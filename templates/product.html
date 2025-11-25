@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Capsule{% endblock %}
+
+{% block content %}
+<section class="product-detail-section">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('index') }}">Accueil</a>
+            <span>/</span>
+            <a href="{{ url_for('catalogue') }}">Catalogue</a>
+            <span>/</span>
+            <span>{{ product.name }}</span>
+        </div>
+        
+        <div class="product-detail-grid">
+            <div class="product-detail-image">
+                <div class="main-image" style="background-color: #e8dcc8;">
+                    <span class="image-placeholder">{{ product.name[:3] }}</span>
+                </div>
+            </div>
+            
+            <div class="product-detail-info">
+                <h1 class="product-detail-title">{{ product.name }}</h1>
+                <p class="product-detail-price">{{ product.price }}</p>
+                <p class="product-detail-description">{{ product.description }}</p>
+                
+                <div class="product-detail-specs">
+                    <h3>Caractéristiques</h3>
+                    <ul class="specs-list">
+                        <li><strong>Matériau:</strong> {{ product.material }}</li>
+                        <li><strong>Dimensions:</strong> {{ product.dimensions }}</li>
+                        <li><strong>Origine:</strong> Maroc</li>
+                        <li><strong>Fabrication:</strong> Artisanale</li>
+                    </ul>
+                </div>
+                
+                <div class="product-detail-full">
+                    <h3>Description Complète</h3>
+                    <p>{{ product.details }}</p>
+                </div>
+                
+                <div class="product-actions">
+                    <a href="{{ url_for('contact') }}" class="btn-primary btn-large">Demander un Devis</a>
+                    <a href="{{ url_for('catalogue') }}" class="btn-secondary">Retour au Catalogue</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if related_products|length > 0 %}
+<section class="related-products-section">
+    <div class="container">
+        <h2>Produits Similaires</h2>
+        <div class="products-grid">
+            {% for product in related_products[:3] %}
+            <div class="product-card">
+                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
+                    <div class="product-image" style="background-color: #e8dcc8;">
+                        <span class="product-placeholder">{{ product.name[:2] }}</span>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
+                    </h3>
+                    <p class="product-description">{{ product.description[:80] }}...</p>
+                    <div class="product-footer">
+                        <span class="product-price">{{ product.price }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">Voir plus</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

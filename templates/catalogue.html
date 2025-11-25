@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Catalogue - Capsule{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Notre Catalogue</h1>
+        <p>Explorez notre collection de produits artisanaux marocains authentiques</p>
+    </div>
+</section>
+
+<section class="catalogue-section">
+    <div class="container">
+        <div class="catalogue-layout">
+            <aside class="catalogue-filters">
+                <h3>Catégories</h3>
+                <ul class="filter-list">
+                    {% for cat in categories %}
+                    <li>
+                        <a href="{{ url_for('catalogue', category=cat.id) }}" 
+                           class="filter-item {% if selected_category == cat.id %}active{% endif %}">
+                            <span class="filter-icon">{{ cat.icon }}</span>
+                            <span class="filter-name">{{ cat.name }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </aside>
+            
+            <div class="catalogue-content">
+                <div class="catalogue-header">
+                    <h2>
+                        {% if selected_category == 'all' %}
+                            Tous les produits
+                        {% else %}
+                            {% for cat in categories %}
+                                {% if cat.id == selected_category %}{{ cat.name }}{% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </h2>
+                    <p class="products-count">{{ products|length }} produit(s)</p>
+                </div>
+                
+                <div class="products-grid">
+                    {% for product in products %}
+                    <div class="product-card">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
+                            <div class="product-image" style="background-color: #e8dcc8;">
+                                <span class="product-placeholder">{{ product.name[:2] }}</span>
+                            </div>
+                        </a>
+                        <div class="product-info">
+                            <h3 class="product-name">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
+                            </h3>
+                            <p class="product-description">{{ product.description[:100] }}...</p>
+                            <div class="product-footer">
+                                <span class="product-price">{{ product.price }}</span>
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">Voir plus</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if products|length == 0 %}
+                <div class="no-products">
+                    <p>Aucun produit trouvé dans cette catégorie.</p>
+                    <a href="{{ url_for('catalogue') }}" class="btn-secondary">Voir tous les produits</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

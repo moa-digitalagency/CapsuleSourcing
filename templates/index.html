@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Capsule - Artisanat Marocain Authentique{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Célébrez la Beauté de l'Artisanat</h1>
+        <p class="hero-subtitle">Découvrez notre sélection exclusive de produits artisanaux marocains, fruits d'un savoir-faire ancestral transmis de génération en génération.</p>
+        <a href="{{ url_for('catalogue') }}" class="btn-hero">Explorer le Catalogue</a>
+    </div>
+    <div class="hero-cards">
+        <div class="hero-card">
+            <div class="hero-card-image" style="background-image: url('{{ url_for('static', filename='images/card1.jpg') }}')"></div>
+            <div class="hero-card-content">
+                <h3>Artisanat en Laiton</h3>
+                <p>Objets ciselés à la main</p>
+                <a href="{{ url_for('catalogue', category='laiton') }}" class="hero-card-link">Découvrir</a>
+            </div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-card-image" style="background-image: url('{{ url_for('static', filename='images/card2.jpg') }}')"></div>
+            <div class="hero-card-content">
+                <h3>Tissages & Textiles</h3>
+                <p>Tapis et coussins berbères</p>
+                <a href="{{ url_for('catalogue', category='textile') }}" class="hero-card-link">Découvrir</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Produits Phares</h2>
+            <p>Une sélection de nos pièces artisanales les plus emblématiques</p>
+        </div>
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <div class="product-card">
+                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
+                    <div class="product-image" style="background-color: #e8dcc8;">
+                        <span class="product-placeholder">{{ product.name[:2] }}</span>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
+                    </h3>
+                    <p class="product-description">{{ product.description[:80] }}...</p>
+                    <div class="product-footer">
+                        <span class="product-price">{{ product.price }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">Voir plus</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{{ url_for('catalogue') }}" class="btn-secondary">Voir Tout le Catalogue</a>
+        </div>
+    </div>
+</section>
+
+<section class="values-section">
+    <div class="container">
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">🎨</div>
+                <h3>Artisanat Authentique</h3>
+                <p>Chaque pièce est créée à la main par des artisans marocains qualifiés, perpétuant des traditions séculaires.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🌍</div>
+                <h3>Sourcing Responsable</h3>
+                <p>Nous travaillons directement avec les artisans pour garantir des pratiques équitables et durables.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">✨</div>
+                <h3>Qualité Premium</h3>
+                <p>Sélection rigoureuse de produits uniques alliant esthétique contemporaine et savoir-faire traditionnel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Prêt à Découvrir Nos Créations ?</h2>
+        <p>Contactez-nous pour en savoir plus sur nos produits et nos services de sourcing.</p>
+        <a href="{{ url_for('contact') }}" class="btn-cta">Nous Contacter</a>
+    </div>
+</section>
+{% endblock %}
