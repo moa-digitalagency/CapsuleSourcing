@@ -4,27 +4,34 @@
 
 {% block content %}
 <section class="hero">
-    <div class="hero-overlay"></div>
-    <div class="container hero-content">
-        <h1 class="hero-title">Célébrez la Beauté de l'Artisanat</h1>
-        <p class="hero-subtitle">Découvrez notre sélection exclusive de produits artisanaux marocains, fruits d'un savoir-faire ancestral transmis de génération en génération.</p>
-        <a href="{{ url_for('catalogue') }}" class="btn-hero">Explorer le Catalogue</a>
-    </div>
-    <div class="hero-cards">
-        <div class="hero-card">
-            <div class="hero-card-image" style="background-image: url('{{ url_for('static', filename='images/card1.jpg') }}')"></div>
-            <div class="hero-card-content">
-                <h3>Artisanat en Laiton</h3>
-                <p>Objets ciselés à la main</p>
-                <a href="{{ url_for('catalogue', category='laiton') }}" class="hero-card-link">Découvrir</a>
+    <div class="hero-grid">
+        <div class="hero-main">
+            <img src="{{ url_for('static', filename='images/moroccan_brass_craft_91c1b440.jpg') }}" alt="Artisanat Marocain" class="hero-bg-image">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">Celebrate the Beauty<br>of Craftsmanship</h1>
+                <p class="hero-subtitle">Découvrez l'authenticité de l'artisanat marocain</p>
+                <a href="{{ url_for('catalogue') }}" class="btn-hero">Voir le Catalogue</a>
             </div>
         </div>
-        <div class="hero-card">
-            <div class="hero-card-image" style="background-image: url('{{ url_for('static', filename='images/card2.jpg') }}')"></div>
-            <div class="hero-card-content">
-                <h3>Tissages & Textiles</h3>
-                <p>Tapis et coussins berbères</p>
-                <a href="{{ url_for('catalogue', category='textile') }}" class="hero-card-link">Découvrir</a>
+        
+        <div class="hero-side-cards">
+            <div class="hero-card">
+                <img src="{{ url_for('static', filename='images/moroccan_brass_craft_59d29144.jpg') }}" alt="Wood crafting" class="hero-card-image">
+                <div class="hero-card-overlay">
+                    <h3>Wood crafting</h3>
+                    <p>Le travail du bois traditionnel</p>
+                    <a href="{{ url_for('catalogue', category='mobilier') }}" class="hero-card-btn">Découvrir</a>
+                </div>
+            </div>
+            
+            <div class="hero-card">
+                <img src="{{ url_for('static', filename='images/moroccan_brass_craft_5197c08b.jpg') }}" alt="Fibres Naturelles" class="hero-card-image">
+                <div class="hero-card-overlay">
+                    <h3>Fibres Naturelles</h3>
+                    <p>Vannerie et tissage</p>
+                    <a href="{{ url_for('catalogue', category='textile') }}" class="hero-card-btn">Découvrir</a>
+                </div>
             </div>
         </div>
     </div>
@@ -33,32 +40,29 @@
 <section class="featured-section">
     <div class="container">
         <div class="section-header">
-            <h2>Produits Phares</h2>
-            <p>Une sélection de nos pièces artisanales les plus emblématiques</p>
+            <h2>Feature Products</h2>
         </div>
-        <div class="products-grid">
-            {% for product in featured_products %}
-            <div class="product-card">
-                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
-                    <div class="product-image" style="background-color: #e8dcc8;">
-                        <span class="product-placeholder">{{ product.name[:2] }}</span>
-                    </div>
-                </a>
-                <div class="product-info">
-                    <h3 class="product-name">
-                        <a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
-                    </h3>
-                    <p class="product-description">{{ product.description[:80] }}...</p>
-                    <div class="product-footer">
-                        <span class="product-price">{{ product.price }}</span>
-                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">Voir plus</a>
-                    </div>
+        <div class="products-grid-modern">
+            <div class="product-card-large">
+                <img src="{{ url_for('static', filename='images/moroccan_artisan_han_11a3ad05.jpg') }}" alt="Hands Painting Pottery" class="product-card-image">
+                <div class="product-card-overlay">
+                    <h3>Hands Painting Pottery</h3>
+                    <a href="{{ url_for('catalogue', category='ceramique') }}" class="product-card-btn">Voir Plus</a>
+                </div>
+            </div>
+            
+            {% for product in featured_products[1:5] %}
+            <div class="product-card-small">
+                <img src="{{ url_for('static', filename='images/moroccan_brass_craft_8cacf1dc.jpg') }}" alt="{{ product.name }}" class="product-card-image">
+                <div class="product-card-info">
+                    <h4>{{ product.name }}</h4>
+                    <p>{{ product.material }}</p>
                 </div>
             </div>
             {% endfor %}
         </div>
         <div class="section-cta">
-            <a href="{{ url_for('catalogue') }}" class="btn-secondary">Voir Tout le Catalogue</a>
+            <a href="{{ url_for('catalogue') }}" class="btn-explore">Explorer Tout</a>
         </div>
     </div>
 </section>
@@ -85,11 +89,65 @@
     </div>
 </section>
 
-<section class="cta-section">
+<section class="artisan-section">
     <div class="container">
-        <h2>Prêt à Découvrir Nos Créations ?</h2>
-        <p>Contactez-nous pour en savoir plus sur nos produits et nos services de sourcing.</p>
-        <a href="{{ url_for('contact') }}" class="btn-cta">Nous Contacter</a>
+        <div class="artisan-grid">
+            <div class="artisan-image-card">
+                <img src="{{ url_for('static', filename='images/moroccan_artisan_han_43aa89bc.jpg') }}" alt="Artisan au travail" class="artisan-img">
+            </div>
+            
+            <div class="artisan-image-card">
+                <img src="{{ url_for('static', filename='images/moroccan_artisan_han_0614122a.jpg') }}" alt="Artisanat traditionnel" class="artisan-img">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="testimonials-title">What Our Client Say About Us</h2>
+        <div class="testimonials-grid">
+            <button class="testimonial-arrow prev">←</button>
+            <div class="testimonial-card">
+                <p class="testimonial-text">"La qualité des produits Capsule est exceptionnelle. Chaque pièce raconte une histoire et reflète un savoir-faire unique. Nos clients adorent l'authenticité."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">
+                        <img src="{{ url_for('static', filename='images/avatar1.jpg') }}" alt="Sarah Chen">
+                    </div>
+                    <div>
+                        <h4>Sarah Chen</h4>
+                        <p>Boutique Le Souk Paris</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Un partenariat formidable. Capsule nous permet d'offrir à nos clients des pièces artisanales authentiques avec une traçabilité complète. Le service est impeccable."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">
+                        <img src="{{ url_for('static', filename='images/avatar2.jpg') }}" alt="Marc Dubois">
+                    </div>
+                    <div>
+                        <h4>Marc Dubois</h4>
+                        <p>Décorateur d'intérieur</p>
+                    </div>
+                </div>
+            </div>
+            <button class="testimonial-arrow next">→</button>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-content">
+            <h2>Recevez Notre Catalogue</h2>
+            <p>Soyez les premiers informés de nos nouvelles collections et produits artisanaux</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" placeholder="Votre adresse email" class="newsletter-input" required>
+                <button type="submit" class="newsletter-btn">S'abonner</button>
+            </form>
+        </div>
     </div>
 </section>
 {% endblock %}

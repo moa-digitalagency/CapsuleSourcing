@@ -105,6 +105,17 @@ Modifier le fichier `products.py` et ajouter des entrées au tableau `PRODUCTS`.
 Placer les images dans `static/images/` et mettre à jour les chemins dans `products.py`.
 
 ## Modifications Récentes
+- 25/11/2024: Refonte complète du design
+  - Nouveau design moderne avec vraies images (images de stock)
+  - Hero section avec grid layout et overlays sur images
+  - Section testimonials clients avec avatars
+  - Section newsletter pour demander le catalogue
+  - Retrait de tous les prix (site catalogue, pas e-commerce)
+  - Boutons "Demander Plus d'Informations" au lieu de prix
+  - Images réelles sur tous les produits du catalogue
+  - Design responsive amélioré
+  - Overlays au hover sur les cartes produits
+
 - 25/11/2024: Création initiale du projet
   - Structure Flask complète
   - 18 produits artisanaux marocains

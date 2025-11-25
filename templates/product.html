@@ -15,14 +15,13 @@
         
         <div class="product-detail-grid">
             <div class="product-detail-image">
-                <div class="main-image" style="background-color: #e8dcc8;">
-                    <span class="image-placeholder">{{ product.name[:3] }}</span>
+                <div class="main-image">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
                 </div>
             </div>
             
             <div class="product-detail-info">
                 <h1 class="product-detail-title">{{ product.name }}</h1>
-                <p class="product-detail-price">{{ product.price }}</p>
                 <p class="product-detail-description">{{ product.description }}</p>
                 
                 <div class="product-detail-specs">
@@ -41,7 +40,7 @@
                 </div>
                 
                 <div class="product-actions">
-                    <a href="{{ url_for('contact') }}" class="btn-primary btn-large">Demander un Devis</a>
+                    <a href="{{ url_for('contact') }}" class="btn-primary btn-large">Demander Plus d'Informations</a>
                     <a href="{{ url_for('catalogue') }}" class="btn-secondary">Retour au Catalogue</a>
                 </div>
             </div>
@@ -57,8 +56,8 @@
             {% for product in related_products[:3] %}
             <div class="product-card">
                 <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
-                    <div class="product-image" style="background-color: #e8dcc8;">
-                        <span class="product-placeholder">{{ product.name[:2] }}</span>
+                    <div class="product-image">
+                        <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </a>
                 <div class="product-info">
@@ -67,8 +66,8 @@
                     </h3>
                     <p class="product-description">{{ product.description[:80] }}...</p>
                     <div class="product-footer">
-                        <span class="product-price">{{ product.price }}</span>
-                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">Voir plus</a>
+                        <span class="product-category">{{ product.material }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">Voir détails</a>
                     </div>
                 </div>
             </div>

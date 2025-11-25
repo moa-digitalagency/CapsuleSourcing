@@ -34,4 +34,15 @@ document.addEventListener('DOMContentLoaded', function() {
             navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
         }
     });
+    
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            
+            alert('Merci pour votre inscription ! Vous recevrez bientôt notre catalogue à l\'adresse : ' + email);
+            this.reset();
+        });
+    }
 });
