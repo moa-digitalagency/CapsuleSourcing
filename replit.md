@@ -105,6 +105,16 @@ Modifier le fichier `products.py` et ajouter des entrées au tableau `PRODUCTS`.
 Placer les images dans `static/images/` et mettre à jour les chemins dans `products.py`.
 
 ## Modifications Récentes
+- 26/11/2024: Refonte design minimaliste et professionnel
+  - Design épuré avec palette de couleurs terre (beige, crème, brun)
+  - Typographie élégante (Georgia serif pour titres, système pour corps)
+  - Animations au scroll avec IntersectionObserver
+  - Transitions douces sur toutes les interactions
+  - Contenu entièrement traduit en français
+  - Navigation fixe avec effet de transparence
+  - Cards produits avec hover effects subtils
+  - Formulaires avec style moderne et validations
+
 - 25/11/2024: Refonte complète du design
   - Nouveau design moderne avec vraies images (images de stock)
   - Hero section avec grid layout et overlays sur images
