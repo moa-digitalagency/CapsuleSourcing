@@ -137,12 +137,27 @@ h1, h2, h3, h4 {
     transition: var(--transition-smooth);
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
     color: var(--color-text);
 }
 
-.nav-link:hover::after {
+.nav-link:hover::after,
+.nav-link.active::after {
     width: 100%;
+}
+
+.nav-dropdown.active > .nav-link-dropdown {
+    color: var(--color-text);
+}
+
+.nav-dropdown.active > .nav-link-dropdown::after {
+    width: 100%;
+}
+
+.dropdown-menu a.active {
+    color: var(--color-primary);
+    font-weight: 500;
 }
 
 .nav-link.btn-primary {
@@ -161,6 +176,27 @@ h1, h2, h3, h4 {
     background-color: var(--color-primary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+.nav-link.btn-primary.active {
+    background-color: var(--color-primary);
+}
+
+.btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #25D366;
+    border-color: #25D366;
+}
+
+.btn-whatsapp:hover {
+    background-color: #128C7E;
+    border-color: #128C7E;
+}
+
+.whatsapp-icon {
+    background-color: rgba(37, 211, 102, 0.1);
 }
 
 .menu-toggle {
@@ -357,6 +393,8 @@ main {
     gap: 0.4rem;
     transition: var(--transition-smooth);
     letter-spacing: 0.02em;
+    width: fit-content;
+    align-self: flex-start;
 }
 
 .hero-card-btn::after {
@@ -2893,6 +2931,172 @@ main {
     
     .timeline-number {
         font-size: 2rem;
+    }
+}
+
+/* Mobile Navigation */
+@media (max-width: 968px) {
+    .menu-toggle {
+        display: flex;
+        z-index: 1001;
+    }
+    
+    .menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background-color: var(--color-text);
+        transition: var(--transition-fast);
+    }
+    
+    .menu-toggle.active span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .menu-toggle.active span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 320px;
+        height: 100vh;
+        background: var(--color-white);
+        flex-direction: column;
+        padding: 100px 40px 40px;
+        gap: 0;
+        box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+        transition: var(--transition-smooth);
+        overflow-y: auto;
+    }
+    
+    .nav-menu.active {
+        right: 0;
+    }
+    
+    .nav-menu li {
+        width: 100%;
+        border-bottom: 1px solid var(--color-border);
+    }
+    
+    .nav-menu li:last-child {
+        border-bottom: none;
+        margin-top: 20px;
+    }
+    
+    .nav-link {
+        display: block;
+        padding: 1rem 0;
+        font-size: 1rem;
+    }
+    
+    .nav-link::after {
+        display: none;
+    }
+    
+    .nav-link.active {
+        color: var(--color-primary);
+        font-weight: 500;
+    }
+    
+    .nav-dropdown {
+        position: relative;
+    }
+    
+    .nav-dropdown .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+        padding: 0 0 0 20px;
+        display: none;
+    }
+    
+    .nav-dropdown.open .dropdown-menu {
+        display: block;
+    }
+    
+    .nav-dropdown .dropdown-menu li {
+        border-bottom: none;
+    }
+    
+    .nav-dropdown .dropdown-menu a {
+        padding: 0.75rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .nav-link.btn-primary {
+        display: inline-block;
+        text-align: center;
+        margin-top: 10px;
+    }
+    
+    .nav-link.btn-primary.active {
+        background-color: var(--color-primary);
+    }
+    
+    .nav-container {
+        padding: 1rem 20px;
+    }
+    
+    body.menu-open {
+        overflow: hidden;
+    }
+    
+    .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition-smooth);
+        z-index: 999;
+    }
+    
+    .nav-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-menu {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .hero-main {
+        height: 400px;
+    }
+    
+    .hero-side-cards {
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    .hero-card {
+        height: 200px;
+    }
+    
+    .container {
+        padding: 0 20px;
     }
 }
 
