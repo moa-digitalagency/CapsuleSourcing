@@ -6,10 +6,10 @@
 <section class="hero">
     <div class="hero-grid">
         <div class="hero-main">
-            <img src="{{ hero.main_image or url_for('static', filename='images/moroccan_brass_craft_91c1b440.jpg') }}" alt="Artisanat Marocain" class="hero-bg-image">
+            <img src="{{ hero.main_image or url_for('static', filename='images/moroccan_pottery_cer_db1d11f8.jpg') }}" alt="Artisanat Marocain" class="hero-bg-image">
             <div class="hero-overlay"></div>
             <div class="hero-content">
-                <h1 class="hero-title">{{ hero.title|replace(' ', '<br>')|safe if hero else "L'Art du<br>Savoir-Faire<br>Marocain" }}</h1>
+                <h1 class="hero-title">{{ hero.title|replace(' ', '<br>')|safe if hero else "L'Art<br>du<br>Savoir-Faire<br>Marocain" }}</h1>
                 <p class="hero-subtitle">{{ hero.subtitle if hero else "Des pieces uniques, faconnees par des mains expertes" }}</p>
                 <a href="{{ url_for('catalogue.catalogue') }}" class="btn-hero">{{ hero.button_text if hero else "Decouvrir la Collection" }}</a>
             </div>
@@ -17,7 +17,7 @@
         
         <div class="hero-side-cards">
             <div class="hero-card">
-                <img src="{{ hero.card1_image or url_for('static', filename='images/moroccan_brass_craft_59d29144.jpg') }}" alt="{{ hero.card1_title if hero else 'Travail du Bois' }}" class="hero-card-image">
+                <img src="{{ hero.card1_image or url_for('static', filename='images/moroccan_woodwork_fu_19c5df4f.jpg') }}" alt="{{ hero.card1_title if hero else 'Travail du Bois' }}" class="hero-card-image">
                 <div class="hero-card-overlay">
                     <h3>{{ hero.card1_title if hero else "Ebenisterie" }}</h3>
                     <p>{{ hero.card1_subtitle if hero else "Le travail du bois traditionnel" }}</p>
@@ -26,7 +26,7 @@
             </div>
             
             <div class="hero-card">
-                <img src="{{ hero.card2_image or url_for('static', filename='images/moroccan_brass_craft_5197c08b.jpg') }}" alt="{{ hero.card2_title if hero else 'Fibres Naturelles' }}" class="hero-card-image">
+                <img src="{{ hero.card2_image or url_for('static', filename='images/moroccan_artisan_wor_de89e55a.jpg') }}" alt="{{ hero.card2_title if hero else 'Fibres Naturelles' }}" class="hero-card-image">
                 <div class="hero-card-overlay">
                     <h3>{{ hero.card2_title if hero else "Fibres Naturelles" }}</h3>
                     <p>{{ hero.card2_subtitle if hero else "Vannerie et tissage artisanal" }}</p>
@@ -68,25 +68,71 @@
             <p>{{ content.featured.description if content and content.featured else "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain." }}</p>
         </div>
         
-        <div class="products-showcase">
-            <div class="showcase-main">
-                <img src="{{ content.featured.showcase_image if content and content.featured else url_for('static', filename='images/moroccan_artisan_han_11a3ad05.jpg') }}" alt="Poterie Artisanale" class="showcase-image">
-                <div class="showcase-content">
-                    <span class="showcase-category">{{ content.featured.showcase_category if content and content.featured else "Ceramique et Poterie" }}</span>
-                    <h3>{{ content.featured.showcase_title if content and content.featured else "Poterie Traditionnelle" }}</h3>
-                    <p>{{ content.featured.showcase_description if content and content.featured else "Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi." }}</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='ceramique') }}" class="btn-explore">{{ content.featured.showcase_button if content and content.featured else "Decouvrir la Collection" }}</a>
+        <div class="categories-showcase">
+            <div class="category-card category-card-large">
+                <img src="{{ url_for('static', filename='images/moroccan_pottery_cer_26051764.jpg') }}" alt="Ceramique et Poterie" class="category-card-image">
+                <div class="category-card-overlay">
+                    <span class="category-badge">Collection</span>
+                    <h3>Ceramique & Poterie</h3>
+                    <p>Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='ceramique') }}" class="category-btn">Explorer</a>
                 </div>
             </div>
-            
-            <div class="showcase-grid">
-                {% for product in featured_products[:4] %}
-                <div class="showcase-item">
-                    <img src="{{ product.image }}" alt="{{ product.name }}" class="showcase-item-image">
-                    <div class="showcase-item-info">
+            <div class="category-card">
+                <img src="{{ url_for('static', filename='images/moroccan_leather_cra_5f8fd31d.jpg') }}" alt="Maroquinerie" class="category-card-image">
+                <div class="category-card-overlay">
+                    <span class="category-badge">Artisanat</span>
+                    <h3>Maroquinerie</h3>
+                    <p>Cuir tanne traditionnellement</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='cuir') }}" class="category-btn">Explorer</a>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="{{ url_for('static', filename='images/moroccan_woodwork_fu_74825e67.jpg') }}" alt="Mobilier" class="category-card-image">
+                <div class="category-card-overlay">
+                    <span class="category-badge">Artisanat</span>
+                    <h3>Ebenisterie</h3>
+                    <p>Bois sculpte et peint a la main</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='mobilier') }}" class="category-btn">Explorer</a>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="{{ url_for('static', filename='images/moroccan_brass_metal_4be139c4.jpg') }}" alt="Luminaires" class="category-card-image">
+                <div class="category-card-overlay">
+                    <span class="category-badge">Artisanat</span>
+                    <h3>Dinanderie</h3>
+                    <p>Travail du cuivre et laiton</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='metal') }}" class="category-btn">Explorer</a>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="{{ url_for('static', filename='images/moroccan_artisan_wor_b7d739f2.jpg') }}" alt="Textiles" class="category-card-image">
+                <div class="category-card-overlay">
+                    <span class="category-badge">Artisanat</span>
+                    <h3>Textile & Tissage</h3>
+                    <p>Fibres naturelles tissees</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='textile') }}" class="category-btn">Explorer</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="featured-products-section">
+            <div class="featured-products-header">
+                <h3>Produits en Vedette</h3>
+                <p>Decouvrez notre selection de pieces d'exception</p>
+            </div>
+            <div class="featured-products-grid">
+                {% for product in featured_products[:6] %}
+                <div class="featured-product-card">
+                    <div class="featured-product-image">
+                        <img src="{{ product.image }}" alt="{{ product.name }}">
+                        <div class="featured-product-badge">En Vedette</div>
+                    </div>
+                    <div class="featured-product-info">
+                        <span class="featured-product-category">{{ product.category_id|title if product.category_id else 'Artisanat' }}</span>
                         <h4>{{ product.name }}</h4>
-                        <p>{{ product.material }}</p>
-                        <a href="{{ url_for('catalogue.product_detail', product_id=product.id) }}" class="showcase-link">Voir le produit</a>
+                        <p class="featured-product-material">{{ product.material }}</p>
+                        <a href="{{ url_for('catalogue.product_detail', product_id=product.id) }}" class="featured-product-link">Voir le produit</a>
                     </div>
                 </div>
                 {% endfor %}
