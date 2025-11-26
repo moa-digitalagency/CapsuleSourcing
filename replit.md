@@ -161,6 +161,15 @@ Placer les images dans `static/images/` et mettre a jour les chemins dans les pr
 
 ## Modifications Recentes
 
+### 26/11/2024: Navigation, WhatsApp et Responsive
+- Boutons hero-card-btn reduits (largeur proportionnelle au texte avec width: fit-content)
+- Etat actif du menu navigation selon la page courante (underline + couleur)
+- Menu hamburger responsive pour mobile/tablet avec overlay
+- Integration WhatsApp pour le formulaire contact (numero: +33 7 74 49 64 40)
+- Bouton "Envoyer via WhatsApp" avec icone WhatsApp
+- Lien WhatsApp direct dans les informations de contact
+- Favicon SVG ajoute (logo Capsule)
+
 ### 26/11/2024: Uniformisation des boutons et overlays
 - Ajout d'overlays permanents sur les cartes hero et produits pour visibilite du texte
 - Uniformisation des boutons avec fleche (→) et animation au survol
