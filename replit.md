@@ -96,7 +96,26 @@ Capsule est une plateforme B2B de sourcing de produits artisanaux marocains auth
 - **HeroSection**: Section hero de la page d'accueil
 - **HomepageStats**: Statistiques (artisans, produits, partenaires, pays)
 - **SEOSettings**: Meta tags par page
-- **ContactInfo**: Informations de contact
+- **ContactInfo**: Informations de contact et reseaux sociaux
+
+## Reseaux Sociaux
+
+### Configuration
+Les reseaux sociaux sont configurables dans `/admin/settings` via le modele ContactInfo:
+
+| Reseau | Champ | Format |
+|--------|-------|--------|
+| WhatsApp | `whatsapp` | Numero (+33 7 XX XX XX XX) |
+| Facebook | `facebook` | URL (https://facebook.com/...) |
+| Instagram | `instagram` | URL (https://instagram.com/...) |
+| TikTok | `tiktok` | URL (https://tiktok.com/@...) |
+| LinkedIn | `linkedin` | URL (https://linkedin.com/company/...) |
+| Twitter/X | `twitter` | URL (https://twitter.com/...) |
+| YouTube | `youtube` | URL (https://youtube.com/...) |
+| Pinterest | `pinterest` | URL (https://pinterest.com/...) |
+
+### Affichage
+Les icones s'affichent automatiquement dans le footer (`templates/base.html`) lorsque les liens sont configures.
 
 ## Panel d'Administration
 
