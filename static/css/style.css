@@ -316,17 +316,18 @@ main {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    top: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
     padding: 30px 25px;
     color: var(--color-white);
-    transform: translateY(10px);
-    opacity: 0.9;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     transition: var(--transition-smooth);
 }
 
 .hero-card:hover .hero-card-overlay {
-    transform: translateY(0);
-    opacity: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
 }
 
 .hero-card-overlay h3 {
@@ -344,9 +345,9 @@ main {
 }
 
 .hero-card-btn {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    color: var(--color-white);
+    color: var(--color-text);
     padding: 0.6rem 1.25rem;
     border-radius: 100px;
     text-decoration: none;
@@ -359,8 +360,9 @@ main {
 }
 
 .hero-card-btn:hover {
-    background-color: var(--color-white);
-    color: var(--color-text);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
 }
 
 .featured-section {
@@ -421,17 +423,18 @@ main {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    top: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
     padding: 40px 30px;
     color: var(--color-white);
-    transform: translateY(20px);
-    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     transition: var(--transition-smooth);
 }
 
 .product-card-large:hover .product-card-overlay {
-    transform: translateY(0);
-    opacity: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
 }
 
 .product-card-overlay h3 {
@@ -442,9 +445,9 @@ main {
 }
 
 .product-card-btn {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    color: var(--color-white);
+    color: var(--color-text);
     padding: 0.75rem 1.5rem;
     border-radius: 100px;
     text-decoration: none;
@@ -456,8 +459,9 @@ main {
 }
 
 .product-card-btn:hover {
-    background-color: var(--color-white);
-    color: var(--color-text);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
 }
 
 .product-card-small {
@@ -644,10 +648,10 @@ main {
 
 .testimonials-grid {
     display: grid;
-    grid-template-columns: 60px 1fr 1fr 60px;
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
-    align-items: center;
-    max-width: 1100px;
+    align-items: stretch;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
