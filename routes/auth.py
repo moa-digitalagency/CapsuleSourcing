@@ -35,55 +35,9 @@ def login():
     return render_template('auth/login.html')
 
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
+@auth_bp.route('/register')
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-    
-    if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip().lower()
-        password = request.form.get('password', '')
-        confirm_password = request.form.get('confirm_password', '')
-        
-        errors = []
-        
-        if not username or len(username) < 3:
-            errors.append('Le nom d\'utilisateur doit contenir au moins 3 caracteres')
-        
-        if not email or '@' not in email:
-            errors.append('Email invalide')
-        
-        if not password or len(password) < 6:
-            errors.append('Le mot de passe doit contenir au moins 6 caracteres')
-        
-        if password != confirm_password:
-            errors.append('Les mots de passe ne correspondent pas')
-        
-        if User.query.filter_by(username=username).first():
-            errors.append('Ce nom d\'utilisateur est deja pris')
-        
-        if User.query.filter_by(email=email).first():
-            errors.append('Cet email est deja utilise')
-        
-        if errors:
-            for error in errors:
-                flash(error, 'error')
-            return render_template('auth/register.html')
-        
-        user = User(username=username, email=email)
-        user.set_password(password)
-        
-        if User.query.count() == 0:
-            user.is_admin = True
-        
-        db.session.add(user)
-        db.session.commit()
-        
-        flash('Compte cree avec succes. Vous pouvez maintenant vous connecter.', 'success')
-        return redirect(url_for('auth.login'))
-    
-    return render_template('auth/register.html')
+    return redirect(url_for('auth.login'))
 
 
 @auth_bp.route('/logout')
