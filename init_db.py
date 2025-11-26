@@ -43,30 +43,60 @@ def seed_default_data():
     )
     from werkzeug.security import generate_password_hash
     
+    admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+    admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
+    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@capsule-maroc.com')
+    
     with app.app_context():
         if User.query.filter_by(is_admin=True).first():
             logger.info("Admin user already exists, skipping user creation.")
         else:
             admin = User(
-                username="admin",
-                email="admin@capsule-maroc.com",
-                password_hash=generate_password_hash("admin123"),
+                username=admin_username,
+                email=admin_email,
+                password_hash=generate_password_hash(admin_password),
                 first_name="Admin",
                 last_name="Capsule",
                 is_admin=True
             )
             db.session.add(admin)
-            logger.info("Created admin user (username: admin, password: admin123)")
+            logger.info(f"Created admin user (username: {admin_username})")
         
-        if not ContactInfo.query.first():
+        contact = ContactInfo.query.first()
+        if not contact:
             contact = ContactInfo(
                 email="contact@capsule-maroc.com",
-                phone="+212 XX XX XX XX",
-                whatsapp="+33 7 74 49 64 40",
-                address="Marrakech, Maroc"
+                phone="+212 5 24 43 XX XX",
+                whatsapp="+212 6 61 XX XX XX",
+                address="Quartier Industriel, Marrakech, Maroc",
+                instagram="https://instagram.com/capsule.maroc",
+                facebook="https://facebook.com/capsulemaroc",
+                linkedin="https://linkedin.com/company/capsule-maroc",
+                twitter="https://twitter.com/capsulemaroc",
+                youtube="https://youtube.com/@capsulemaroc",
+                tiktok="https://tiktok.com/@capsulemaroc",
+                pinterest="https://pinterest.com/capsulemaroc"
             )
             db.session.add(contact)
-            logger.info("Created default contact info")
+            logger.info("Created default contact info with social networks")
+        else:
+            if not contact.instagram:
+                contact.instagram = "https://instagram.com/capsule.maroc"
+            if not contact.facebook:
+                contact.facebook = "https://facebook.com/capsulemaroc"
+            if not contact.linkedin:
+                contact.linkedin = "https://linkedin.com/company/capsule-maroc"
+            if not contact.whatsapp:
+                contact.whatsapp = "+212 6 61 XX XX XX"
+            if not contact.twitter:
+                contact.twitter = "https://twitter.com/capsulemaroc"
+            if not contact.youtube:
+                contact.youtube = "https://youtube.com/@capsulemaroc"
+            if not contact.tiktok:
+                contact.tiktok = "https://tiktok.com/@capsulemaroc"
+            if not contact.pinterest:
+                contact.pinterest = "https://pinterest.com/capsulemaroc"
+            logger.info("Updated contact info with social networks")
         
         if not HeroSection.query.first():
             hero = HeroSection()
