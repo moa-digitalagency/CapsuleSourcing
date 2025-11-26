@@ -1,1 +1,20 @@
-from app import app
+from app import app, db
+import logging
+
+with app.app_context():
+    import models.database
+    db.create_all()
+    logging.info("Database tables created")
+
+from routes import main_bp, catalogue_bp, business_bp
+from routes.admin import admin_bp
+from replit_auth import make_replit_blueprint
+
+app.register_blueprint(main_bp)
+app.register_blueprint(catalogue_bp)
+app.register_blueprint(business_bp)
+app.register_blueprint(admin_bp, url_prefix='/admin')
+app.register_blueprint(make_replit_blueprint(), url_prefix="/auth")
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

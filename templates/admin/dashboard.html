@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.products }}</div>
+        <div class="stat-label">Produits</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.categories }}</div>
+        <div class="stat-label">Categories</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.services }}</div>
+        <div class="stat-label">Services</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.faqs }}</div>
+        <div class="stat-label">FAQs</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.users }}</div>
+        <div class="stat-label">Utilisateurs</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 class="card-title">Actions rapides</h3>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="{{ url_for('admin.add_product') }}" class="btn btn-primary">Ajouter un produit</a>
+        <a href="{{ url_for('admin.add_category') }}" class="btn btn-secondary">Ajouter une categorie</a>
+        <a href="{{ url_for('admin.homepage') }}" class="btn btn-secondary">Modifier la page d'accueil</a>
+        <a href="{{ url_for('admin.seo') }}" class="btn btn-secondary">Parametres SEO</a>
+    </div>
+</div>
+{% endblock %}

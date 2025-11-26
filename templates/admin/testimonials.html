@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Temoignages - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Temoignages</h1>
+    <a href="{{ url_for('admin.add_testimonial') }}" class="btn btn-primary">Ajouter un temoignage</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Auteur</th>
+                <th>Temoignage</th>
+                <th>Ordre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in testimonials %}
+            <tr>
+                <td>
+                    {% if t.author_image %}
+                    <img src="{{ t.author_image }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                    {% else %}
+                    <div style="width: 50px; height: 50px; background: #eee; border-radius: 50%;"></div>
+                    {% endif %}
+                </td>
+                <td>
+                    <strong>{{ t.author_name }}</strong><br>
+                    <small style="color: #666;">{{ t.author_title or '' }}</small>
+                </td>
+                <td>{{ t.text[:80] }}{% if t.text|length > 80 %}...{% endif %}</td>
+                <td>{{ t.order }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('admin.edit_testimonial', id=t.id) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        <form action="{{ url_for('admin.delete_testimonial', id=t.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer ?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: #666;">Aucun temoignage.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

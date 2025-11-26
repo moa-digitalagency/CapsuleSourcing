@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Categories - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Categories</h1>
+    <a href="{{ url_for('admin.add_category') }}" class="btn btn-primary">Ajouter une categorie</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Icone</th>
+                <th>Produits</th>
+                <th>Ordre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td><code>{{ category.id }}</code></td>
+                <td><strong>{{ category.name }}</strong></td>
+                <td>{{ category.icon or '-' }}</td>
+                <td>{{ category.products|length }}</td>
+                <td>{{ category.order }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('admin.edit_category', id=category.id) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        <form action="{{ url_for('admin.delete_category', id=category.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cette categorie ?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #666;">Aucune categorie.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

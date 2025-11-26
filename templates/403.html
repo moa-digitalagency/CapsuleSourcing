@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Acces non autorise - Capsule{% endblock %}
+
+{% block content %}
+<div style="min-height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px;">
+    <div>
+        <h1 style="font-size: 4rem; color: #8B7355; margin-bottom: 20px;">403</h1>
+        <h2 style="font-size: 1.5rem; color: #333; margin-bottom: 16px;">Acces non autorise</h2>
+        <p style="color: #666; margin-bottom: 24px;">Vous n'avez pas les droits necessaires pour acceder a cette page.</p>
+        <a href="{{ url_for('main.index') }}" style="display: inline-block; padding: 12px 24px; background: #8B7355; color: #fff; text-decoration: none; border-radius: 8px;">Retour a l'accueil</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Modifier' if testimonial else 'Ajouter' }} un temoignage - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ 'Modifier' if testimonial else 'Ajouter' }} un temoignage</h1>
+    <a href="{{ url_for('admin.testimonials') }}" class="btn btn-secondary">Retour</a>
+</div>
+
+<div class="card">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="form-label">Temoignage *</label>
+            <textarea name="text" class="form-control" style="min-height: 150px;" required>{{ testimonial.text if testimonial else '' }}</textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nom de l'auteur *</label>
+                <input type="text" name="author_name" class="form-control" value="{{ testimonial.author_name if testimonial else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Titre / Entreprise</label>
+                <input type="text" name="author_title" class="form-control" value="{{ testimonial.author_title if testimonial else '' }}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Photo de l'auteur</label>
+            {% if testimonial and testimonial.author_image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ testimonial.author_image }}" alt="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
+            </div>
+            {% endif %}
+            <div class="file-input-wrapper">
+                <div class="file-input-label">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Telecharger une photo
+                </div>
+                <input type="file" name="author_image" accept="image/*">
+            </div>
+        </div>
+        
+        <div class="form-group" style="max-width: 200px;">
+            <label class="form-label">Ordre</label>
+            <input type="number" name="order" class="form-control" value="{{ testimonial.order if testimonial else 0 }}">
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">{{ 'Enregistrer' if testimonial else 'Ajouter' }}</button>
+            <a href="{{ url_for('admin.testimonials') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

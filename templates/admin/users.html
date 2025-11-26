@@ -1,0 +1,67 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Utilisateurs - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Utilisateurs</h1>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Avatar</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Inscrit le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    {% if user.profile_image_url %}
+                    <img src="{{ user.profile_image_url }}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                    {% else %}
+                    <div style="width: 40px; height: 40px; background: #eee; border-radius: 50%;"></div>
+                    {% endif %}
+                </td>
+                <td>
+                    <strong>{{ user.first_name or '' }} {{ user.last_name or '' }}</strong>
+                    {% if not user.first_name and not user.last_name %}
+                    <span style="color: #999;">-</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.email or user.id }}</td>
+                <td>
+                    {% if user.is_admin %}
+                    <span class="badge badge-success">Admin</span>
+                    {% else %}
+                    <span class="badge badge-warning">Utilisateur</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.created_at.strftime('%d/%m/%Y') if user.created_at else '-' }}</td>
+                <td>
+                    {% if user.id != current_user.id %}
+                    <form action="{{ url_for('admin.toggle_admin', user_id=user.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary btn-sm">
+                            {% if user.is_admin %}Retirer admin{% else %}Rendre admin{% endif %}
+                        </button>
+                    </form>
+                    {% else %}
+                    <span style="color: #999; font-size: 0.85rem;">C'est vous</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #666;">Aucun utilisateur.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Partenariats - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Types de Partenariats</h1>
+    <a href="{{ url_for('admin.add_partnership') }}" class="btn btn-primary">Ajouter un type</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Avantages</th>
+                <th>Ordre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in partnerships %}
+            <tr>
+                <td><strong>{{ p.title }}</strong></td>
+                <td>{{ p.description[:60] if p.description else '-' }}{% if p.description and p.description|length > 60 %}...{% endif %}</td>
+                <td>{{ p.benefits[:40] if p.benefits else '-' }}{% if p.benefits and p.benefits|length > 40 %}...{% endif %}</td>
+                <td>{{ p.order }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('admin.edit_partnership', id=p.id) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        <form action="{{ url_for('admin.delete_partnership', id=p.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer ?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: #666;">Aucun type de partenariat.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

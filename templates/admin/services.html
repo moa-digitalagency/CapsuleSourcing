@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Services - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Services</h1>
+    <a href="{{ url_for('admin.add_service') }}" class="btn btn-primary">Ajouter un service</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Icone</th>
+                <th>Ordre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in services %}
+            <tr>
+                <td><strong>{{ service.title }}</strong></td>
+                <td>{{ service.description[:80] }}{% if service.description|length > 80 %}...{% endif %}</td>
+                <td>{{ service.icon or '-' }}</td>
+                <td>{{ service.order }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('admin.edit_service', id=service.id) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        <form action="{{ url_for('admin.delete_service', id=service.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer ce service ?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: #666;">Aucun service.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

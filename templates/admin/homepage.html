@@ -1,0 +1,128 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Page d'accueil - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Page d'accueil</h1>
+</div>
+
+<div class="card">
+    <h3 class="card-title">Section Hero</h3>
+    <form method="POST" action="{{ url_for('admin.update_hero') }}" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Titre principal</label>
+                <input type="text" name="title" class="form-control" value="{{ hero.title }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Texte du bouton</label>
+                <input type="text" name="button_text" class="form-control" value="{{ hero.button_text }}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Sous-titre</label>
+            <textarea name="subtitle" class="form-control">{{ hero.subtitle }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Image principale</label>
+            {% if hero.main_image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ hero.main_image }}" alt="" class="image-preview">
+            </div>
+            {% endif %}
+            <div class="file-input-wrapper">
+                <div class="file-input-label">Telecharger une image</div>
+                <input type="file" name="main_image" accept="image/*">
+            </div>
+        </div>
+        
+        <h4 style="margin: 24px 0 16px; color: #666;">Carte 1</h4>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Titre</label>
+                <input type="text" name="card1_title" class="form-control" value="{{ hero.card1_title }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lien (categorie)</label>
+                <input type="text" name="card1_link" class="form-control" value="{{ hero.card1_link }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Sous-titre</label>
+            <input type="text" name="card1_subtitle" class="form-control" value="{{ hero.card1_subtitle }}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Image carte 1</label>
+            {% if hero.card1_image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ hero.card1_image }}" alt="" class="image-preview" style="max-width: 100px;">
+            </div>
+            {% endif %}
+            <div class="file-input-wrapper">
+                <div class="file-input-label">Telecharger</div>
+                <input type="file" name="card1_image" accept="image/*">
+            </div>
+        </div>
+        
+        <h4 style="margin: 24px 0 16px; color: #666;">Carte 2</h4>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Titre</label>
+                <input type="text" name="card2_title" class="form-control" value="{{ hero.card2_title }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lien (categorie)</label>
+                <input type="text" name="card2_link" class="form-control" value="{{ hero.card2_link }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Sous-titre</label>
+            <input type="text" name="card2_subtitle" class="form-control" value="{{ hero.card2_subtitle }}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Image carte 2</label>
+            {% if hero.card2_image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ hero.card2_image }}" alt="" class="image-preview" style="max-width: 100px;">
+            </div>
+            {% endif %}
+            <div class="file-input-wrapper">
+                <div class="file-input-label">Telecharger</div>
+                <input type="file" name="card2_image" accept="image/*">
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Enregistrer la section Hero</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3 class="card-title">Statistiques</h3>
+    <form method="POST" action="{{ url_for('admin.update_stats') }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nombre d'artisans</label>
+                <input type="number" name="artisans" class="form-control" value="{{ stats.artisans }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre de produits</label>
+                <input type="number" name="products" class="form-control" value="{{ stats.products }}">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nombre de partenaires</label>
+                <input type="number" name="partners" class="form-control" value="{{ stats.partners }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre de pays</label>
+                <input type="number" name="countries" class="form-control" value="{{ stats.countries }}">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Enregistrer les statistiques</button>
+    </form>
+</div>
+{% endblock %}
