@@ -488,6 +488,138 @@ def seed_all_data():
                     image="/static/images/moroccan_brass_craft_5cbdcb61.jpg",
                     is_featured=False,
                     order=6
+                ),
+                ProductDB(
+                    name="Miroir en Laiton Martele",
+                    category_id="metal",
+                    description="Miroir decoratif encadre de laiton finement martele, parfait pour sublimer votre interieur.",
+                    details="Travail traditionnel des artisans de Marrakech, le cadre en laiton est martele a la main pour creer des reflets uniques.",
+                    dimensions="D: 60cm",
+                    material="Laiton, miroir",
+                    image="/static/images/moroccan_brass_craft_5197c08b.jpg",
+                    is_featured=True,
+                    order=7
+                ),
+                ProductDB(
+                    name="Tajine Decoratif Peint",
+                    category_id="ceramique",
+                    description="Tajine decoratif peint a la main avec des motifs traditionnels fassis.",
+                    details="Cette piece decorative est realisee par les maitres potiers de Fes. Les couleurs sont obtenues a partir de pigments naturels.",
+                    dimensions="D: 30cm, H: 25cm",
+                    material="Terre cuite emaillee",
+                    image="/static/images/moroccan_pottery_cer_26051764.jpg",
+                    is_featured=False,
+                    order=8
+                ),
+                ProductDB(
+                    name="Coussin Brode Main",
+                    category_id="textile",
+                    description="Coussin brode a la main avec des motifs geometriques berberes traditionnels.",
+                    details="Chaque coussin est une piece unique, brodee par des artisanes de l'Atlas selon des techniques ancestrales.",
+                    dimensions="50cm x 50cm",
+                    material="Coton, fils de soie",
+                    image="/static/images/moroccan_artisan_wor_de89e55a.jpg",
+                    is_featured=False,
+                    order=9
+                ),
+                ProductDB(
+                    name="Boite a Bijoux en Thuya",
+                    category_id="bois",
+                    description="Boite a bijoux en bois de thuya avec incrustations de nacre et citronnier.",
+                    details="Le thuya d'Essaouira est un bois precieux aux veines uniques. Chaque boite est sculptee et polie a la main.",
+                    dimensions="L: 15cm, l: 10cm, H: 8cm",
+                    material="Bois de thuya, nacre",
+                    image="/static/images/moroccan_woodwork_fu_74825e67.jpg",
+                    is_featured=False,
+                    order=10
+                ),
+                ProductDB(
+                    name="Sac en Cuir Naturel",
+                    category_id="cuir",
+                    description="Sac a main en cuir tanne naturellement dans les tanneries de Fes.",
+                    details="Le cuir est tanne selon la methode traditionnelle seculaire, sans produits chimiques, puis teint avec des colorants naturels.",
+                    dimensions="L: 35cm, H: 25cm",
+                    material="Cuir de chevre tanne",
+                    image="/static/images/moroccan_artisan_han_43aa89bc.jpg",
+                    is_featured=False,
+                    order=11
+                ),
+                ProductDB(
+                    name="Plateau en Laiton Grave",
+                    category_id="metal",
+                    description="Plateau decoratif en laiton grave avec des arabesques traditionnelles.",
+                    details="Grave a la main par les maitres artisans de Fes, ce plateau allie beaute et fonctionnalite.",
+                    dimensions="D: 50cm",
+                    material="Laiton grave",
+                    image="/static/images/moroccan_brass_metal_6cc61071.jpg",
+                    is_featured=False,
+                    order=12
+                ),
+                ProductDB(
+                    name="Assiette Decorative Bleue",
+                    category_id="ceramique",
+                    description="Assiette decorative en ceramique bleue de Fes, ornee de motifs floraux.",
+                    details="La ceramique bleue de Fes est reconnaissable a ses motifs bleus cobalt sur fond blanc, technique heritee des Andalous.",
+                    dimensions="D: 35cm",
+                    material="Ceramique emaillee",
+                    image="/static/images/moroccan_pottery_cer_db1d11f8.jpg",
+                    is_featured=False,
+                    order=13
+                ),
+                ProductDB(
+                    name="Tabouret en Bois Sculpte",
+                    category_id="mobilier",
+                    description="Tabouret traditionnel en bois sculpte a la main avec des motifs geometriques.",
+                    details="Fabrique par les ebenistes d'Essaouira, ce tabouret allie fonctionnalite et art decoratif.",
+                    dimensions="H: 45cm, D: 30cm",
+                    material="Bois de cedre",
+                    image="/static/images/moroccan_woodwork_fu_19c5df4f.jpg",
+                    is_featured=False,
+                    order=14
+                ),
+                ProductDB(
+                    name="Bougeoir en Fer Forge",
+                    category_id="metal",
+                    description="Bougeoir en fer forge a la main, design contemporain inspire de l'artisanat marocain.",
+                    details="Realise par les forgerons de Marrakech selon des techniques ancestrales adaptees au design moderne.",
+                    dimensions="H: 35cm, D: 12cm",
+                    material="Fer forge",
+                    image="/static/images/moroccan_brass_craft_91c1b440.jpg",
+                    is_featured=False,
+                    order=15
+                ),
+                ProductDB(
+                    name="Cheche en Coton",
+                    category_id="textile",
+                    description="Cheche traditionnel en coton leger, tisse a la main dans le sud marocain.",
+                    details="Ce foulard polyvalent est tisse par les artisans du desert selon des techniques ancestrales touaregues.",
+                    dimensions="200cm x 100cm",
+                    material="Coton naturel",
+                    image="/static/images/moroccan_artisan_han_2e2686eb.jpg",
+                    is_featured=False,
+                    order=16
+                ),
+                ProductDB(
+                    name="Cadre Photo en Laiton",
+                    category_id="metal",
+                    description="Cadre photo decoratif en laiton martele avec des motifs floraux.",
+                    details="Fabrique a la main par les artisans de Marrakech, ce cadre sublime vos photos preferees.",
+                    dimensions="20cm x 25cm",
+                    material="Laiton martele",
+                    image="/static/images/moroccan_brass_craft_af2c930a.jpg",
+                    is_featured=False,
+                    order=17
+                ),
+                ProductDB(
+                    name="Vide-Poche en Ceramique",
+                    category_id="ceramique",
+                    description="Petit vide-poche en ceramique peinte, ideal pour les cles ou bijoux.",
+                    details="Piece decorative et fonctionnelle, peinte a la main avec des motifs traditionnels de Safi.",
+                    dimensions="D: 15cm, H: 5cm",
+                    material="Ceramique peinte",
+                    image="/static/images/moroccan_artisan_han_11a3ad05.jpg",
+                    is_featured=False,
+                    order=18
                 )
             ]
             for product in products:

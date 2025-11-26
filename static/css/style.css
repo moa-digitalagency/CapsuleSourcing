@@ -2450,12 +2450,13 @@ main {
 }
 
 .vedette-card {
-    background: var(--color-background);
+    background: transparent;
     border-radius: 20px;
     overflow: hidden;
     transition: var(--transition-smooth);
     display: flex;
     flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .vedette-card:hover {
@@ -2464,10 +2465,9 @@ main {
 }
 
 .vedette-card-image {
-    height: 160px;
+    height: 180px;
     overflow: hidden;
-    border-radius: 16px;
-    margin: 12px 12px 0 12px;
+    position: relative;
 }
 
 .vedette-card-image img {
@@ -2475,6 +2475,7 @@ main {
     height: 100%;
     object-fit: cover;
     transition: var(--transition-smooth);
+    display: block;
 }
 
 .vedette-card:hover .vedette-card-image img {
@@ -2492,24 +2493,25 @@ main {
 }
 
 .vedette-card-content {
-    padding: 16px 18px 20px;
+    padding: 18px 20px 22px;
     display: flex;
     flex-direction: column;
     flex: 1;
+    background: #f8f6f3;
 }
 
 .vedette-card-title {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: 1.05rem;
+    font-weight: 400;
     color: var(--color-text);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .vedette-card-subtitle {
     font-size: 0.85rem;
     color: var(--color-text-muted);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     flex: 1;
 }
 
