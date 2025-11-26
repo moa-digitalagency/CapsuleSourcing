@@ -68,52 +68,30 @@
             <p>{{ content.featured.description if content and content.featured else "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain." }}</p>
         </div>
         
-        <div class="categories-showcase">
-            <div class="category-card category-card-large">
-                <img src="{{ url_for('static', filename='images/moroccan_pottery_cer_26051764.jpg') }}" alt="Ceramique et Poterie" class="category-card-image">
-                <div class="category-card-overlay">
-                    <span class="category-badge">Collection</span>
-                    <h3>Ceramique & Poterie</h3>
-                    <p>Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='ceramique') }}" class="category-btn">Explorer</a>
+        <div class="featured-highlights-grid">
+            {% for highlight in highlights[:4] %}
+            <div class="featured-highlight-card">
+                <div class="featured-highlight-image">
+                    {% if highlight.image %}
+                    <img src="{{ highlight.image }}" alt="{{ highlight.title }}">
+                    {% else %}
+                    <div class="featured-highlight-placeholder">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="featured-highlight-overlay">
+                    <span class="featured-highlight-badge">{{ highlight.badge or 'Artisanat' }}</span>
+                    <h3>{{ highlight.title }}</h3>
+                    <p>{{ highlight.subtitle }}</p>
+                    <a href="{{ highlight.link or '/catalogue' }}" class="featured-highlight-btn">{{ highlight.link_text or 'Explorer' }}</a>
                 </div>
             </div>
-            <div class="category-card">
-                <img src="{{ url_for('static', filename='images/moroccan_leather_cra_5f8fd31d.jpg') }}" alt="Maroquinerie" class="category-card-image">
-                <div class="category-card-overlay">
-                    <span class="category-badge">Artisanat</span>
-                    <h3>Maroquinerie</h3>
-                    <p>Cuir tanne traditionnellement</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='cuir') }}" class="category-btn">Explorer</a>
-                </div>
-            </div>
-            <div class="category-card">
-                <img src="{{ url_for('static', filename='images/moroccan_woodwork_fu_74825e67.jpg') }}" alt="Mobilier" class="category-card-image">
-                <div class="category-card-overlay">
-                    <span class="category-badge">Artisanat</span>
-                    <h3>Ebenisterie</h3>
-                    <p>Bois sculpte et peint a la main</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='mobilier') }}" class="category-btn">Explorer</a>
-                </div>
-            </div>
-            <div class="category-card">
-                <img src="{{ url_for('static', filename='images/moroccan_brass_metal_4be139c4.jpg') }}" alt="Luminaires" class="category-card-image">
-                <div class="category-card-overlay">
-                    <span class="category-badge">Artisanat</span>
-                    <h3>Dinanderie</h3>
-                    <p>Travail du cuivre et laiton</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='metal') }}" class="category-btn">Explorer</a>
-                </div>
-            </div>
-            <div class="category-card">
-                <img src="{{ url_for('static', filename='images/moroccan_artisan_wor_b7d739f2.jpg') }}" alt="Textiles" class="category-card-image">
-                <div class="category-card-overlay">
-                    <span class="category-badge">Artisanat</span>
-                    <h3>Textile & Tissage</h3>
-                    <p>Fibres naturelles tissees</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='textile') }}" class="category-btn">Explorer</a>
-                </div>
-            </div>
+            {% endfor %}
         </div>
 
         <div class="featured-products-section">
