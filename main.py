@@ -1,12 +1,19 @@
 from app import app, db
 import logging
 import os
+from init_db import seed_all_data, seed_page_content
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 with app.app_context():
     import models.database
     from models.database import User
     db.create_all()
     logging.info("Database tables created")
+    
+    seed_all_data()
+    seed_page_content()
+    logging.info("Database seeding completed")
     
     admin_username = os.environ.get('ADMIN_USERNAME')
     admin_email = os.environ.get('ADMIN_EMAIL')

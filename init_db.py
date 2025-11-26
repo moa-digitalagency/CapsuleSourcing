@@ -8,6 +8,7 @@ seeds default data including all page content.
 import os
 import sys
 import logging
+from flask import has_app_context
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ def seed_page_content():
     from app import app, db
     from models.database import PageContent
     
-    with app.app_context():
+    def run_seed():
         def init_content(page, section, key, value):
             if not PageContent.query.filter_by(page=page, section=section, key=key).first():
                 content = PageContent(page=page, section=section, key=key, value=value)
@@ -161,7 +162,7 @@ def seed_page_content():
         init_content('partenariats', 'header', 'subtitle', "Des solutions adaptees a chaque type de partenaire")
         init_content('partenariats', 'intro', 'title', 'Devenez Partenaire')
         init_content('partenariats', 'intro', 'description', "Nous collaborons avec des professionnels de tous horizons partageant notre passion pour l'artisanat authentique.")
-        init_content('partenariats', 'cta', 'title', 'Interessé par un Partenariat ?')
+        init_content('partenariats', 'cta', 'title', 'Interesse par un Partenariat ?')
         init_content('partenariats', 'cta', 'description', "Discutons ensemble de la meilleure formule pour votre activite.")
         init_content('partenariats', 'cta', 'button', 'Nous Contacter')
         
@@ -191,6 +192,12 @@ def seed_page_content():
         
         db.session.commit()
         logger.info("Created all page content")
+    
+    if has_app_context():
+        run_seed()
+    else:
+        with app.app_context():
+            run_seed()
 
 
 def seed_all_data():
@@ -202,7 +209,7 @@ def seed_all_data():
         PartnershipType, ProcessStep, FAQ, Testimonial
     )
     
-    with app.app_context():
+    def run_seed():
         logger.info("Seeding all default data...")
         
         if not ContactInfo.query.first():
@@ -517,6 +524,12 @@ def seed_all_data():
         logger.info("All default data seeded successfully!")
         
         return True
+    
+    if has_app_context():
+        return run_seed()
+    else:
+        with app.app_context():
+            return run_seed()
 
 
 def main():
