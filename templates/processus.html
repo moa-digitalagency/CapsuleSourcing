@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Notre Processus - Capsule{% endblock %}
+{% block title %}{{ content.header.title if content and content.header else "Notre Processus" }} - Capsule{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1>Notre Processus</h1>
-        <p>Une methodologie eprouvee pour garantir qualite et satisfaction</p>
+        <h1>{{ content.header.title if content and content.header else "Notre Processus" }}</h1>
+        <p>{{ content.header.subtitle if content and content.header else "Une methodologie eprouvee pour des projets reussis" }}</p>
     </div>
 </section>
 
 <section class="process-intro">
     <div class="container">
         <div class="intro-content">
-            <h2>De la Commande a la Livraison</h2>
-            <p>Notre processus structure vous assure une experience fluide et transparente, du premier contact jusqu'a la reception de vos produits.</p>
+            <h2>{{ content.intro.title if content and content.intro else "De la Commande a la Livraison" }}</h2>
+            <p>{{ content.intro.description if content and content.intro else "Nous avons developpe un processus structure pour garantir la qualite et le respect des delais a chaque etape de votre projet." }}</p>
         </div>
     </div>
 </section>
@@ -35,36 +35,12 @@
     </div>
 </section>
 
-<section class="process-guarantees">
-    <div class="container">
-        <h2>Nos Engagements</h2>
-        <div class="guarantees-grid">
-            <div class="guarantee-item">
-                <h4>Delais Respectes</h4>
-                <p>Planning de production detaille avec jalons de validation.</p>
-            </div>
-            <div class="guarantee-item">
-                <h4>Qualite Controlee</h4>
-                <p>Inspection systematique avant expedition selon vos criteres.</p>
-            </div>
-            <div class="guarantee-item">
-                <h4>Traçabilite Complete</h4>
-                <p>Documentation de chaque etape de fabrication et transport.</p>
-            </div>
-            <div class="guarantee-item">
-                <h4>Support Continu</h4>
-                <p>Interlocuteur dedie disponible tout au long du projet.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 <section class="process-cta">
     <div class="container">
         <div class="cta-content">
-            <h2>Pret a Lancer Votre Projet ?</h2>
-            <p>Contactez-nous pour demarrer le processus et recevoir votre premiere proposition.</p>
-            <a href="{{ url_for('main.contact') }}" class="btn-primary">Demarrer un Projet</a>
+            <h2>{{ content.cta.title if content and content.cta else "Pret a Lancer Votre Projet ?" }}</h2>
+            <p>{{ content.cta.description if content and content.cta else "Contactez-nous pour discuter de vos besoins et demarrer notre collaboration." }}</p>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">{{ content.cta.button if content and content.cta else "Demarrer un Projet" }}</a>
         </div>
     </div>
 </section>

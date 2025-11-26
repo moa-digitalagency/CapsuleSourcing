@@ -13,6 +13,186 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
+def seed_page_content():
+    """Seed all page content into database."""
+    from app import app, db
+    from models.database import PageContent
+    
+    with app.app_context():
+        def init_content(page, section, key, value):
+            if not PageContent.query.filter_by(page=page, section=section, key=key).first():
+                content = PageContent(page=page, section=section, key=key, value=value)
+                db.session.add(content)
+        
+        init_content('index', 'featured', 'section_label', 'Notre Selection')
+        init_content('index', 'featured', 'title', 'Nos Creations Phares')
+        init_content('index', 'featured', 'description', "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain. Chaque creation est le fruit d'un savoir-faire ancestral transmis de generation en generation.")
+        init_content('index', 'featured', 'showcase_category', 'Ceramique et Poterie')
+        init_content('index', 'featured', 'showcase_title', 'Poterie Traditionnelle')
+        init_content('index', 'featured', 'showcase_description', "Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi. Chaque creation porte l'empreinte du maitre artisan qui l'a realisee.")
+        init_content('index', 'featured', 'showcase_button', 'Decouvrir la Collection')
+        init_content('index', 'featured', 'showcase_image', '/static/images/moroccan_artisan_han_11a3ad05.jpg')
+        init_content('index', 'featured', 'cta_button', 'Voir Toute la Collection')
+        
+        init_content('index', 'stats', 'artisans_label', 'Artisans Partenaires')
+        init_content('index', 'stats', 'products_label', 'References Produits')
+        init_content('index', 'stats', 'partners_label', 'Clients B2B')
+        init_content('index', 'stats', 'countries_label', 'Pays Livres')
+        
+        init_content('index', 'our_values', 'section_label', 'Nos Valeurs')
+        init_content('index', 'our_values', 'title', 'Authenticite, Ethique, Excellence')
+        init_content('index', 'our_values', 'description', "Trois piliers fondamentaux qui guident notre approche du sourcing artisanal et notre relation avec les artisans marocains.")
+        
+        init_content('index', 'our_values', 'value1_title', 'Authenticite')
+        init_content('index', 'our_values', 'value1_description', "Chaque piece est creee a la main par des artisans marocains qualifies, perpetuant des traditions seculaires transmises de generation en generation.")
+        init_content('index', 'our_values', 'value1_points', "Tracabilite complete de chaque produit|Techniques traditionnelles preservees|Materiaux locaux de qualite|Certification d'origine artisanale")
+        
+        init_content('index', 'our_values', 'value2_title', 'Ethique')
+        init_content('index', 'our_values', 'value2_description', "Nous collaborons directement avec les artisans locaux pour garantir des pratiques equitables et soutenir les communautes creatrices.")
+        init_content('index', 'our_values', 'value2_points', "Commerce equitable garanti|Remuneration juste des artisans|Soutien aux cooperatives locales|Respect des conditions de travail")
+        
+        init_content('index', 'our_values', 'value3_title', 'Excellence')
+        init_content('index', 'our_values', 'value3_description', "Une selection rigoureuse de creations uniques alliant esthetique contemporaine et savoir-faire traditionnel d'exception.")
+        init_content('index', 'our_values', 'value3_points', "Controle qualite systematique|Selection des meilleurs artisans|Finitions irreprochables|Standards internationaux")
+        
+        init_content('index', 'process', 'section_label', 'Notre Methode')
+        init_content('index', 'process', 'title', 'Un Processus Eprouve')
+        init_content('index', 'process', 'description', "De la selection a la livraison, nous assurons un accompagnement complet pour garantir votre satisfaction.")
+        init_content('index', 'process', 'cta_button', 'Decouvrir Notre Processus')
+        
+        init_content('index', 'testimonials', 'section_label', 'Temoignages')
+        init_content('index', 'testimonials', 'title', 'Ce Que Disent Nos Clients')
+        
+        init_content('index', 'cta', 'title', "Pret a Integrer l'Artisanat Marocain dans Vos Projets ?")
+        init_content('index', 'cta', 'description', "Contactez notre equipe pour discuter de vos besoins et recevoir une proposition personnalisee.")
+        init_content('index', 'cta', 'button1_text', 'Nous Contacter')
+        init_content('index', 'cta', 'button2_text', 'Voir le Catalogue')
+        
+        init_content('index', 'newsletter', 'title', 'Restez Informes')
+        init_content('index', 'newsletter', 'description', "Recevez en avant-premiere nos nouvelles collections et actualites du monde de l'artisanat marocain")
+        init_content('index', 'newsletter', 'placeholder', 'Votre adresse email professionnelle')
+        init_content('index', 'newsletter', 'button', "S'inscrire")
+        
+        init_content('about', 'header', 'title', 'Notre Histoire')
+        init_content('about', 'header', 'subtitle', "Valoriser l'artisanat marocain d'exception")
+        
+        init_content('about', 'intro', 'title', 'Quand la Tradition Rencontre la Modernite')
+        init_content('about', 'intro', 'description', "Capsule est nee d'une passion profonde pour l'artisanat marocain et du desir de faire rayonner la richesse du savoir-faire ancestral a travers le monde.")
+        
+        init_content('about', 'mission', 'title', 'Notre Mission')
+        init_content('about', 'mission', 'description', "Sourcer et promouvoir des creations artisanales marocaines authentiques, en collaboration directe avec les artisans. Nous preservons les techniques ancestrales tout en les adaptant aux sensibilites contemporaines.")
+        
+        init_content('about', 'our_values', 'title', 'Nos Valeurs')
+        init_content('about', 'our_values', 'description', "Authenticite, excellence et commerce equitable guident chacune de nos actions. Nous croyons en des relations transparentes avec les artisans, garantissant une remuneration juste et des conditions dignes.")
+        
+        init_content('about', 'expertise', 'title', 'Notre Expertise')
+        init_content('about', 'expertise', 'description', "Forte d'une connaissance approfondie du terrain artisanal marocain, notre equipe selectionne rigoureusement chaque piece pour sa qualite, son authenticite et son caractere unique.")
+        
+        init_content('about', 'sourcing', 'title', "L'Art du Sourcing")
+        init_content('about', 'sourcing', 'description', "Chaque creation de notre collection a ete soigneusement choisie lors de nos explorations a travers le Maroc. Des souks de Marrakech aux ateliers de Fes, en passant par les villages berberes, nous parcourons le pays a la recherche des artisans les plus talentueux.")
+        init_content('about', 'sourcing', 'intro', "Nous valorisons particulierement les techniques traditionnelles :")
+        init_content('about', 'sourcing', 'techniques', "Le travail du laiton - Ciselage, martelage et gravure selon des methodes ancestrales|La ceramique - Poterie tournee a la main et emaillee avec des pigments naturels|Le tissage - Tapis berberes, coussins brodes et textiles sur metiers traditionnels|La maroquinerie - Cuir tanne naturellement et travaille a la main|La bijouterie artisanale - Bracelets Maayaz tisses selon la methode de la sfifa")
+        
+        init_content('about', 'commitments', 'title', 'Nos Engagements')
+        init_content('about', 'commitments', 'item1_title', 'Qualite Garantie')
+        init_content('about', 'commitments', 'item1_description', "Chaque piece est inspectee pour assurer une qualite artisanale irreprochable.")
+        init_content('about', 'commitments', 'item2_title', 'Commerce Equitable')
+        init_content('about', 'commitments', 'item2_description', "Remuneration juste des artisans et partenariats durables.")
+        init_content('about', 'commitments', 'item3_title', '100% Authentique')
+        init_content('about', 'commitments', 'item3_description', "Produits entierement artisanaux, fabriques selon des techniques traditionnelles.")
+        init_content('about', 'commitments', 'item4_title', 'Durabilite')
+        init_content('about', 'commitments', 'item4_description', "Preservation des savoir-faire ancestraux et pratiques responsables.")
+        
+        init_content('about', 'cta', 'title', 'Collaborons Ensemble')
+        init_content('about', 'cta', 'description', "Professionnel souhaitant enrichir votre offre avec nos creations artisanales ? Contactez-nous pour echanger sur vos besoins.")
+        init_content('about', 'cta', 'button', 'Nous Contacter')
+        
+        init_content('services', 'header', 'title', 'Nos Services')
+        init_content('services', 'header', 'subtitle', "Un accompagnement complet pour integrer l'artisanat marocain dans vos projets")
+        
+        init_content('services', 'intro', 'title', 'Votre Partenaire Sourcing')
+        init_content('services', 'intro', 'description', "Capsule vous accompagne a chaque etape de votre projet, de la selection des produits a la livraison finale. Notre expertise du terrain marocain et notre reseau d'artisans qualifies vous garantissent des produits authentiques et de qualite.")
+        
+        init_content('services', 'features', 'feature1_title', 'Reactivite')
+        init_content('services', 'features', 'feature1_description', "Reponse sous 24h a toutes vos demandes et devis personnalises sous 48h.")
+        init_content('services', 'features', 'feature2_title', 'Transparence')
+        init_content('services', 'features', 'feature2_description', "Suivi en temps reel de votre commande et communication directe avec notre equipe.")
+        init_content('services', 'features', 'feature3_title', 'Flexibilite')
+        init_content('services', 'features', 'feature3_description', "Adaptation a vos contraintes de volume, delais et specifications techniques.")
+        init_content('services', 'features', 'feature4_title', 'Garantie')
+        init_content('services', 'features', 'feature4_description', "Remplacement ou remboursement en cas de non-conformite a votre commande.")
+        
+        init_content('services', 'cta', 'title', 'Pret a Demarrer Votre Projet ?')
+        init_content('services', 'cta', 'description', "Contactez-nous pour discuter de vos besoins et recevoir une proposition sur mesure.")
+        init_content('services', 'cta', 'button', 'Nous Contacter')
+        
+        init_content('contact', 'header', 'title', 'Contactez-Nous')
+        init_content('contact', 'header', 'subtitle', "Une question ? Un projet ? Nous sommes a votre ecoute")
+        
+        init_content('contact', 'form', 'title', 'Parlons de Votre Projet')
+        init_content('contact', 'form', 'description', "Que vous soyez professionnel a la recherche de pieces artisanales pour votre boutique, architecte d'interieur, ou simplement passionne par l'artisanat, nous serons ravis d'echanger avec vous.")
+        init_content('contact', 'form', 'name_label', 'Nom complet')
+        init_content('contact', 'form', 'name_placeholder', 'Votre nom')
+        init_content('contact', 'form', 'email_label', 'Email')
+        init_content('contact', 'form', 'email_placeholder', 'votre@email.com')
+        init_content('contact', 'form', 'company_label', 'Entreprise (optionnel)')
+        init_content('contact', 'form', 'company_placeholder', 'Nom de votre entreprise')
+        init_content('contact', 'form', 'message_label', 'Votre message')
+        init_content('contact', 'form', 'message_placeholder', 'Comment pouvons-nous vous aider ?')
+        init_content('contact', 'form', 'submit_button', 'Envoyer via WhatsApp')
+        
+        init_content('contact', 'info', 'social_title', 'Suivez-nous')
+        init_content('contact', 'info', 'hours_title', "Horaires d'ouverture")
+        init_content('contact', 'info', 'hours_line1', 'Lundi - Vendredi : 9h - 18h')
+        init_content('contact', 'info', 'hours_line2', 'Samedi : 10h - 16h')
+        
+        init_content('catalogue', 'header', 'title', 'Notre Collection')
+        init_content('catalogue', 'header', 'subtitle', "Decouvrez notre selection de produits artisanaux marocains")
+        init_content('catalogue', 'filter', 'all_categories', 'Toutes les categories')
+        init_content('catalogue', 'empty', 'message', 'Aucun produit trouve dans cette categorie.')
+        
+        init_content('faq', 'header', 'title', 'Questions Frequentes')
+        init_content('faq', 'header', 'subtitle', "Retrouvez les reponses aux questions les plus posees")
+        init_content('faq', 'cta', 'title', "Vous n'avez pas trouve votre reponse ?")
+        init_content('faq', 'cta', 'description', "Notre equipe est disponible pour repondre a toutes vos questions.")
+        init_content('faq', 'cta', 'button', 'Nous Contacter')
+        
+        init_content('partenariats', 'header', 'title', 'Partenariats')
+        init_content('partenariats', 'header', 'subtitle', "Des solutions adaptees a chaque type de partenaire")
+        init_content('partenariats', 'intro', 'title', 'Devenez Partenaire')
+        init_content('partenariats', 'intro', 'description', "Nous collaborons avec des professionnels de tous horizons partageant notre passion pour l'artisanat authentique.")
+        init_content('partenariats', 'cta', 'title', 'Interessé par un Partenariat ?')
+        init_content('partenariats', 'cta', 'description', "Discutons ensemble de la meilleure formule pour votre activite.")
+        init_content('partenariats', 'cta', 'button', 'Nous Contacter')
+        
+        init_content('processus', 'header', 'title', 'Notre Processus')
+        init_content('processus', 'header', 'subtitle', "Une methodologie eprouvee pour des projets reussis")
+        init_content('processus', 'intro', 'title', 'De la Commande a la Livraison')
+        init_content('processus', 'intro', 'description', "Nous avons developpe un processus structure pour garantir la qualite et le respect des delais a chaque etape de votre projet.")
+        init_content('processus', 'cta', 'title', 'Pret a Lancer Votre Projet ?')
+        init_content('processus', 'cta', 'description', "Contactez-nous pour discuter de vos besoins et demarrer notre collaboration.")
+        init_content('processus', 'cta', 'button', 'Demarrer un Projet')
+        
+        init_content('global', 'nav', 'home', 'Accueil')
+        init_content('global', 'nav', 'enterprise', 'Entreprise')
+        init_content('global', 'nav', 'catalogue', 'Catalogue')
+        init_content('global', 'nav', 'services', 'Services')
+        init_content('global', 'nav', 'faq', 'FAQ')
+        init_content('global', 'nav', 'contact', 'Contact')
+        init_content('global', 'nav', 'about', 'A Propos')
+        init_content('global', 'nav', 'partnerships', 'Partenariats')
+        init_content('global', 'nav', 'process', 'Processus')
+        
+        init_content('global', 'footer', 'tagline', "L'excellence de l'artisanat marocain a portee de main")
+        init_content('global', 'footer', 'navigation_title', 'Navigation')
+        init_content('global', 'footer', 'enterprise_title', 'Entreprise')
+        init_content('global', 'footer', 'contact_title', 'Contact')
+        init_content('global', 'footer', 'copyright', '2024 Capsule. Tous droits reserves.')
+        
+        db.session.commit()
+        logger.info("Created all page content")
+
+
 def seed_all_data():
     """Seed the database with all default data from templates."""
     from app import app, db
@@ -80,7 +260,8 @@ def seed_all_data():
         ]
         
         for cat in default_categories:
-            if not CategoryDB.query.get(cat['id']):
+            existing = db.session.get(CategoryDB, cat['id'])
+            if not existing:
                 category = CategoryDB(**cat)
                 db.session.add(category)
         logger.info("Created categories")
@@ -358,6 +539,7 @@ def main():
             logger.info("Database tables created successfully!")
         
         seed_all_data()
+        seed_page_content()
     
     except Exception as e:
         logger.error(f"Error initializing database: {e}")

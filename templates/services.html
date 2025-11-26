@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Nos Services - Capsule{% endblock %}
+{% block title %}{{ content.header.title if content and content.header else "Nos Services" }} - Capsule{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1>Nos Services</h1>
-        <p>Un accompagnement complet pour integrer l'artisanat marocain dans vos projets</p>
+        <h1>{{ content.header.title if content and content.header else "Nos Services" }}</h1>
+        <p>{{ content.header.subtitle if content and content.header else "Un accompagnement complet pour integrer l'artisanat marocain dans vos projets" }}</p>
     </div>
 </section>
 
 <section class="services-intro">
     <div class="container">
         <div class="intro-content">
-            <h2>Votre Partenaire Sourcing</h2>
-            <p>Capsule vous accompagne a chaque etape de votre projet, de la selection des produits a la livraison finale. Notre expertise du terrain marocain et notre reseau d'artisans qualifies vous garantissent des produits authentiques et de qualite.</p>
+            <h2>{{ content.intro.title if content and content.intro else "Votre Partenaire Sourcing" }}</h2>
+            <p>{{ content.intro.description if content and content.intro else "Capsule vous accompagne a chaque etape de votre projet, de la selection des produits a la livraison finale." }}</p>
         </div>
     </div>
 </section>
@@ -63,20 +63,20 @@
     <div class="container">
         <div class="features-grid">
             <div class="feature-item">
-                <h3>Reactivite</h3>
-                <p>Reponse sous 24h a toutes vos demandes et devis personnalises sous 48h.</p>
+                <h3>{{ content.features.feature1_title if content and content.features else "Reactivite" }}</h3>
+                <p>{{ content.features.feature1_description if content and content.features else "Reponse sous 24h a toutes vos demandes et devis personnalises sous 48h." }}</p>
             </div>
             <div class="feature-item">
-                <h3>Transparence</h3>
-                <p>Suivi en temps reel de votre commande et communication directe avec notre equipe.</p>
+                <h3>{{ content.features.feature2_title if content and content.features else "Transparence" }}</h3>
+                <p>{{ content.features.feature2_description if content and content.features else "Suivi en temps reel de votre commande et communication directe avec notre equipe." }}</p>
             </div>
             <div class="feature-item">
-                <h3>Flexibilite</h3>
-                <p>Adaptation a vos contraintes de volume, delais et specifications techniques.</p>
+                <h3>{{ content.features.feature3_title if content and content.features else "Flexibilite" }}</h3>
+                <p>{{ content.features.feature3_description if content and content.features else "Adaptation a vos contraintes de volume, delais et specifications techniques." }}</p>
             </div>
             <div class="feature-item">
-                <h3>Garantie</h3>
-                <p>Remplacement ou remboursement en cas de non-conformite a votre commande.</p>
+                <h3>{{ content.features.feature4_title if content and content.features else "Garantie" }}</h3>
+                <p>{{ content.features.feature4_description if content and content.features else "Remplacement ou remboursement en cas de non-conformite a votre commande." }}</p>
             </div>
         </div>
     </div>
@@ -85,9 +85,9 @@
 <section class="services-cta">
     <div class="container">
         <div class="cta-content">
-            <h2>Pret a Demarrer Votre Projet ?</h2>
-            <p>Contactez-nous pour discuter de vos besoins et recevoir une proposition sur mesure.</p>
-            <a href="{{ url_for('main.contact') }}" class="btn-primary">Nous Contacter</a>
+            <h2>{{ content.cta.title if content and content.cta else "Pret a Demarrer Votre Projet ?" }}</h2>
+            <p>{{ content.cta.description if content and content.cta else "Contactez-nous pour discuter de vos besoins et recevoir une proposition sur mesure." }}</p>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">{{ content.cta.button if content and content.cta else "Nous Contacter" }}</a>
         </div>
     </div>
 </section>

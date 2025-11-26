@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}FAQ - Capsule{% endblock %}
+{% block title %}{{ content.header.title if content and content.header else "FAQ" }} - Capsule{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1>Questions Frequentes</h1>
-        <p>Tout ce que vous devez savoir sur nos services et notre fonctionnement</p>
+        <h1>{{ content.header.title if content and content.header else "Questions Frequentes" }}</h1>
+        <p>{{ content.header.subtitle if content and content.header else "Retrouvez les reponses aux questions les plus posees" }}</p>
     </div>
 </section>
 
@@ -31,19 +31,21 @@
 <section class="faq-contact">
     <div class="container">
         <div class="faq-contact-content">
-            <h2>Vous avez d'autres questions ?</h2>
-            <p>Notre equipe est disponible pour repondre a toutes vos interrogations.</p>
+            <h2>{{ content.cta.title if content and content.cta else "Vous n'avez pas trouve votre reponse ?" }}</h2>
+            <p>{{ content.cta.description if content and content.cta else "Notre equipe est disponible pour repondre a toutes vos questions." }}</p>
             <div class="faq-contact-options">
                 <div class="contact-option">
                     <h4>Par Email</h4>
-                    <p>contact@capsule-maroc.com</p>
+                    <p>{{ contact_info.email if contact_info else 'contact@capsule-maroc.com' }}</p>
                 </div>
+                {% if contact_info and contact_info.whatsapp %}
                 <div class="contact-option">
                     <h4>Par WhatsApp</h4>
-                    <p><a href="https://wa.me/33774496440" target="_blank">+33 7 74 49 64 40</a></p>
+                    <p><a href="https://wa.me/{{ contact_info.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank">{{ contact_info.whatsapp }}</a></p>
                 </div>
+                {% endif %}
             </div>
-            <a href="{{ url_for('main.contact') }}" class="btn-primary">Nous Contacter</a>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">{{ content.cta.button if content and content.cta else "Nous Contacter" }}</a>
         </div>
     </div>
 </section>

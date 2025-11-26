@@ -1,0 +1,226 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Contenu des Pages - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Contenu des Pages</h1>
+    <p>Modifiez les textes affichees sur le site</p>
+</div>
+
+<div class="page-tabs">
+    {% for page in pages %}
+    <a href="{{ url_for('admin.page_content', page=page) }}" 
+       class="page-tab {% if page == current_page %}active{% endif %}">
+        {{ page|capitalize }}
+    </a>
+    {% endfor %}
+</div>
+
+{% if sections %}
+<div class="content-sections">
+    {% for section_name, items in sections.items() %}
+    <div class="content-section">
+        <h3 class="section-title">{{ section_name|replace('_', ' ')|title }}</h3>
+        <div class="content-items">
+            {% for item in items %}
+            <form action="{{ url_for('admin.edit_page_content', id=item.id) }}" method="POST" class="content-item">
+                <div class="content-item-header">
+                    <label>{{ item.key|replace('_', ' ')|title }}</label>
+                    <span class="content-key">{{ item.key }}</span>
+                </div>
+                {% if item.value and item.value|length > 100 %}
+                <textarea name="value" rows="4">{{ item.value }}</textarea>
+                {% else %}
+                <input type="text" name="value" value="{{ item.value or '' }}">
+                {% endif %}
+                <div class="content-item-actions">
+                    <button type="submit" class="btn-save">Sauvegarder</button>
+                    <form action="{{ url_for('admin.delete_page_content', id=item.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Supprimer ce contenu ?')">Supprimer</button>
+                    </form>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>Aucun contenu pour cette page. Initialisez la base de donnees ou ajoutez du contenu manuellement.</p>
+</div>
+{% endif %}
+
+<div class="add-content-section">
+    <h3>Ajouter du contenu</h3>
+    <form action="{{ url_for('admin.add_page_content') }}" method="POST" class="add-content-form">
+        <input type="hidden" name="page" value="{{ current_page }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Section</label>
+                <input type="text" name="section" placeholder="ex: header, cta, intro" required>
+            </div>
+            <div class="form-group">
+                <label>Cle</label>
+                <input type="text" name="key" placeholder="ex: title, description, button" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Valeur</label>
+            <textarea name="value" rows="3" placeholder="Le texte a afficher"></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Ajouter</button>
+    </form>
+</div>
+
+<style>
+.page-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.page-tab {
+    padding: 8px 16px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+}
+.page-tab.active {
+    background: #8B7355;
+    color: white;
+}
+.page-tab:hover:not(.active) {
+    background: #e0e0e0;
+}
+.content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+.content-section {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.section-title {
+    font-size: 18px;
+    color: #8B7355;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #8B7355;
+}
+.content-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.content-item {
+    padding: 16px;
+    background: #fafafa;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+.content-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.content-item-header label {
+    font-weight: 600;
+    color: #333;
+}
+.content-key {
+    font-size: 12px;
+    color: #999;
+    font-family: monospace;
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+.content-item input,
+.content-item textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+.content-item textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+.content-item-actions {
+    display: flex;
+    gap: 8px;
+}
+.btn-save {
+    padding: 8px 16px;
+    background: #8B7355;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-save:hover {
+    background: #7a6549;
+}
+.btn-delete {
+    padding: 8px 16px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-delete:hover {
+    background: #c82333;
+}
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    color: #666;
+    background: #fafafa;
+    border-radius: 8px;
+}
+.add-content-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.add-content-section h3 {
+    margin-bottom: 16px;
+    color: #333;
+}
+.add-content-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.add-content-form .form-group {
+    margin-bottom: 16px;
+}
+.add-content-form label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+.add-content-form input,
+.add-content-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+</style>
+{% endblock %}

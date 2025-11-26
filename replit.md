@@ -213,6 +213,16 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Modifications Recentes
 
+### 26/11/2025: Systeme de Contenu Dynamique des Pages
+- Nouveau modele PageContent pour stocker tous les textes par page/section/cle
+- Templates mis a jour pour charger le contenu depuis la base de donnees
+- Nouvelle section admin "Textes des Pages" dans /admin/page-content
+- Service content_service.py pour simplifier la recuperation du contenu
+- Script init_db.py etendu pour initialiser tout le contenu par defaut en francais
+- Contenu editable: titres, sous-titres, descriptions, boutons, sections, CTA
+- Pages couvertes: index, about, services, contact, catalogue, faq, partenariats, processus
+- Correction du bug Jinja2 avec la section 'values' (renommee en 'our_values')
+
 ### 26/11/2025: Migration vers Authentification Python Native
 - Remplacement de Replit Auth par Flask-Login avec username/password
 - Nouveau modele User avec password_hash

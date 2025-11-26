@@ -717,3 +717,78 @@ def upload_with_crop():
         return jsonify({'url': url, 'success': True})
     
     return jsonify({'error': 'Erreur lors du traitement de l\'image'}), 400
+
+
+@admin_bp.route('/page-content')
+@require_admin
+def page_content():
+    from models.database import PageContent
+    pages = ['index', 'about', 'services', 'contact', 'catalogue', 'faq', 'partenariats', 'processus', 'global']
+    page_filter = request.args.get('page', 'index')
+    
+    contents = PageContent.query.filter_by(page=page_filter).order_by(PageContent.section, PageContent.key).all()
+    
+    sections = {}
+    for content in contents:
+        if content.section not in sections:
+            sections[content.section] = []
+        sections[content.section].append(content)
+    
+    return render_template('admin/page_content.html', 
+        pages=pages, 
+        current_page=page_filter, 
+        sections=sections
+    )
+
+
+@admin_bp.route('/page-content/edit/<int:id>', methods=['POST'])
+@require_admin
+def edit_page_content(id):
+    from app import db
+    from models.database import PageContent
+    
+    content = PageContent.query.get_or_404(id)
+    content.value = request.form.get('value', '')
+    db.session.commit()
+    
+    flash(f'Contenu "{content.key}" mis a jour', 'success')
+    return redirect(url_for('admin.page_content', page=content.page))
+
+
+@admin_bp.route('/page-content/add', methods=['POST'])
+@require_admin
+def add_page_content():
+    from app import db
+    from models.database import PageContent
+    
+    page = request.form.get('page')
+    section = request.form.get('section')
+    key = request.form.get('key')
+    value = request.form.get('value', '')
+    
+    existing = PageContent.query.filter_by(page=page, section=section, key=key).first()
+    if existing:
+        flash('Ce contenu existe deja', 'error')
+        return redirect(url_for('admin.page_content', page=page))
+    
+    content = PageContent(page=page, section=section, key=key, value=value)
+    db.session.add(content)
+    db.session.commit()
+    
+    flash('Contenu ajoute avec succes', 'success')
+    return redirect(url_for('admin.page_content', page=page))
+
+
+@admin_bp.route('/page-content/delete/<int:id>', methods=['POST'])
+@require_admin
+def delete_page_content(id):
+    from app import db
+    from models.database import PageContent
+    
+    content = PageContent.query.get_or_404(id)
+    page = content.page
+    db.session.delete(content)
+    db.session.commit()
+    
+    flash('Contenu supprime', 'success')
+    return redirect(url_for('admin.page_content', page=page))

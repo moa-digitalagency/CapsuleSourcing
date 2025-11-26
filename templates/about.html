@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Notre Histoire - Capsule{% endblock %}
+{% block title %}{{ content.header.title if content and content.header else "Notre Histoire" }} - Capsule{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1>Notre Histoire</h1>
-        <p>Valoriser l'artisanat marocain d'exception</p>
+        <h1>{{ content.header.title if content and content.header else "Notre Histoire" }}</h1>
+        <p>{{ content.header.subtitle if content and content.header else "Valoriser l'artisanat marocain d'exception" }}</p>
     </div>
 </section>
 
 <section class="about-content">
     <div class="container">
         <div class="about-intro">
-            <h2>Quand la Tradition Rencontre la Modernite</h2>
-            <p class="lead">Capsule est nee d'une passion profonde pour l'artisanat marocain et du desir de faire rayonner la richesse du savoir-faire ancestral a travers le monde.</p>
+            <h2>{{ content.intro.title if content and content.intro else "Quand la Tradition Rencontre la Modernite" }}</h2>
+            <p class="lead">{{ content.intro.description if content and content.intro else "Capsule est nee d'une passion profonde pour l'artisanat marocain et du desir de faire rayonner la richesse du savoir-faire ancestral a travers le monde." }}</p>
         </div>
         
         <div class="about-grid">
@@ -25,8 +25,8 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </div>
-                <h3>Notre Mission</h3>
-                <p>Sourcer et promouvoir des creations artisanales marocaines authentiques, en collaboration directe avec les artisans. Nous preservons les techniques ancestrales tout en les adaptant aux sensibilites contemporaines.</p>
+                <h3>{{ content.mission.title if content and content.mission else "Notre Mission" }}</h3>
+                <p>{{ content.mission.description if content and content.mission else "Sourcer et promouvoir des creations artisanales marocaines authentiques, en collaboration directe avec les artisans." }}</p>
             </div>
             
             <div class="about-card">
@@ -35,8 +35,8 @@
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
-                <h3>Nos Valeurs</h3>
-                <p>Authenticite, excellence et commerce equitable guident chacune de nos actions. Nous croyons en des relations transparentes avec les artisans, garantissant une remuneration juste et des conditions dignes.</p>
+                <h3>{{ content.our_values.title if content and content.our_values else "Nos Valeurs" }}</h3>
+                <p>{{ content.our_values.description if content and content.our_values else "Authenticite, excellence et commerce equitable guident chacune de nos actions." }}</p>
             </div>
             
             <div class="about-card">
@@ -45,51 +45,50 @@
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
                 </div>
-                <h3>Notre Expertise</h3>
-                <p>Forte d'une connaissance approfondie du terrain artisanal marocain, notre equipe selectionne rigoureusement chaque piece pour sa qualite, son authenticite et son caractere unique.</p>
+                <h3>{{ content.expertise.title if content and content.expertise else "Notre Expertise" }}</h3>
+                <p>{{ content.expertise.description if content and content.expertise else "Forte d'une connaissance approfondie du terrain artisanal marocain, notre equipe selectionne rigoureusement chaque piece." }}</p>
             </div>
         </div>
         
         <div class="about-story">
-            <h2>L'Art du Sourcing</h2>
-            <p>Chaque creation de notre collection a ete soigneusement choisie lors de nos explorations a travers le Maroc. Des souks de Marrakech aux ateliers de Fes, en passant par les villages berberes, nous parcourons le pays a la recherche des artisans les plus talentueux.</p>
+            <h2>{{ content.sourcing.title if content and content.sourcing else "L'Art du Sourcing" }}</h2>
+            <p>{{ content.sourcing.description if content and content.sourcing else "Chaque creation de notre collection a ete soigneusement choisie lors de nos explorations a travers le Maroc." }}</p>
             
-            <p>Nous valorisons particulierement les techniques traditionnelles :</p>
+            <p>{{ content.sourcing.intro if content and content.sourcing else "Nous valorisons particulierement les techniques traditionnelles :" }}</p>
             <ul class="features-list">
-                <li><strong>Le travail du laiton</strong> - Ciselage, martelage et gravure selon des methodes ancestrales</li>
-                <li><strong>La ceramique</strong> - Poterie tournee a la main et emaillee avec des pigments naturels</li>
-                <li><strong>Le tissage</strong> - Tapis berberes, coussins brodes et textiles sur metiers traditionnels</li>
-                <li><strong>La maroquinerie</strong> - Cuir tanne naturellement et travaille a la main</li>
-                <li><strong>La bijouterie artisanale</strong> - Bracelets Maayaz tisses selon la methode de la sfifa</li>
+                {% set techniques = (content.sourcing.techniques if content and content.sourcing else "Le travail du laiton - Ciselage et gravure|La ceramique - Poterie tournee a la main|Le tissage - Tapis berberes et textiles|La maroquinerie - Cuir tanne naturellement|La bijouterie artisanale - Bracelets tisses").split('|') %}
+                {% for technique in techniques %}
+                <li><strong>{{ technique.split(' - ')[0] }}</strong> - {{ technique.split(' - ')[1] if ' - ' in technique else '' }}</li>
+                {% endfor %}
             </ul>
         </div>
         
         <div class="about-commitment">
-            <h2>Nos Engagements</h2>
+            <h2>{{ content.commitments.title if content and content.commitments else "Nos Engagements" }}</h2>
             <div class="commitment-grid">
                 <div class="commitment-item">
-                    <h4>Qualite Garantie</h4>
-                    <p>Chaque piece est inspectee pour assurer une qualite artisanale irreprochable.</p>
+                    <h4>{{ content.commitments.item1_title if content and content.commitments else "Qualite Garantie" }}</h4>
+                    <p>{{ content.commitments.item1_description if content and content.commitments else "Chaque piece est inspectee pour assurer une qualite artisanale irreprochable." }}</p>
                 </div>
                 <div class="commitment-item">
-                    <h4>Commerce Equitable</h4>
-                    <p>Remuneration juste des artisans et partenariats durables.</p>
+                    <h4>{{ content.commitments.item2_title if content and content.commitments else "Commerce Equitable" }}</h4>
+                    <p>{{ content.commitments.item2_description if content and content.commitments else "Remuneration juste des artisans et partenariats durables." }}</p>
                 </div>
                 <div class="commitment-item">
-                    <h4>100% Authentique</h4>
-                    <p>Produits entierement artisanaux, fabriques selon des techniques traditionnelles.</p>
+                    <h4>{{ content.commitments.item3_title if content and content.commitments else "100% Authentique" }}</h4>
+                    <p>{{ content.commitments.item3_description if content and content.commitments else "Produits entierement artisanaux, fabriques selon des techniques traditionnelles." }}</p>
                 </div>
                 <div class="commitment-item">
-                    <h4>Durabilite</h4>
-                    <p>Preservation des savoir-faire ancestraux et pratiques responsables.</p>
+                    <h4>{{ content.commitments.item4_title if content and content.commitments else "Durabilite" }}</h4>
+                    <p>{{ content.commitments.item4_description if content and content.commitments else "Preservation des savoir-faire ancestraux et pratiques responsables." }}</p>
                 </div>
             </div>
         </div>
         
         <div class="about-cta">
-            <h2>Collaborons Ensemble</h2>
-            <p>Professionnel souhaitant enrichir votre offre avec nos creations artisanales ? Contactez-nous pour echanger sur vos besoins.</p>
-            <a href="{{ url_for('main.contact') }}" class="btn-primary">Nous Contacter</a>
+            <h2>{{ content.cta.title if content and content.cta else "Collaborons Ensemble" }}</h2>
+            <p>{{ content.cta.description if content and content.cta else "Professionnel souhaitant enrichir votre offre avec nos creations artisanales ? Contactez-nous pour echanger sur vos besoins." }}</p>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">{{ content.cta.button if content and content.cta else "Nous Contacter" }}</a>
         </div>
     </div>
 </section>

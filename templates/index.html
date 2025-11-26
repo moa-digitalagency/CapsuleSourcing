@@ -6,31 +6,31 @@
 <section class="hero">
     <div class="hero-grid">
         <div class="hero-main">
-            <img src="{{ url_for('static', filename='images/moroccan_brass_craft_91c1b440.jpg') }}" alt="Artisanat Marocain" class="hero-bg-image">
+            <img src="{{ hero.main_image or url_for('static', filename='images/moroccan_brass_craft_91c1b440.jpg') }}" alt="Artisanat Marocain" class="hero-bg-image">
             <div class="hero-overlay"></div>
             <div class="hero-content">
-                <h1 class="hero-title">L'Art du<br>Savoir-Faire<br>Marocain</h1>
-                <p class="hero-subtitle">Des pieces uniques, faconnees par des mains expertes</p>
-                <a href="{{ url_for('catalogue.catalogue') }}" class="btn-hero">Decouvrir la Collection</a>
+                <h1 class="hero-title">{{ hero.title|replace(' ', '<br>')|safe if hero else "L'Art du<br>Savoir-Faire<br>Marocain" }}</h1>
+                <p class="hero-subtitle">{{ hero.subtitle if hero else "Des pieces uniques, faconnees par des mains expertes" }}</p>
+                <a href="{{ url_for('catalogue.catalogue') }}" class="btn-hero">{{ hero.button_text if hero else "Decouvrir la Collection" }}</a>
             </div>
         </div>
         
         <div class="hero-side-cards">
             <div class="hero-card">
-                <img src="{{ url_for('static', filename='images/moroccan_brass_craft_59d29144.jpg') }}" alt="Travail du Bois" class="hero-card-image">
+                <img src="{{ hero.card1_image or url_for('static', filename='images/moroccan_brass_craft_59d29144.jpg') }}" alt="{{ hero.card1_title if hero else 'Travail du Bois' }}" class="hero-card-image">
                 <div class="hero-card-overlay">
-                    <h3>Ebenisterie</h3>
-                    <p>Le travail du bois traditionnel</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='mobilier') }}" class="hero-card-btn">Explorer</a>
+                    <h3>{{ hero.card1_title if hero else "Ebenisterie" }}</h3>
+                    <p>{{ hero.card1_subtitle if hero else "Le travail du bois traditionnel" }}</p>
+                    <a href="{{ url_for('catalogue.catalogue', category=hero.card1_link if hero else 'mobilier') }}" class="hero-card-btn">Explorer</a>
                 </div>
             </div>
             
             <div class="hero-card">
-                <img src="{{ url_for('static', filename='images/moroccan_brass_craft_5197c08b.jpg') }}" alt="Fibres Naturelles" class="hero-card-image">
+                <img src="{{ hero.card2_image or url_for('static', filename='images/moroccan_brass_craft_5197c08b.jpg') }}" alt="{{ hero.card2_title if hero else 'Fibres Naturelles' }}" class="hero-card-image">
                 <div class="hero-card-overlay">
-                    <h3>Fibres Naturelles</h3>
-                    <p>Vannerie et tissage artisanal</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='textile') }}" class="hero-card-btn">Explorer</a>
+                    <h3>{{ hero.card2_title if hero else "Fibres Naturelles" }}</h3>
+                    <p>{{ hero.card2_subtitle if hero else "Vannerie et tissage artisanal" }}</p>
+                    <a href="{{ url_for('catalogue.catalogue', category=hero.card2_link if hero else 'textile') }}" class="hero-card-btn">Explorer</a>
                 </div>
             </div>
         </div>
@@ -41,20 +41,20 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-item">
-                <span class="stat-number">{{ stats.artisans }}+</span>
-                <span class="stat-label">Artisans Partenaires</span>
+                <span class="stat-number">{{ stats.artisans if stats else 50 }}+</span>
+                <span class="stat-label">{{ content.stats.artisans_label if content and content.stats else "Artisans Partenaires" }}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">{{ stats.products }}+</span>
-                <span class="stat-label">References Produits</span>
+                <span class="stat-number">{{ stats.products if stats else 200 }}+</span>
+                <span class="stat-label">{{ content.stats.products_label if content and content.stats else "References Produits" }}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">{{ stats.partners }}+</span>
-                <span class="stat-label">Clients B2B</span>
+                <span class="stat-number">{{ stats.partners if stats else 35 }}+</span>
+                <span class="stat-label">{{ content.stats.partners_label if content and content.stats else "Clients B2B" }}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">{{ stats.countries }}</span>
-                <span class="stat-label">Pays Livres</span>
+                <span class="stat-number">{{ stats.countries if stats else 12 }}</span>
+                <span class="stat-label">{{ content.stats.countries_label if content and content.stats else "Pays Livres" }}</span>
             </div>
         </div>
     </div>
@@ -63,19 +63,19 @@
 <section class="featured-section">
     <div class="container">
         <div class="section-header">
-            <span class="section-label">Notre Selection</span>
-            <h2>Nos Creations Phares</h2>
-            <p>Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain. Chaque creation est le fruit d'un savoir-faire ancestral transmis de generation en generation.</p>
+            <span class="section-label">{{ content.featured.section_label if content and content.featured else "Notre Selection" }}</span>
+            <h2>{{ content.featured.title if content and content.featured else "Nos Creations Phares" }}</h2>
+            <p>{{ content.featured.description if content and content.featured else "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain." }}</p>
         </div>
         
         <div class="products-showcase">
             <div class="showcase-main">
-                <img src="{{ url_for('static', filename='images/moroccan_artisan_han_11a3ad05.jpg') }}" alt="Poterie Artisanale" class="showcase-image">
+                <img src="{{ content.featured.showcase_image if content and content.featured else url_for('static', filename='images/moroccan_artisan_han_11a3ad05.jpg') }}" alt="Poterie Artisanale" class="showcase-image">
                 <div class="showcase-content">
-                    <span class="showcase-category">Ceramique et Poterie</span>
-                    <h3>Poterie Traditionnelle</h3>
-                    <p>Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi. Chaque creation porte l'empreinte du maitre artisan qui l'a realisee.</p>
-                    <a href="{{ url_for('catalogue.catalogue', category='ceramique') }}" class="btn-explore">Decouvrir la Collection</a>
+                    <span class="showcase-category">{{ content.featured.showcase_category if content and content.featured else "Ceramique et Poterie" }}</span>
+                    <h3>{{ content.featured.showcase_title if content and content.featured else "Poterie Traditionnelle" }}</h3>
+                    <p>{{ content.featured.showcase_description if content and content.featured else "Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi." }}</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='ceramique') }}" class="btn-explore">{{ content.featured.showcase_button if content and content.featured else "Decouvrir la Collection" }}</a>
                 </div>
             </div>
             
@@ -94,7 +94,7 @@
         </div>
         
         <div class="section-cta">
-            <a href="{{ url_for('catalogue.catalogue') }}" class="btn-explore">Voir Toute la Collection</a>
+            <a href="{{ url_for('catalogue.catalogue') }}" class="btn-explore">{{ content.featured.cta_button if content and content.featured else "Voir Toute la Collection" }}</a>
         </div>
     </div>
 </section>
@@ -102,9 +102,9 @@
 <section class="values-section">
     <div class="container">
         <div class="section-header">
-            <span class="section-label">Nos Valeurs</span>
-            <h2>Authenticite, Ethique, Excellence</h2>
-            <p>Trois piliers fondamentaux qui guident notre approche du sourcing artisanal et notre relation avec les artisans marocains.</p>
+            <span class="section-label">{{ content.our_values.section_label if content and content.our_values else "Nos Valeurs" }}</span>
+            <h2>{{ content.our_values.title if content and content.our_values else "Authenticite, Ethique, Excellence" }}</h2>
+            <p>{{ content.our_values.description if content and content.our_values else "Trois piliers fondamentaux qui guident notre approche du sourcing artisanal." }}</p>
         </div>
         
         <div class="values-grid-expanded">
@@ -115,14 +115,14 @@
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
                     </div>
-                    <h3>Authenticite</h3>
+                    <h3>{{ content.our_values.value1_title if content and content.our_values else "Authenticite" }}</h3>
                 </div>
-                <p class="value-description">Chaque piece est creee a la main par des artisans marocains qualifies, perpetuant des traditions seculaires transmises de generation en generation.</p>
+                <p class="value-description">{{ content.our_values.value1_description if content and content.our_values else "Chaque piece est creee a la main par des artisans marocains qualifies." }}</p>
                 <ul class="value-points">
-                    <li>Tracabilite complete de chaque produit</li>
-                    <li>Techniques traditionnelles preservees</li>
-                    <li>Materiaux locaux de qualite</li>
-                    <li>Certification d'origine artisanale</li>
+                    {% set points = (content.our_values.value1_points if content and content.our_values else "Tracabilite complete|Techniques traditionnelles|Materiaux locaux|Certification d'origine").split('|') %}
+                    {% for point in points %}
+                    <li>{{ point }}</li>
+                    {% endfor %}
                 </ul>
             </div>
             
@@ -134,14 +134,14 @@
                             <path d="M12 6v6l4 2"></path>
                         </svg>
                     </div>
-                    <h3>Ethique</h3>
+                    <h3>{{ content.our_values.value2_title if content and content.our_values else "Ethique" }}</h3>
                 </div>
-                <p class="value-description">Nous collaborons directement avec les artisans locaux pour garantir des pratiques equitables et soutenir les communautes creatrices.</p>
+                <p class="value-description">{{ content.our_values.value2_description if content and content.our_values else "Nous collaborons directement avec les artisans locaux pour garantir des pratiques equitables." }}</p>
                 <ul class="value-points">
-                    <li>Commerce equitable garanti</li>
-                    <li>Remuneration juste des artisans</li>
-                    <li>Soutien aux cooperatives locales</li>
-                    <li>Respect des conditions de travail</li>
+                    {% set points = (content.our_values.value2_points if content and content.our_values else "Commerce equitable|Remuneration juste|Soutien cooperatives|Conditions de travail").split('|') %}
+                    {% for point in points %}
+                    <li>{{ point }}</li>
+                    {% endfor %}
                 </ul>
             </div>
             
@@ -152,14 +152,14 @@
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                         </svg>
                     </div>
-                    <h3>Excellence</h3>
+                    <h3>{{ content.our_values.value3_title if content and content.our_values else "Excellence" }}</h3>
                 </div>
-                <p class="value-description">Une selection rigoureuse de creations uniques alliant esthetique contemporaine et savoir-faire traditionnel d'exception.</p>
+                <p class="value-description">{{ content.our_values.value3_description if content and content.our_values else "Une selection rigoureuse de creations uniques alliant esthetique et savoir-faire." }}</p>
                 <ul class="value-points">
-                    <li>Controle qualite systematique</li>
-                    <li>Selection des meilleurs artisans</li>
-                    <li>Finitions irreprochables</li>
-                    <li>Standards internationaux</li>
+                    {% set points = (content.our_values.value3_points if content and content.our_values else "Controle qualite|Meilleurs artisans|Finitions irreprochables|Standards internationaux").split('|') %}
+                    {% for point in points %}
+                    <li>{{ point }}</li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
@@ -169,39 +169,24 @@
 <section class="process-overview">
     <div class="container">
         <div class="section-header">
-            <span class="section-label">Notre Methode</span>
-            <h2>Un Processus Eprouve</h2>
-            <p>De la selection a la livraison, nous assurons un accompagnement complet pour garantir votre satisfaction.</p>
+            <span class="section-label">{{ content.process.section_label if content and content.process else "Notre Methode" }}</span>
+            <h2>{{ content.process.title if content and content.process else "Un Processus Eprouve" }}</h2>
+            <p>{{ content.process.description if content and content.process else "De la selection a la livraison, nous assurons un accompagnement complet." }}</p>
         </div>
         
         <div class="process-steps-home">
+            {% for step in process_steps %}
+            {% if not loop.first %}<div class="process-connector"></div>{% endif %}
             <div class="process-step-home">
-                <div class="step-icon">01</div>
-                <h4>Decouverte</h4>
-                <p>Analyse de vos besoins et definition du cahier des charges.</p>
+                <div class="step-icon">{{ step.number }}</div>
+                <h4>{{ step.title }}</h4>
+                <p>{{ step.description[:80] }}...</p>
             </div>
-            <div class="process-connector"></div>
-            <div class="process-step-home">
-                <div class="step-icon">02</div>
-                <h4>Selection</h4>
-                <p>Identification des artisans et produits correspondants.</p>
-            </div>
-            <div class="process-connector"></div>
-            <div class="process-step-home">
-                <div class="step-icon">03</div>
-                <h4>Production</h4>
-                <p>Fabrication artisanale avec suivi qualite rigoureux.</p>
-            </div>
-            <div class="process-connector"></div>
-            <div class="process-step-home">
-                <div class="step-icon">04</div>
-                <h4>Livraison</h4>
-                <p>Expedition soignee et livraison dans les delais.</p>
-            </div>
+            {% endfor %}
         </div>
         
         <div class="section-cta">
-            <a href="{{ url_for('business.processus') }}" class="btn-secondary">Decouvrir Notre Processus</a>
+            <a href="{{ url_for('business.processus') }}" class="btn-secondary">{{ content.process.cta_button if content and content.process else "Decouvrir Notre Processus" }}</a>
         </div>
     </div>
 </section>
@@ -210,48 +195,24 @@
 <section class="testimonials-section">
     <div class="container">
         <div class="section-header">
-            <span class="section-label">Temoignages</span>
-            <h2>Ce Que Disent Nos Clients</h2>
+            <span class="section-label">{{ content.testimonials.section_label if content and content.testimonials else "Temoignages" }}</span>
+            <h2>{{ content.testimonials.title if content and content.testimonials else "Ce Que Disent Nos Clients" }}</h2>
         </div>
         <div class="testimonials-grid">
+            {% for testimonial in testimonials %}
             <div class="testimonial-card">
-                <p class="testimonial-text">La qualite des produits Capsule est exceptionnelle. Chaque piece raconte une histoire et reflete un savoir-faire unique. Nos clients adorent l'authenticite de ces creations.</p>
+                <p class="testimonial-text">{{ testimonial.text }}</p>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">
-                        <img src="{{ url_for('static', filename='images/avatar1.jpg') }}" alt="Sarah Chen">
+                        <img src="{{ testimonial.author_image or url_for('static', filename='images/avatar1.jpg') }}" alt="{{ testimonial.author_name }}">
                     </div>
                     <div>
-                        <h4>Sarah Chen</h4>
-                        <p>Boutique Le Souk, Paris</p>
+                        <h4>{{ testimonial.author_name }}</h4>
+                        <p>{{ testimonial.author_title }}</p>
                     </div>
                 </div>
             </div>
-            
-            <div class="testimonial-card">
-                <p class="testimonial-text">Un partenariat formidable. Capsule nous permet d'offrir a nos clients des pieces artisanales authentiques avec une tracabilite complete. Le service est impeccable.</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">
-                        <img src="{{ url_for('static', filename='images/avatar2.jpg') }}" alt="Marc Dubois">
-                    </div>
-                    <div>
-                        <h4>Marc Dubois</h4>
-                        <p>Architecte d'interieur</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="testimonial-card">
-                <p class="testimonial-text">Excellente reactivite et produits conformes a nos attentes. Capsule comprend parfaitement les exigences du secteur hotelier haut de gamme.</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">
-                        <img src="{{ url_for('static', filename='images/avatar1.jpg') }}" alt="Julie Martin">
-                    </div>
-                    <div>
-                        <h4>Julie Martin</h4>
-                        <p>Directrice Achats, Groupe Hotelier</p>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -259,11 +220,11 @@
 <section class="cta-section">
     <div class="container">
         <div class="cta-content-large">
-            <h2>Pret a Integrer l'Artisanat Marocain dans Vos Projets ?</h2>
-            <p>Contactez notre equipe pour discuter de vos besoins et recevoir une proposition personnalisee.</p>
+            <h2>{{ content.cta.title if content and content.cta else "Pret a Integrer l'Artisanat Marocain dans Vos Projets ?" }}</h2>
+            <p>{{ content.cta.description if content and content.cta else "Contactez notre equipe pour discuter de vos besoins et recevoir une proposition personnalisee." }}</p>
             <div class="cta-buttons">
-                <a href="{{ url_for('main.contact') }}" class="btn-primary-large">Nous Contacter</a>
-                <a href="{{ url_for('catalogue.catalogue') }}" class="btn-secondary-large">Voir le Catalogue</a>
+                <a href="{{ url_for('main.contact') }}" class="btn-primary-large">{{ content.cta.button1_text if content and content.cta else "Nous Contacter" }}</a>
+                <a href="{{ url_for('catalogue.catalogue') }}" class="btn-secondary-large">{{ content.cta.button2_text if content and content.cta else "Voir le Catalogue" }}</a>
             </div>
         </div>
     </div>
@@ -272,11 +233,11 @@
 <section class="newsletter-section">
     <div class="container">
         <div class="newsletter-content">
-            <h2>Restez Informes</h2>
-            <p>Recevez en avant-premiere nos nouvelles collections et actualites du monde de l'artisanat marocain</p>
+            <h2>{{ content.newsletter.title if content and content.newsletter else "Restez Informes" }}</h2>
+            <p>{{ content.newsletter.description if content and content.newsletter else "Recevez en avant-premiere nos nouvelles collections et actualites" }}</p>
             <form class="newsletter-form" id="newsletterForm">
-                <input type="email" placeholder="Votre adresse email professionnelle" class="newsletter-input" required>
-                <button type="submit" class="newsletter-btn">S'inscrire</button>
+                <input type="email" placeholder="{{ content.newsletter.placeholder if content and content.newsletter else 'Votre adresse email professionnelle' }}" class="newsletter-input" required>
+                <button type="submit" class="newsletter-btn">{{ content.newsletter.button if content and content.newsletter else "S'inscrire" }}</button>
             </form>
         </div>
     </div>
