@@ -1,10 +1,10 @@
-modules = ["web", "python-3.11", "nodejs-20"]
+modules = ["web", "python-3.11", "nodejs-20", "postgresql-16"]
 [agent]
 expertMode = true
 
 [nix]
 channel = "stable-25_05"
-packages = ["openssl", "postgresql"]
+packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "openssl", "postgresql", "tcl", "tk", "zlib"]
 
 [workflows]
 runButton = "Project"
@@ -43,8 +43,8 @@ localPort = 33379
 externalPort = 3001
 
 [[ports]]
-localPort = 33777
-externalPort = 3002
+localPort = 40251
+externalPort = 3003
 
 [deployment]
 deploymentTarget = "autoscale"

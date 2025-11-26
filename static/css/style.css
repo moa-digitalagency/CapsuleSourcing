@@ -147,12 +147,29 @@ h1, h2, h3, h4 {
     width: 100%;
 }
 
-.nav-dropdown.active > .nav-link-dropdown {
+.nav-dropdown:hover > .nav-link-dropdown,
+.nav-dropdown.open > .nav-link-dropdown {
     color: var(--color-text);
 }
 
-.nav-dropdown.active > .nav-link-dropdown::after {
-    width: 100%;
+.nav-link-dropdown {
+    position: relative;
+}
+
+.nav-link-dropdown::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-primary);
+    transition: var(--transition-smooth);
+}
+
+.nav-dropdown:hover > .nav-link-dropdown::before,
+.nav-dropdown.open > .nav-link-dropdown::before {
+    width: calc(100% - 14px);
 }
 
 .dropdown-menu a.active {

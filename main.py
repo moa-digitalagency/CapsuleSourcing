@@ -8,13 +8,13 @@ with app.app_context():
 
 from routes import main_bp, catalogue_bp, business_bp
 from routes.admin import admin_bp
-from replit_auth import make_replit_blueprint
+from routes.auth import auth_bp
 
 app.register_blueprint(main_bp)
 app.register_blueprint(catalogue_bp)
 app.register_blueprint(business_bp)
 app.register_blueprint(admin_bp, url_prefix='/admin')
-app.register_blueprint(make_replit_blueprint(), url_prefix="/auth")
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

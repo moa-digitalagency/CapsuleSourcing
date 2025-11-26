@@ -1,7 +1,7 @@
 import os
 import uuid
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from functools import wraps
 
@@ -17,7 +17,7 @@ def require_admin(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            return redirect(url_for('replit_auth.login'))
+            return redirect(url_for('auth.login'))
         if not current_user.is_admin:
             flash('Acces non autorise', 'error')
             return redirect(url_for('main.index'))
@@ -54,16 +54,14 @@ def products():
 def add_product():
     from app import db
     from models.database import ProductDB, CategoryDB
+    from utils.image_processor import process_image_for_type
     categories = CategoryDB.query.order_by(CategoryDB.order).all()
     if request.method == 'POST':
         image_path = None
         if 'image' in request.files:
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-                upload_path = os.path.join('static', 'uploads', filename)
-                file.save(upload_path)
-                image_path = f"/static/uploads/{filename}"
+                image_path = process_image_for_type(file, 'product')
         
         product = ProductDB(
             name=request.form['name'],
@@ -88,16 +86,16 @@ def add_product():
 def edit_product(id):
     from app import db
     from models.database import ProductDB, CategoryDB
+    from utils.image_processor import process_image_for_type
     product = ProductDB.query.get_or_404(id)
     categories = CategoryDB.query.order_by(CategoryDB.order).all()
     if request.method == 'POST':
         if 'image' in request.files:
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-                upload_path = os.path.join('static', 'uploads', filename)
-                file.save(upload_path)
-                product.image = f"/static/uploads/{filename}"
+                new_image = process_image_for_type(file, 'product')
+                if new_image:
+                    product.image = new_image
         elif request.form.get('image_url'):
             product.image = request.form['image_url']
         
@@ -420,15 +418,13 @@ def testimonials():
 def add_testimonial():
     from app import db
     from models.database import Testimonial
+    from utils.image_processor import process_image_for_type
     if request.method == 'POST':
         image_path = None
         if 'author_image' in request.files:
             file = request.files['author_image']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-                upload_path = os.path.join('static', 'uploads', filename)
-                file.save(upload_path)
-                image_path = f"/static/uploads/{filename}"
+                image_path = process_image_for_type(file, 'testimonial')
         
         testimonial = Testimonial(
             text=request.form['text'],
@@ -449,15 +445,15 @@ def add_testimonial():
 def edit_testimonial(id):
     from app import db
     from models.database import Testimonial
+    from utils.image_processor import process_image_for_type
     testimonial = Testimonial.query.get_or_404(id)
     if request.method == 'POST':
         if 'author_image' in request.files:
             file = request.files['author_image']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-                upload_path = os.path.join('static', 'uploads', filename)
-                file.save(upload_path)
-                testimonial.author_image = f"/static/uploads/{filename}"
+                new_image = process_image_for_type(file, 'testimonial')
+                if new_image:
+                    testimonial.author_image = new_image
         elif request.form.get('author_image_url'):
             testimonial.author_image = request.form['author_image_url']
         
@@ -508,6 +504,7 @@ def homepage():
 def update_hero():
     from app import db
     from models.database import HeroSection
+    from utils.image_processor import process_image_for_type
     hero = HeroSection.query.first()
     if not hero:
         hero = HeroSection()
@@ -523,14 +520,14 @@ def update_hero():
     hero.card2_subtitle = request.form.get('card2_subtitle', hero.card2_subtitle)
     hero.card2_link = request.form.get('card2_link', hero.card2_link)
     
-    for field in ['main_image', 'card1_image', 'card2_image']:
+    image_types = {'main_image': 'hero_main', 'card1_image': 'hero_card', 'card2_image': 'hero_card'}
+    for field, img_type in image_types.items():
         if field in request.files:
             file = request.files[field]
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-                upload_path = os.path.join('static', 'uploads', filename)
-                file.save(upload_path)
-                setattr(hero, field, f"/static/uploads/{filename}")
+                new_image = process_image_for_type(file, img_type)
+                if new_image:
+                    setattr(hero, field, new_image)
     
     db.session.commit()
     flash('Section hero mise a jour', 'success')
@@ -584,6 +581,8 @@ def update_seo(page):
         setting = SEOSettings(page=page)
         db.session.add(setting)
     
+    from utils.image_processor import process_image_for_type
+    
     setting.meta_title = request.form.get('meta_title', '')
     setting.meta_description = request.form.get('meta_description', '')
     setting.meta_keywords = request.form.get('meta_keywords', '')
@@ -593,10 +592,9 @@ def update_seo(page):
     if 'og_image' in request.files:
         file = request.files['og_image']
         if file and file.filename and allowed_file(file.filename):
-            filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-            upload_path = os.path.join('static', 'uploads', filename)
-            file.save(upload_path)
-            setting.og_image = f"/static/uploads/{filename}"
+            new_image = process_image_for_type(file, 'og_image')
+            if new_image:
+                setting.og_image = new_image
     
     db.session.commit()
     flash(f'SEO de la page {page} mis a jour', 'success')
@@ -664,6 +662,7 @@ def toggle_admin(user_id):
 @admin_bp.route('/upload', methods=['POST'])
 @require_admin
 def upload_file():
+    from utils.image_processor import process_image_for_type
     if 'file' not in request.files:
         return jsonify({'error': 'Aucun fichier'}), 400
     
@@ -672,9 +671,44 @@ def upload_file():
         return jsonify({'error': 'Aucun fichier selectionne'}), 400
     
     if file and allowed_file(file.filename):
-        filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-        upload_path = os.path.join('static', 'uploads', filename)
-        file.save(upload_path)
-        return jsonify({'url': f"/static/uploads/{filename}"})
+        image_type = request.form.get('image_type', 'default')
+        url = process_image_for_type(file, image_type)
+        if url:
+            return jsonify({'url': url})
+        return jsonify({'error': 'Erreur lors du traitement'}), 400
     
     return jsonify({'error': 'Type de fichier non autorise'}), 400
+
+
+@admin_bp.route('/upload-with-crop', methods=['POST'])
+@require_admin
+def upload_with_crop():
+    from utils.image_processor import process_image_for_type
+    
+    if 'file' not in request.files:
+        return jsonify({'error': 'Aucun fichier'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'Aucun fichier selectionne'}), 400
+    
+    image_type = request.form.get('image_type', 'default')
+    
+    crop_data = None
+    if request.form.get('crop_x') is not None:
+        try:
+            crop_data = {
+                'x': float(request.form.get('crop_x', 0)),
+                'y': float(request.form.get('crop_y', 0)),
+                'width': float(request.form.get('crop_width', 0)),
+                'height': float(request.form.get('crop_height', 0))
+            }
+        except (ValueError, TypeError):
+            crop_data = None
+    
+    url = process_image_for_type(file, image_type, crop_data)
+    
+    if url:
+        return jsonify({'url': url, 'success': True})
+    
+    return jsonify({'error': 'Erreur lors du traitement de l\'image'}), 400

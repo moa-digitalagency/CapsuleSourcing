@@ -10,7 +10,8 @@ Capsule est une plateforme B2B de sourcing de produits artisanaux marocains auth
 - **Frontend**: HTML5, CSS3, JavaScript vanilla
 - **Templating**: Jinja2
 - **Base de donnees**: PostgreSQL avec SQLAlchemy ORM
-- **Authentification**: Replit Auth (OAuth2)
+- **Authentification**: Python Flask-Login (username/password)
+- **Traitement d'images**: Pillow (rognage et redimensionnement)
 - **Architecture**: MVC avec services
 
 ### Structure des Fichiers
@@ -18,16 +19,15 @@ Capsule est une plateforme B2B de sourcing de produits artisanaux marocains auth
 .
 ├── app.py                  # Application Flask principale, config DB
 ├── main.py                 # Point d'entree gunicorn, registration des blueprints
-├── replit_auth.py          # Authentification Replit OAuth2
 ├── routes/                 # Blueprints Flask
 │   ├── __init__.py        # Export des blueprints
 │   ├── main.py            # Routes principales (index, about, contact)
 │   ├── catalogue.py       # Routes catalogue et produits
 │   ├── business.py        # Routes B2B (services, partenariats, faq)
-│   └── admin.py           # Panel d'administration complet
+│   ├── admin.py           # Panel d'administration complet
+│   └── auth.py            # Authentification Python (login/register/logout)
 ├── models/                 # Modeles de donnees
 │   ├── __init__.py        # Export de tous les modeles
-│   ├── product.py         # Classes Product et Category (donnees statiques)
 │   └── database.py        # Modeles SQLAlchemy pour la DB
 ├── services/               # Logique metier
 │   ├── __init__.py
@@ -81,8 +81,7 @@ Capsule est une plateforme B2B de sourcing de produits artisanaux marocains auth
 ## Modeles de Donnees (SQLAlchemy)
 
 ### Modeles d'authentification
-- **User**: Utilisateurs avec is_admin flag
-- **OAuth**: Tokens OAuth pour Replit Auth
+- **User**: Utilisateurs avec username, email, password_hash et is_admin flag
 
 ### Modeles de contenu
 - **CategoryDB**: Categories de produits
@@ -103,8 +102,9 @@ Capsule est une plateforme B2B de sourcing de produits artisanaux marocains auth
 
 ### Acces
 - URL: `/admin`
-- Authentification requise via Replit Auth
+- Authentification requise via login/password Python
 - Droit admin requis (is_admin=True sur le User)
+- Le premier utilisateur inscrit devient automatiquement admin
 
 ### Fonctionnalites
 1. **Dashboard** - Vue d'ensemble avec statistiques
@@ -157,23 +157,21 @@ Capsule est une plateforme B2B de sourcing de produits artisanaux marocains auth
 - `GET/POST /admin/settings` - Parametres
 - `GET /admin/users` - Utilisateurs
 
-### auth (replit_auth.py)
-- `GET /auth/login` - Connexion Replit
+### auth_bp (routes/auth.py)
+- `GET /auth/login` - Page de connexion
+- `POST /auth/login` - Soumission connexion
+- `GET /auth/register` - Page d'inscription
+- `POST /auth/register` - Soumission inscription
 - `GET /auth/logout` - Deconnexion
-- `GET /auth/error` - Erreur d'authentification
 
 ## Variables d'Environnement
 
 ### Requises
 - `DATABASE_URL` - URL PostgreSQL
 - `SESSION_SECRET` - Cle secrete pour les sessions
-- `REPL_ID` - ID du Repl (automatique)
-
-### Optionnelles
-- `ADMIN_EMAILS` - Liste d'emails separes par virgules qui seront automatiquement admin a leur premiere connexion
 
 ### Bootstrap Admin
-Le premier utilisateur a se connecter devient automatiquement admin. Alternativement, vous pouvez definir la variable `ADMIN_EMAILS` avec une liste d'emails qui seront promus admin a leur premiere connexion.
+Le premier utilisateur a s'inscrire devient automatiquement admin. Utilisez la gestion des utilisateurs dans l'admin pour promouvoir d'autres utilisateurs.
 
 ## Design
 
@@ -195,15 +193,26 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 ```
 
 ### Premier admin
-1. Se connecter via Replit Auth
-2. Modifier directement en DB: `UPDATE users SET is_admin = true WHERE id = 'votre-id'`
-3. Ou utiliser l'admin existant pour promouvoir d'autres utilisateurs
+1. S'inscrire via /auth/register (le premier utilisateur est automatiquement admin)
+2. Ou utiliser l'admin existant pour promouvoir d'autres utilisateurs via /admin/users
 
 ## Modifications Recentes
 
+### 26/11/2025: Migration vers Authentification Python Native
+- Remplacement de Replit Auth par Flask-Login avec username/password
+- Nouveau modele User avec password_hash
+- Routes /auth/login, /auth/register, /auth/logout
+- Templates de connexion et inscription stylises
+- Correction du bug de soulignement dans le header (dropdown Entreprise)
+- Ajout de WhatsApp dans le footer avec liens dynamiques
+- Liens directs tel:, mailto:, wa.me pour tous les contacts
+- Traitement d'images avec Pillow (rognage et redimensionnement)
+- Endpoint /admin/upload-with-crop pour upload avec rognage
+- Suppression des fichiers inutilises (products.py, models/product.py, replit_auth.py)
+- Base de donnees PostgreSQL verifiee et fonctionnelle
+
 ### 26/11/2024: Panel d'Administration Complet
 - Integration PostgreSQL avec SQLAlchemy ORM
-- Authentification Replit OAuth2
 - Panel admin complet avec sidebar navigation
 - CRUD pour tous les types de contenu
 - Upload d'images avec stockage local

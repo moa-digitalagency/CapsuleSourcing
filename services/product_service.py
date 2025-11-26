@@ -1,6 +1,3 @@
-from models.product import Product, Category
-
-
 class ProductService:
     def __init__(self):
         self._products = self._load_products()

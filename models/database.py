@@ -1,32 +1,29 @@
 from datetime import datetime
-from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_login import UserMixin
 from sqlalchemy import UniqueConstraint
+from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.String, primary_key=True)
-    email = db.Column(db.String, unique=True, nullable=True)
-    first_name = db.Column(db.String, nullable=True)
-    last_name = db.Column(db.String, nullable=True)
-    profile_image_url = db.Column(db.String, nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=True)
+    first_name = db.Column(db.String(100), nullable=True)
+    last_name = db.Column(db.String(100), nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-class OAuth(OAuthConsumerMixin, db.Model):
-    user_id = db.Column(db.String, db.ForeignKey(User.id))
-    browser_session_key = db.Column(db.String, nullable=False)
-    user = db.relationship(User)
-    __table_args__ = (UniqueConstraint(
-        'user_id',
-        'browser_session_key',
-        'provider',
-        name='uq_user_browser_session_key_provider',
-    ),)
+    def check_password(self, password):
+        if not self.password_hash:
+            return False
+        return check_password_hash(self.password_hash, password)
 
 
 class CategoryDB(db.Model):
