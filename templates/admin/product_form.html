@@ -38,8 +38,8 @@
             </div>
         </div>
         
-        <input type="hidden" name="name" value="{{ product.name if product else 'Produit' }}">
-        <input type="hidden" name="category_id" value="{{ product.category_id if product else 'mobilier' }}">
+        <input type="hidden" name="name" value="{{ product.name if product else 'Produit Artisanal' }}">
+        <input type="hidden" name="category_id" value="{{ product.category_id if product else '' }}">
         <input type="hidden" name="description" value="{{ product.description if product else '' }}">
         
         <div style="display: flex; gap: 12px; margin-top: 20px;">

@@ -213,6 +213,15 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Modifications Recentes
 
+### 26/11/2025: Catalogue Galerie Simplifie
+- Nouveau format galerie pour le catalogue avec numerotation des produits (#1, #2, etc.)
+- Bouton WhatsApp "Ca m'interesse" sur chaque produit qui envoie le lien du produit
+- 428 nouvelles images de produits ajoutees depuis le fichier zip fourni
+- ProductService mis a jour pour lire depuis la base de donnees PostgreSQL
+- Admin panel simplifie pour gerer les produits en mode galerie
+- Suppression des categories et filtres pour un affichage galerie simple
+- Images stockees dans `/static/images/products/`
+
 ### 26/11/2025: Section Vedette Redesign
 - Nouvelle mise en page Section Vedette: 1 bloc principal a gauche + 4 cartes produits a droite (grille 2x2)
 - Modele FeaturedHighlight avec 5 slots: slot 1 = bloc principal, slots 2-5 = cartes produits
