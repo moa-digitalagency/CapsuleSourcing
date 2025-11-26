@@ -345,24 +345,32 @@ main {
 }
 
 .hero-card-btn {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: var(--color-white);
     color: var(--color-text);
-    padding: 0.6rem 1.25rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 100px;
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.75rem;
-    display: inline-block;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-smooth);
+    letter-spacing: 0.02em;
+}
+
+.hero-card-btn::after {
+    content: '→';
     transition: var(--transition-fast);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    letter-spacing: 0.03em;
 }
 
 .hero-card-btn:hover {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.hero-card-btn:hover::after {
+    transform: translateX(3px);
 }
 
 .featured-section {
@@ -445,23 +453,32 @@ main {
 }
 
 .product-card-btn {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: var(--color-white);
     color: var(--color-text);
     padding: 0.75rem 1.5rem;
     border-radius: 100px;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.8rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-smooth);
+    letter-spacing: 0.02em;
+}
+
+.product-card-btn::after {
+    content: '→';
     transition: var(--transition-fast);
-    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .product-card-btn:hover {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.product-card-btn:hover::after {
+    transform: translateX(3px);
 }
 
 .product-card-small {
@@ -526,11 +543,32 @@ main {
     letter-spacing: 0.02em;
 }
 
+.btn-explore::after {
+    content: '→';
+    transition: var(--transition-fast);
+}
+
 .btn-explore:hover {
     background-color: var(--color-text);
     color: var(--color-white);
     border-color: var(--color-text);
     transform: translateY(-2px);
+}
+
+.btn-explore:hover::after {
+    transform: translateX(4px);
+}
+
+.showcase-content .btn-explore {
+    background-color: var(--color-white);
+    color: var(--color-text);
+    border: none;
+}
+
+.showcase-content .btn-explore:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: var(--shadow-md);
 }
 
 .section-cta {
@@ -2152,10 +2190,23 @@ main {
     color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: var(--transition-fast);
+}
+
+.showcase-link::after {
+    content: '→';
+    transition: var(--transition-fast);
 }
 
 .showcase-link:hover {
-    text-decoration: underline;
+    color: var(--color-primary-dark);
+}
+
+.showcase-link:hover::after {
+    transform: translateX(3px);
 }
 
 /* Process Overview Home */

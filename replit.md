@@ -161,6 +161,13 @@ Placer les images dans `static/images/` et mettre a jour les chemins dans les pr
 
 ## Modifications Recentes
 
+### 26/11/2024: Uniformisation des boutons et overlays
+- Ajout d'overlays permanents sur les cartes hero et produits pour visibilite du texte
+- Uniformisation des boutons avec fleche (→) et animation au survol
+- Boutons .hero-card-btn, .product-card-btn, .btn-explore uniformises
+- Suppression de la section artisan apres processus
+- Correction de la grille temoignages (3 colonnes sans fleches)
+
 ### 26/11/2024: Architecture B2B et restructuration
 - Restructuration complete du backend avec Flask Blueprints
 - Separation en dossiers: routes/, models/, services/, utils/
