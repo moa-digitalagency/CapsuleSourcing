@@ -11,6 +11,14 @@ Usage:
     
 Options:
     --seed    Add default data (admin user, sample categories, etc.)
+
+Required Environment Variables:
+    DATABASE_URL      - PostgreSQL connection URL
+    
+Required for --seed:
+    ADMIN_USERNAME    - Admin username
+    ADMIN_PASSWORD    - Admin password  
+    ADMIN_EMAIL       - Admin email
 """
 import os
 import sys
@@ -43,48 +51,41 @@ def seed_default_data():
     )
     from werkzeug.security import generate_password_hash
     
-    admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
-    admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
-    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@capsule-maroc.com')
+    admin_username = os.environ.get('ADMIN_USERNAME')
+    admin_password = os.environ.get('ADMIN_PASSWORD')
+    admin_email = os.environ.get('ADMIN_EMAIL')
     
     with app.app_context():
         if User.query.filter_by(is_admin=True).first():
             logger.info("Admin user already exists, skipping user creation.")
         else:
-            admin = User(
-                username=admin_username,
-                email=admin_email,
-                password_hash=generate_password_hash(admin_password),
-                first_name="Admin",
-                last_name="Capsule",
-                is_admin=True
-            )
-            db.session.add(admin)
-            logger.info(f"Created admin user (username: {admin_username})")
+            if not admin_username or not admin_password or not admin_email:
+                logger.warning("Admin credentials not set in environment variables.")
+                logger.warning("Set ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_EMAIL to create admin user.")
+                logger.warning("Skipping admin user creation.")
+            else:
+                admin = User(
+                    username=admin_username,
+                    email=admin_email,
+                    password_hash=generate_password_hash(admin_password),
+                    is_admin=True
+                )
+                db.session.add(admin)
+                logger.info(f"Created admin user (username: {admin_username})")
         
         contact = ContactInfo.query.first()
         if not contact:
             contact = ContactInfo(
-                email="contact@capsule-maroc.com",
-                phone="+212 5 24 43 XX XX",
-                whatsapp="+212 6 61 XX XX XX",
-                address="Quartier Industriel, Marrakech, Maroc",
-                instagram="https://instagram.com/capsule.maroc",
-                facebook="https://facebook.com/capsulemaroc",
-                tiktok="https://tiktok.com/@capsulemaroc"
+                email=os.environ.get('CONTACT_EMAIL', ''),
+                phone=os.environ.get('CONTACT_PHONE', ''),
+                whatsapp=os.environ.get('CONTACT_WHATSAPP', ''),
+                address=os.environ.get('CONTACT_ADDRESS', ''),
+                instagram=os.environ.get('SOCIAL_INSTAGRAM', ''),
+                facebook=os.environ.get('SOCIAL_FACEBOOK', ''),
+                tiktok=os.environ.get('SOCIAL_TIKTOK', '')
             )
             db.session.add(contact)
-            logger.info("Created default contact info with social networks")
-        else:
-            if not contact.whatsapp:
-                contact.whatsapp = "+212 6 61 XX XX XX"
-            if not contact.instagram:
-                contact.instagram = "https://instagram.com/capsule.maroc"
-            if not contact.facebook:
-                contact.facebook = "https://facebook.com/capsulemaroc"
-            if not contact.tiktok:
-                contact.tiktok = "https://tiktok.com/@capsulemaroc"
-            logger.info("Updated contact info with social networks")
+            logger.info("Created default contact info (configure in admin panel)")
         
         if not HeroSection.query.first():
             hero = HeroSection()

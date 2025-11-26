@@ -105,14 +105,10 @@ Les reseaux sociaux sont configurables dans `/admin/settings` via le modele Cont
 
 | Reseau | Champ | Format |
 |--------|-------|--------|
-| WhatsApp | `whatsapp` | Numero (+33 7 XX XX XX XX) |
+| WhatsApp | `whatsapp` | Numero (+212 6 XX XX XX XX) |
 | Facebook | `facebook` | URL (https://facebook.com/...) |
 | Instagram | `instagram` | URL (https://instagram.com/...) |
 | TikTok | `tiktok` | URL (https://tiktok.com/@...) |
-| LinkedIn | `linkedin` | URL (https://linkedin.com/company/...) |
-| Twitter/X | `twitter` | URL (https://twitter.com/...) |
-| YouTube | `youtube` | URL (https://youtube.com/...) |
-| Pinterest | `pinterest` | URL (https://pinterest.com/...) |
 
 ### Affichage
 Les icones s'affichent automatiquement dans le footer (`templates/base.html`) lorsque les liens sont configures.
