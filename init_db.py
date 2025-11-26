@@ -71,31 +71,19 @@ def seed_default_data():
                 address="Quartier Industriel, Marrakech, Maroc",
                 instagram="https://instagram.com/capsule.maroc",
                 facebook="https://facebook.com/capsulemaroc",
-                linkedin="https://linkedin.com/company/capsule-maroc",
-                twitter="https://twitter.com/capsulemaroc",
-                youtube="https://youtube.com/@capsulemaroc",
-                tiktok="https://tiktok.com/@capsulemaroc",
-                pinterest="https://pinterest.com/capsulemaroc"
+                tiktok="https://tiktok.com/@capsulemaroc"
             )
             db.session.add(contact)
             logger.info("Created default contact info with social networks")
         else:
+            if not contact.whatsapp:
+                contact.whatsapp = "+212 6 61 XX XX XX"
             if not contact.instagram:
                 contact.instagram = "https://instagram.com/capsule.maroc"
             if not contact.facebook:
                 contact.facebook = "https://facebook.com/capsulemaroc"
-            if not contact.linkedin:
-                contact.linkedin = "https://linkedin.com/company/capsule-maroc"
-            if not contact.whatsapp:
-                contact.whatsapp = "+212 6 61 XX XX XX"
-            if not contact.twitter:
-                contact.twitter = "https://twitter.com/capsulemaroc"
-            if not contact.youtube:
-                contact.youtube = "https://youtube.com/@capsulemaroc"
             if not contact.tiktok:
                 contact.tiktok = "https://tiktok.com/@capsulemaroc"
-            if not contact.pinterest:
-                contact.pinterest = "https://pinterest.com/capsulemaroc"
             logger.info("Updated contact info with social networks")
         
         if not HeroSection.query.first():
