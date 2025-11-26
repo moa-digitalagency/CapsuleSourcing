@@ -15,27 +15,27 @@
         <div class="contact-grid">
             <div class="contact-info">
                 <h2>Parlons de Votre Projet</h2>
-                <p>Que vous soyez un professionnel à la recherche de produits artisanaux pour votre boutique, un décorateur d'intérieur, ou simplement curieux de découvrir notre sélection, nous serons ravis d'échanger avec vous.</p>
+                <p>Que vous soyez professionnel à la recherche de pièces artisanales pour votre boutique, architecte d'intérieur, ou simplement passionné par l'artisanat, nous serons ravis d'échanger avec vous.</p>
                 
                 <div class="contact-details">
-                    <div class="contact-detail">
-                        <div class="contact-icon">📧</div>
+                    <div class="contact-item">
+                        <div class="contact-icon">✉</div>
                         <div>
                             <h4>Email</h4>
-                            <p>contact@capsule-maroc.com</p>
+                            <a href="mailto:contact@capsule-maroc.com">contact@capsule-maroc.com</a>
                         </div>
                     </div>
                     
-                    <div class="contact-detail">
-                        <div class="contact-icon">📱</div>
+                    <div class="contact-item">
+                        <div class="contact-icon">☏</div>
                         <div>
                             <h4>Téléphone</h4>
                             <p>+212 XX XX XX XX</p>
                         </div>
                     </div>
                     
-                    <div class="contact-detail">
-                        <div class="contact-icon">📍</div>
+                    <div class="contact-item">
+                        <div class="contact-icon">◉</div>
                         <div>
                             <h4>Adresse</h4>
                             <p>Marrakech, Maroc</p>
@@ -44,33 +44,34 @@
                 </div>
                 
                 <div class="contact-hours">
-                    <h4>Horaires</h4>
-                    <p>Lundi - Vendredi : 9h - 18h</p>
+                    <h4>Horaires d'ouverture</h4>
+                    <p>Lundi — Vendredi : 9h - 18h</p>
                     <p>Samedi : 10h - 16h</p>
-                    <p>Dimanche : Fermé</p>
                 </div>
             </div>
             
             <div class="contact-form-wrapper">
                 <form id="contactForm" class="contact-form">
-                    <div class="form-group">
-                        <label for="name">Nom complet *</label>
-                        <input type="text" id="name" name="name" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Nom complet</label>
+                            <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
+                        <label for="company">Entreprise (optionnel)</label>
+                        <input type="text" id="company" name="company" placeholder="Nom de votre entreprise">
                     </div>
                     
                     <div class="form-group">
-                        <label for="company">Entreprise</label>
-                        <input type="text" id="company" name="company">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message">Message *</label>
-                        <textarea id="message" name="message" rows="6" required></textarea>
+                        <label for="message">Votre message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Comment pouvons-nous vous aider ?" required></textarea>
                     </div>
                     
                     <button type="submit" class="btn-primary btn-large">Envoyer le Message</button>
