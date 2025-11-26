@@ -1,0 +1,70 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Nos Creations Phares - Admin Capsule{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Nos Creations Phares</h1>
+</div>
+
+<div class="card">
+    <p style="margin-bottom: 20px; color: #666;">
+        Gerez les 4 elements mis en avant sur la page d'accueil. Chaque element peut avoir son image, titre et lien personnalises.
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+        {% for highlight in highlights %}
+        <div style="border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fafafa;">
+            <div style="height: 180px; background: #e5e5e5; position: relative;">
+                {% if highlight.image %}
+                <img src="{{ highlight.image }}" alt="{{ highlight.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                </div>
+                {% endif %}
+                <span style="position: absolute; top: 10px; left: 10px; background: #8B7355; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">
+                    Slot {{ highlight.slot }}
+                </span>
+                {% if not highlight.is_active %}
+                <span style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">
+                    Inactif
+                </span>
+                {% endif %}
+            </div>
+            <div style="padding: 16px;">
+                <div style="font-size: 0.75rem; color: #8B7355; margin-bottom: 4px;">{{ highlight.badge }}</div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: #1a1a1a;">{{ highlight.title }}</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 12px;">{{ highlight.subtitle or 'Aucune description' }}</p>
+                <a href="{{ url_for('admin.edit_featured_highlight', id=highlight.id) }}" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Modifier
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <div class="card-title">A propos de cette section</div>
+    <p style="color: #666; line-height: 1.6;">
+        Ces 4 elements apparaissent dans la section "Nos Creations Phares" sur la page d'accueil. 
+        Vous pouvez personnaliser chaque element avec :
+    </p>
+    <ul style="margin-top: 12px; margin-left: 20px; color: #666; line-height: 1.8;">
+        <li><strong>Une image</strong> - Format recommande 500x400px</li>
+        <li><strong>Un badge</strong> - Ex: "Collection", "Artisanat", "Nouveaute"</li>
+        <li><strong>Un titre</strong> - Le nom de la categorie ou du produit</li>
+        <li><strong>Une description</strong> - Court texte explicatif</li>
+        <li><strong>Un lien</strong> - Vers le catalogue ou une page specifique</li>
+    </ul>
+</div>
+{% endblock %}

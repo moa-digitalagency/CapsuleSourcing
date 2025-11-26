@@ -101,6 +101,7 @@ IMAGE_SIZES = {
     'testimonial': (100, 100),
     'og_image': (1200, 630),
     'logo': (200, 200),
+    'featured_highlight': (500, 400),
 }
 
 

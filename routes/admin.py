@@ -837,3 +837,63 @@ def delete_page_content(id):
     
     flash('Contenu supprime', 'success')
     return redirect(url_for('admin.page_content', page=page))
+
+
+@admin_bp.route('/featured-highlights')
+@require_admin
+def featured_highlights():
+    from app import db
+    from models.database import FeaturedHighlight
+    
+    highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
+    
+    if len(highlights) < 4:
+        default_data = [
+            {'slot': 1, 'title': 'Ceramique & Poterie', 'subtitle': 'Pieces uniques de Fes et Safi', 'badge': 'Collection', 'link': '/catalogue?category=ceramique'},
+            {'slot': 2, 'title': 'Maroquinerie', 'subtitle': 'Cuir tanne traditionnellement', 'badge': 'Artisanat', 'link': '/catalogue?category=cuir'},
+            {'slot': 3, 'title': 'Ebenisterie', 'subtitle': 'Bois sculpte et peint a la main', 'badge': 'Artisanat', 'link': '/catalogue?category=mobilier'},
+            {'slot': 4, 'title': 'Dinanderie', 'subtitle': 'Travail du cuivre et laiton', 'badge': 'Artisanat', 'link': '/catalogue?category=metal'},
+        ]
+        existing_slots = [h.slot for h in highlights]
+        for data in default_data:
+            if data['slot'] not in existing_slots:
+                highlight = FeaturedHighlight(**data)
+                db.session.add(highlight)
+        db.session.commit()
+        highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
+    
+    return render_template('admin/featured_highlights.html', highlights=highlights)
+
+
+@admin_bp.route('/featured-highlights/<int:id>/edit', methods=['GET', 'POST'])
+@require_admin
+def edit_featured_highlight(id):
+    from app import db
+    from models.database import FeaturedHighlight
+    from utils.image_processor import process_image_for_type
+    
+    highlight = FeaturedHighlight.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and file.filename and allowed_file(file.filename):
+                new_image = process_image_for_type(file, 'featured_highlight')
+                if new_image:
+                    highlight.image = new_image
+        elif request.form.get('image_url'):
+            highlight.image = request.form['image_url']
+        
+        highlight.title = request.form.get('title', highlight.title)
+        highlight.subtitle = request.form.get('subtitle', '')
+        highlight.description = request.form.get('description', '')
+        highlight.link = request.form.get('link', '')
+        highlight.link_text = request.form.get('link_text', 'Explorer')
+        highlight.badge = request.form.get('badge', 'Artisanat')
+        highlight.is_active = bool(request.form.get('is_active'))
+        
+        db.session.commit()
+        flash(f'Element {highlight.slot} mis a jour avec succes', 'success')
+        return redirect(url_for('admin.featured_highlights'))
+    
+    return render_template('admin/featured_highlight_form.html', highlight=highlight)

@@ -174,3 +174,18 @@ class ContactInfo(db.Model):
     instagram = db.Column(db.String(200), nullable=True)
     facebook = db.Column(db.String(200), nullable=True)
     tiktok = db.Column(db.String(200), nullable=True)
+
+
+class FeaturedHighlight(db.Model):
+    __tablename__ = 'featured_highlights'
+    id = db.Column(db.Integer, primary_key=True)
+    slot = db.Column(db.Integer, nullable=False, unique=True)
+    title = db.Column(db.String(200), nullable=False)
+    subtitle = db.Column(db.String(300), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    image = db.Column(db.String(500), nullable=True)
+    link = db.Column(db.String(200), nullable=True)
+    link_text = db.Column(db.String(100), default="Explorer")
+    badge = db.Column(db.String(50), default="Artisanat")
+    is_active = db.Column(db.Boolean, default=True)
+    order = db.Column(db.Integer, default=0)
