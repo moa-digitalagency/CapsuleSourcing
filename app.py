@@ -46,3 +46,30 @@ def inject_contact_info():
     from models.database import ContactInfo
     contact = ContactInfo.query.first()
     return dict(contact_info=contact)
+
+
+@app.context_processor
+def inject_seo():
+    from flask import request
+    from models.database import SEOSettings
+    
+    page_mapping = {
+        'main.index': 'index',
+        'catalogue.catalogue': 'catalogue',
+        'catalogue.product_detail': 'catalogue',
+        'main.about': 'about',
+        'main.contact': 'contact',
+        'business.services': 'services',
+        'business.partenariats': 'partenariats',
+        'business.processus': 'processus',
+        'business.faq': 'faq',
+        'auth.login': 'index',
+        'auth.register': 'index',
+    }
+    
+    page_name = page_mapping.get(request.endpoint)
+    seo = None
+    if page_name:
+        seo = SEOSettings.query.filter_by(page=page_name).first()
+    
+    return dict(seo=seo)

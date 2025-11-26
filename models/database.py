@@ -173,3 +173,8 @@ class ContactInfo(db.Model):
     address = db.Column(db.Text, nullable=True)
     instagram = db.Column(db.String(200), nullable=True)
     linkedin = db.Column(db.String(200), nullable=True)
+    facebook = db.Column(db.String(200), nullable=True)
+    twitter = db.Column(db.String(200), nullable=True)
+    youtube = db.Column(db.String(200), nullable=True)
+    tiktok = db.Column(db.String(200), nullable=True)
+    pinterest = db.Column(db.String(200), nullable=True)

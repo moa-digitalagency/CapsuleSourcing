@@ -24,7 +24,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">WhatsApp</label>
-                <input type="text" name="whatsapp" class="form-control" value="{{ contact.whatsapp or '' }}">
+                <input type="text" name="whatsapp" class="form-control" value="{{ contact.whatsapp or '' }}" placeholder="+33 7 74 49 64 40">
             </div>
             <div class="form-group">
                 <label class="form-label">Adresse</label>
@@ -36,12 +36,50 @@
         
         <div class="form-row">
             <div class="form-group">
+                <label class="form-label">WhatsApp (lien)</label>
+                <small style="display: block; color: #888; margin-bottom: 4px;">Le numero sera utilise pour les liens WhatsApp</small>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Facebook</label>
+                <input type="url" name="facebook" class="form-control" value="{{ contact.facebook or '' }}" placeholder="https://facebook.com/...">
+            </div>
+            <div class="form-group">
                 <label class="form-label">Instagram</label>
                 <input type="url" name="instagram" class="form-control" value="{{ contact.instagram or '' }}" placeholder="https://instagram.com/...">
             </div>
+        </div>
+        
+        <div class="form-row">
             <div class="form-group">
                 <label class="form-label">LinkedIn</label>
                 <input type="url" name="linkedin" class="form-control" value="{{ contact.linkedin or '' }}" placeholder="https://linkedin.com/company/...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Twitter / X</label>
+                <input type="url" name="twitter" class="form-control" value="{{ contact.twitter or '' }}" placeholder="https://twitter.com/...">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">YouTube</label>
+                <input type="url" name="youtube" class="form-control" value="{{ contact.youtube or '' }}" placeholder="https://youtube.com/...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">TikTok</label>
+                <input type="url" name="tiktok" class="form-control" value="{{ contact.tiktok or '' }}" placeholder="https://tiktok.com/@...">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Pinterest</label>
+                <input type="url" name="pinterest" class="form-control" value="{{ contact.pinterest or '' }}" placeholder="https://pinterest.com/...">
+            </div>
+            <div class="form-group">
             </div>
         </div>
         

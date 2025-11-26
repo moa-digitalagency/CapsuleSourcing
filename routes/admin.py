@@ -630,6 +630,11 @@ def update_contact():
     contact.address = request.form.get('address', '')
     contact.instagram = request.form.get('instagram', '')
     contact.linkedin = request.form.get('linkedin', '')
+    contact.facebook = request.form.get('facebook', '')
+    contact.twitter = request.form.get('twitter', '')
+    contact.youtube = request.form.get('youtube', '')
+    contact.tiktok = request.form.get('tiktok', '')
+    contact.pinterest = request.form.get('pinterest', '')
     
     db.session.commit()
     flash('Informations de contact mises a jour', 'success')
