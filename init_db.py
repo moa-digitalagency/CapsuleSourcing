@@ -218,13 +218,9 @@ def seed_all_data():
                 phone="+212 XX XX XX XX",
                 whatsapp="+33774496440",
                 address="Marrakech, Maroc",
-                instagram="",
-                facebook="",
-                linkedin="",
-                twitter="",
-                youtube="",
-                tiktok="",
-                pinterest=""
+                instagram="https://instagram.com/capsule.maroc",
+                facebook="https://facebook.com/capsule.maroc",
+                tiktok="https://tiktok.com/@capsule.maroc"
             )
             db.session.add(contact)
             logger.info("Created contact info")
