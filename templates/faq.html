@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - Capsule{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Questions Frequentes</h1>
+        <p>Tout ce que vous devez savoir sur nos services et notre fonctionnement</p>
+    </div>
+</section>
+
+<section class="faq-section">
+    <div class="container">
+        <div class="faq-list">
+            {% for faq in faqs %}
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>{{ faq.question }}</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>{{ faq.answer }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="faq-contact">
+    <div class="container">
+        <div class="faq-contact-content">
+            <h2>Vous avez d'autres questions ?</h2>
+            <p>Notre equipe est disponible pour repondre a toutes vos interrogations.</p>
+            <div class="faq-contact-options">
+                <div class="contact-option">
+                    <h4>Par Email</h4>
+                    <p>contact@capsule-maroc.com</p>
+                </div>
+                <div class="contact-option">
+                    <h4>Par Telephone</h4>
+                    <p>+212 XX XX XX XX</p>
+                </div>
+            </div>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">Nous Contacter</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleFaq(button) {
+    const item = button.parentElement;
+    const answer = item.querySelector('.faq-answer');
+    const toggle = button.querySelector('.faq-toggle');
+    
+    if (item.classList.contains('active')) {
+        item.classList.remove('active');
+        answer.style.maxHeight = null;
+        toggle.textContent = '+';
+    } else {
+        document.querySelectorAll('.faq-item.active').forEach(function(activeItem) {
+            activeItem.classList.remove('active');
+            activeItem.querySelector('.faq-answer').style.maxHeight = null;
+            activeItem.querySelector('.faq-toggle').textContent = '+';
+        });
+        
+        item.classList.add('active');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        toggle.textContent = '-';
+    }
+}
+</script>
+{% endblock %}

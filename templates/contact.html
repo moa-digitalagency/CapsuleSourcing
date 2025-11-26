@@ -6,7 +6,7 @@
 <section class="page-header">
     <div class="container">
         <h1>Contactez-Nous</h1>
-        <p>Une question ? Un projet ? Nous sommes à votre écoute</p>
+        <p>Une question ? Un projet ? Nous sommes a votre ecoute</p>
     </div>
 </section>
 
@@ -15,11 +15,16 @@
         <div class="contact-grid">
             <div class="contact-info">
                 <h2>Parlons de Votre Projet</h2>
-                <p>Que vous soyez professionnel à la recherche de pièces artisanales pour votre boutique, architecte d'intérieur, ou simplement passionné par l'artisanat, nous serons ravis d'échanger avec vous.</p>
+                <p>Que vous soyez professionnel a la recherche de pieces artisanales pour votre boutique, architecte d'interieur, ou simplement passionne par l'artisanat, nous serons ravis d'echanger avec vous.</p>
                 
                 <div class="contact-details">
                     <div class="contact-item">
-                        <div class="contact-icon">✉</div>
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </div>
                         <div>
                             <h4>Email</h4>
                             <a href="mailto:contact@capsule-maroc.com">contact@capsule-maroc.com</a>
@@ -27,15 +32,24 @@
                     </div>
                     
                     <div class="contact-item">
-                        <div class="contact-icon">☏</div>
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </div>
                         <div>
-                            <h4>Téléphone</h4>
+                            <h4>Telephone</h4>
                             <p>+212 XX XX XX XX</p>
                         </div>
                     </div>
                     
                     <div class="contact-item">
-                        <div class="contact-icon">◉</div>
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
                         <div>
                             <h4>Adresse</h4>
                             <p>Marrakech, Maroc</p>
@@ -45,7 +59,7 @@
                 
                 <div class="contact-hours">
                     <h4>Horaires d'ouverture</h4>
-                    <p>Lundi — Vendredi : 9h - 18h</p>
+                    <p>Lundi - Vendredi : 9h - 18h</p>
                     <p>Samedi : 10h - 16h</p>
                 </div>
             </div>
@@ -93,7 +107,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     const messageDiv = document.getElementById('formMessage');
     
     try {
-        const response = await fetch('{{ url_for("contact") }}', {
+        const response = await fetch('{{ url_for("main.contact") }}', {
             method: 'POST',
             body: formData
         });
@@ -107,7 +121,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
             this.reset();
         }
     } catch (error) {
-        messageDiv.textContent = 'Une erreur s\'est produite. Veuillez réessayer.';
+        messageDiv.textContent = 'Une erreur s\'est produite. Veuillez reessayer.';
         messageDiv.className = 'form-message error';
         messageDiv.style.display = 'block';
     }

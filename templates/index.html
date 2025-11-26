@@ -10,8 +10,8 @@
             <div class="hero-overlay"></div>
             <div class="hero-content">
                 <h1 class="hero-title">L'Art du<br>Savoir-Faire<br>Marocain</h1>
-                <p class="hero-subtitle">Des pièces uniques, façonnées par des mains expertes</p>
-                <a href="{{ url_for('catalogue') }}" class="btn-hero">Découvrir la Collection</a>
+                <p class="hero-subtitle">Des pieces uniques, faconnees par des mains expertes</p>
+                <a href="{{ url_for('catalogue.catalogue') }}" class="btn-hero">Decouvrir la Collection</a>
             </div>
         </div>
         
@@ -19,9 +19,9 @@
             <div class="hero-card">
                 <img src="{{ url_for('static', filename='images/moroccan_brass_craft_59d29144.jpg') }}" alt="Travail du Bois" class="hero-card-image">
                 <div class="hero-card-overlay">
-                    <h3>Ébénisterie</h3>
+                    <h3>Ebenisterie</h3>
                     <p>Le travail du bois traditionnel</p>
-                    <a href="{{ url_for('catalogue', category='mobilier') }}" class="hero-card-btn">Explorer</a>
+                    <a href="{{ url_for('catalogue.catalogue', category='mobilier') }}" class="hero-card-btn">Explorer</a>
                 </div>
             </div>
             
@@ -30,8 +30,31 @@
                 <div class="hero-card-overlay">
                     <h3>Fibres Naturelles</h3>
                     <p>Vannerie et tissage artisanal</p>
-                    <a href="{{ url_for('catalogue', category='textile') }}" class="hero-card-btn">Explorer</a>
+                    <a href="{{ url_for('catalogue.catalogue', category='textile') }}" class="hero-card-btn">Explorer</a>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.artisans }}+</span>
+                <span class="stat-label">Artisans Partenaires</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.products }}+</span>
+                <span class="stat-label">References Produits</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.partners }}+</span>
+                <span class="stat-label">Clients B2B</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.countries }}</span>
+                <span class="stat-label">Pays Livres</span>
             </div>
         </div>
     </div>
@@ -40,52 +63,145 @@
 <section class="featured-section">
     <div class="container">
         <div class="section-header">
-            <h2>Nos Créations Phares</h2>
-            <p>Une sélection de pièces emblématiques de l'artisanat marocain</p>
+            <span class="section-label">Notre Selection</span>
+            <h2>Nos Creations Phares</h2>
+            <p>Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain. Chaque creation est le fruit d'un savoir-faire ancestral transmis de generation en generation.</p>
         </div>
-        <div class="products-grid-modern">
-            <div class="product-card-large">
-                <img src="{{ url_for('static', filename='images/moroccan_artisan_han_11a3ad05.jpg') }}" alt="Poterie Artisanale" class="product-card-image">
-                <div class="product-card-overlay">
+        
+        <div class="products-showcase">
+            <div class="showcase-main">
+                <img src="{{ url_for('static', filename='images/moroccan_artisan_han_11a3ad05.jpg') }}" alt="Poterie Artisanale" class="showcase-image">
+                <div class="showcase-content">
+                    <span class="showcase-category">Ceramique et Poterie</span>
                     <h3>Poterie Traditionnelle</h3>
-                    <a href="{{ url_for('catalogue', category='ceramique') }}" class="product-card-btn">Découvrir</a>
+                    <p>Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi. Chaque creation porte l'empreinte du maitre artisan qui l'a realisee.</p>
+                    <a href="{{ url_for('catalogue.catalogue', category='ceramique') }}" class="btn-explore">Decouvrir la Collection</a>
                 </div>
             </div>
             
-            {% for product in featured_products[1:5] %}
-            <div class="product-card-small">
-                <img src="{{ url_for('static', filename='images/moroccan_brass_craft_8cacf1dc.jpg') }}" alt="{{ product.name }}" class="product-card-image">
-                <div class="product-card-info">
-                    <h4>{{ product.name }}</h4>
-                    <p>{{ product.material }}</p>
+            <div class="showcase-grid">
+                {% for product in featured_products[:4] %}
+                <div class="showcase-item">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="showcase-item-image">
+                    <div class="showcase-item-info">
+                        <h4>{{ product.name }}</h4>
+                        <p>{{ product.material }}</p>
+                        <a href="{{ url_for('catalogue.product_detail', product_id=product.id) }}" class="showcase-link">Voir le produit</a>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
+        
         <div class="section-cta">
-            <a href="{{ url_for('catalogue') }}" class="btn-explore">Voir Toute la Collection</a>
+            <a href="{{ url_for('catalogue.catalogue') }}" class="btn-explore">Voir Toute la Collection</a>
         </div>
     </div>
 </section>
 
 <section class="values-section">
     <div class="container">
-        <div class="values-grid">
-            <div class="value-card">
-                <div class="value-icon">✦</div>
-                <h3>Authenticité</h3>
-                <p>Chaque pièce est créée à la main par des artisans marocains qualifiés, perpétuant des traditions séculaires transmises de génération en génération.</p>
+        <div class="section-header">
+            <span class="section-label">Nos Valeurs</span>
+            <h2>Authenticite, Ethique, Excellence</h2>
+            <p>Trois piliers fondamentaux qui guident notre approche du sourcing artisanal et notre relation avec les artisans marocains.</p>
+        </div>
+        
+        <div class="values-grid-expanded">
+            <div class="value-card-expanded">
+                <div class="value-header">
+                    <div class="value-icon-modern">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h3>Authenticite</h3>
+                </div>
+                <p class="value-description">Chaque piece est creee a la main par des artisans marocains qualifies, perpetuant des traditions seculaires transmises de generation en generation.</p>
+                <ul class="value-points">
+                    <li>Tracabilite complete de chaque produit</li>
+                    <li>Techniques traditionnelles preservees</li>
+                    <li>Materiaux locaux de qualite</li>
+                    <li>Certification d'origine artisanale</li>
+                </ul>
             </div>
-            <div class="value-card">
-                <div class="value-icon">◐</div>
-                <h3>Éthique</h3>
-                <p>Nous collaborons directement avec les artisans locaux pour garantir des pratiques équitables et soutenir les communautés créatrices.</p>
+            
+            <div class="value-card-expanded">
+                <div class="value-header">
+                    <div class="value-icon-modern">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
+                    <h3>Ethique</h3>
+                </div>
+                <p class="value-description">Nous collaborons directement avec les artisans locaux pour garantir des pratiques equitables et soutenir les communautes creatrices.</p>
+                <ul class="value-points">
+                    <li>Commerce equitable garanti</li>
+                    <li>Remuneration juste des artisans</li>
+                    <li>Soutien aux cooperatives locales</li>
+                    <li>Respect des conditions de travail</li>
+                </ul>
             </div>
-            <div class="value-card">
-                <div class="value-icon">◇</div>
-                <h3>Excellence</h3>
-                <p>Une sélection rigoureuse de créations uniques alliant esthétique contemporaine et savoir-faire traditionnel d'exception.</p>
+            
+            <div class="value-card-expanded">
+                <div class="value-header">
+                    <div class="value-icon-modern">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <h3>Excellence</h3>
+                </div>
+                <p class="value-description">Une selection rigoureuse de creations uniques alliant esthetique contemporaine et savoir-faire traditionnel d'exception.</p>
+                <ul class="value-points">
+                    <li>Controle qualite systematique</li>
+                    <li>Selection des meilleurs artisans</li>
+                    <li>Finitions irreprochables</li>
+                    <li>Standards internationaux</li>
+                </ul>
             </div>
+        </div>
+    </div>
+</section>
+
+<section class="process-overview">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Notre Methode</span>
+            <h2>Un Processus Eprouve</h2>
+            <p>De la selection a la livraison, nous assurons un accompagnement complet pour garantir votre satisfaction.</p>
+        </div>
+        
+        <div class="process-steps-home">
+            <div class="process-step-home">
+                <div class="step-icon">01</div>
+                <h4>Decouverte</h4>
+                <p>Analyse de vos besoins et definition du cahier des charges.</p>
+            </div>
+            <div class="process-connector"></div>
+            <div class="process-step-home">
+                <div class="step-icon">02</div>
+                <h4>Selection</h4>
+                <p>Identification des artisans et produits correspondants.</p>
+            </div>
+            <div class="process-connector"></div>
+            <div class="process-step-home">
+                <div class="step-icon">03</div>
+                <h4>Production</h4>
+                <p>Fabrication artisanale avec suivi qualite rigoureux.</p>
+            </div>
+            <div class="process-connector"></div>
+            <div class="process-step-home">
+                <div class="step-icon">04</div>
+                <h4>Livraison</h4>
+                <p>Expedition soignee et livraison dans les delais.</p>
+            </div>
+        </div>
+        
+        <div class="section-cta">
+            <a href="{{ url_for('business.processus') }}" class="btn-secondary">Decouvrir Notre Processus</a>
         </div>
     </div>
 </section>
@@ -106,11 +222,13 @@
 
 <section class="testimonials-section">
     <div class="container">
-        <h2 class="testimonials-title">Ce Que Disent Nos Clients</h2>
+        <div class="section-header">
+            <span class="section-label">Temoignages</span>
+            <h2>Ce Que Disent Nos Clients</h2>
+        </div>
         <div class="testimonials-grid">
-            <button class="testimonial-arrow prev">←</button>
             <div class="testimonial-card">
-                <p class="testimonial-text">La qualité des produits Capsule est exceptionnelle. Chaque pièce raconte une histoire et reflète un savoir-faire unique. Nos clients adorent l'authenticité de ces créations.</p>
+                <p class="testimonial-text">La qualite des produits Capsule est exceptionnelle. Chaque piece raconte une histoire et reflete un savoir-faire unique. Nos clients adorent l'authenticite de ces creations.</p>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">
                         <img src="{{ url_for('static', filename='images/avatar1.jpg') }}" alt="Sarah Chen">
@@ -123,18 +241,43 @@
             </div>
             
             <div class="testimonial-card">
-                <p class="testimonial-text">Un partenariat formidable. Capsule nous permet d'offrir à nos clients des pièces artisanales authentiques avec une traçabilité complète. Le service est impeccable.</p>
+                <p class="testimonial-text">Un partenariat formidable. Capsule nous permet d'offrir a nos clients des pieces artisanales authentiques avec une tracabilite complete. Le service est impeccable.</p>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">
                         <img src="{{ url_for('static', filename='images/avatar2.jpg') }}" alt="Marc Dubois">
                     </div>
                     <div>
                         <h4>Marc Dubois</h4>
-                        <p>Architecte d'intérieur</p>
+                        <p>Architecte d'interieur</p>
                     </div>
                 </div>
             </div>
-            <button class="testimonial-arrow next">→</button>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">Excellente reactivite et produits conformes a nos attentes. Capsule comprend parfaitement les exigences du secteur hotelier haut de gamme.</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">
+                        <img src="{{ url_for('static', filename='images/avatar1.jpg') }}" alt="Julie Martin">
+                    </div>
+                    <div>
+                        <h4>Julie Martin</h4>
+                        <p>Directrice Achats, Groupe Hotelier</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content-large">
+            <h2>Pret a Integrer l'Artisanat Marocain dans Vos Projets ?</h2>
+            <p>Contactez notre equipe pour discuter de vos besoins et recevoir une proposition personnalisee.</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('main.contact') }}" class="btn-primary-large">Nous Contacter</a>
+                <a href="{{ url_for('catalogue.catalogue') }}" class="btn-secondary-large">Voir le Catalogue</a>
+            </div>
         </div>
     </div>
 </section>
@@ -142,10 +285,10 @@
 <section class="newsletter-section">
     <div class="container">
         <div class="newsletter-content">
-            <h2>Restez Inspirés</h2>
-            <p>Recevez en avant-première nos nouvelles collections et inspirations artisanales</p>
+            <h2>Restez Informes</h2>
+            <p>Recevez en avant-premiere nos nouvelles collections et actualites du monde de l'artisanat marocain</p>
             <form class="newsletter-form" id="newsletterForm">
-                <input type="email" placeholder="Votre adresse email" class="newsletter-input" required>
+                <input type="email" placeholder="Votre adresse email professionnelle" class="newsletter-input" required>
                 <button type="submit" class="newsletter-btn">S'inscrire</button>
             </form>
         </div>

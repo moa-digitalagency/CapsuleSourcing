@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Partenariats - Capsule{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Partenariats</h1>
+        <p>Des collaborations sur mesure pour valoriser l'artisanat marocain</p>
+    </div>
+</section>
+
+<section class="partnerships-intro">
+    <div class="container">
+        <div class="intro-content">
+            <h2>Construisons Ensemble</h2>
+            <p>Que vous soyez distributeur, hotelier, architecte ou marque, Capsule vous propose des formules de partenariat adaptees a votre activite et vos ambitions.</p>
+        </div>
+    </div>
+</section>
+
+<section class="partnerships-types">
+    <div class="container">
+        <div class="partnerships-grid">
+            {% for partnership in partnership_types %}
+            <div class="partnership-card">
+                <h3>{{ partnership.title }}</h3>
+                <p class="partnership-desc">{{ partnership.description }}</p>
+                <ul class="partnership-benefits">
+                    {% for benefit in partnership.benefits %}
+                    <li>{{ benefit }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('main.contact') }}" class="btn-secondary">En Savoir Plus</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="partnerships-process">
+    <div class="container">
+        <h2>Comment Devenir Partenaire</h2>
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h4>Premier Contact</h4>
+                <p>Presentez-nous votre projet et vos attentes lors d'un premier echange.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h4>Proposition</h4>
+                <p>Nous elaborons une offre personnalisee adaptee a vos besoins.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h4>Collaboration</h4>
+                <p>Demarrage du partenariat avec un accompagnement dedie.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="partnerships-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Interessé par un Partenariat ?</h2>
+            <p>Discutons de votre projet et explorons ensemble les possibilites de collaboration.</p>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">Proposer un Partenariat</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

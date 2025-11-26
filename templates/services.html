@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Nos Services - Capsule{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Nos Services</h1>
+        <p>Un accompagnement complet pour integrer l'artisanat marocain dans vos projets</p>
+    </div>
+</section>
+
+<section class="services-intro">
+    <div class="container">
+        <div class="intro-content">
+            <h2>Votre Partenaire Sourcing</h2>
+            <p>Capsule vous accompagne a chaque etape de votre projet, de la selection des produits a la livraison finale. Notre expertise du terrain marocain et notre reseau d'artisans qualifies vous garantissent des produits authentiques et de qualite.</p>
+        </div>
+    </div>
+</section>
+
+<section class="services-grid-section">
+    <div class="container">
+        <div class="services-grid">
+            {% for service in services %}
+            <div class="service-card">
+                <div class="service-icon">
+                    {% if service.icon == 'search' %}
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    {% elif service.icon == 'check' %}
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    {% elif service.icon == 'truck' %}
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    {% elif service.icon == 'users' %}
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    {% endif %}
+                </div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="services-features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item">
+                <h3>Reactivite</h3>
+                <p>Reponse sous 24h a toutes vos demandes et devis personnalises sous 48h.</p>
+            </div>
+            <div class="feature-item">
+                <h3>Transparence</h3>
+                <p>Suivi en temps reel de votre commande et communication directe avec notre equipe.</p>
+            </div>
+            <div class="feature-item">
+                <h3>Flexibilite</h3>
+                <p>Adaptation a vos contraintes de volume, delais et specifications techniques.</p>
+            </div>
+            <div class="feature-item">
+                <h3>Garantie</h3>
+                <p>Remplacement ou remboursement en cas de non-conformite a votre commande.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Pret a Demarrer Votre Projet ?</h2>
+            <p>Contactez-nous pour discuter de vos besoins et recevoir une proposition sur mesure.</p>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">Nous Contacter</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

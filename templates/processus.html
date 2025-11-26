@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Notre Processus - Capsule{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Notre Processus</h1>
+        <p>Une methodologie eprouvee pour garantir qualite et satisfaction</p>
+    </div>
+</section>
+
+<section class="process-intro">
+    <div class="container">
+        <div class="intro-content">
+            <h2>De la Commande a la Livraison</h2>
+            <p>Notre processus structure vous assure une experience fluide et transparente, du premier contact jusqu'a la reception de vos produits.</p>
+        </div>
+    </div>
+</section>
+
+<section class="process-timeline">
+    <div class="container">
+        <div class="timeline">
+            {% for step in steps %}
+            <div class="timeline-item">
+                <div class="timeline-number">{{ step.number }}</div>
+                <div class="timeline-content">
+                    <h3>{{ step.title }}</h3>
+                    <p>{{ step.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="process-guarantees">
+    <div class="container">
+        <h2>Nos Engagements</h2>
+        <div class="guarantees-grid">
+            <div class="guarantee-item">
+                <h4>Delais Respectes</h4>
+                <p>Planning de production detaille avec jalons de validation.</p>
+            </div>
+            <div class="guarantee-item">
+                <h4>Qualite Controlee</h4>
+                <p>Inspection systematique avant expedition selon vos criteres.</p>
+            </div>
+            <div class="guarantee-item">
+                <h4>Traçabilite Complete</h4>
+                <p>Documentation de chaque etape de fabrication et transport.</p>
+            </div>
+            <div class="guarantee-item">
+                <h4>Support Continu</h4>
+                <p>Interlocuteur dedie disponible tout au long du projet.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="process-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Pret a Lancer Votre Projet ?</h2>
+            <p>Contactez-nous pour demarrer le processus et recevoir votre premiere proposition.</p>
+            <a href="{{ url_for('main.contact') }}" class="btn-primary">Demarrer un Projet</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
