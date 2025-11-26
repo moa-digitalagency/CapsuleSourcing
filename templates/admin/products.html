@@ -10,15 +10,23 @@
 
 <div class="card" style="margin-bottom: 20px;">
     <p style="color: #666; font-size: 0.9rem;">
-        Gerez vos produits en galerie. Chaque produit sera affiche avec un numero et un bouton WhatsApp "Ca m'interesse".
+        Gerez vos produits en galerie. Cliquez sur l'etoile pour mettre un produit en vedette sur la page d'accueil.
     </p>
+</div>
+
+<div class="featured-products-summary" style="margin-bottom: 20px; padding: 15px; background: #fff8e6; border-radius: 8px; border-left: 4px solid #f59e0b;">
+    <strong style="color: #92400e;">Produits en vedette:</strong> 
+    <span id="featured-count">{{ products|selectattr('is_featured')|list|length }}</span> produit(s) affiches sur l'accueil
 </div>
 
 <div class="admin-gallery-grid">
     {% for product in products %}
-    <div class="admin-gallery-item">
+    <div class="admin-gallery-item {% if product.is_featured %}is-featured{% endif %}">
         <div class="admin-gallery-image">
             <span class="admin-product-number">#{{ loop.index }}</span>
+            {% if product.is_featured %}
+            <span class="featured-badge">VEDETTE</span>
+            {% endif %}
             {% if product.image %}
             <img src="{{ product.image }}" alt="Produit {{ loop.index }}">
             {% else %}
@@ -26,6 +34,13 @@
             {% endif %}
         </div>
         <div class="admin-gallery-actions">
+            <form action="{{ url_for('admin.toggle_featured', id=product.id) }}" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-star {% if product.is_featured %}active{% endif %}" title="{% if product.is_featured %}Retirer des vedettes{% else %}Mettre en vedette{% endif %}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if product.is_featured %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </button>
+            </form>
             <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-secondary btn-sm">Modifier</a>
             <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Supprimer ce produit ?')">
                 <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
@@ -51,6 +66,12 @@
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.admin-gallery-item.is-featured {
+    border: 2px solid #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
 }
 
 .admin-gallery-image {
@@ -78,6 +99,20 @@
     z-index: 1;
 }
 
+.featured-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    z-index: 1;
+}
+
 .admin-image-placeholder {
     width: 100%;
     height: 100%;
@@ -93,11 +128,46 @@
     display: flex;
     gap: 8px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .admin-gallery-actions .btn-sm {
     font-size: 0.75rem;
     padding: 6px 12px;
+}
+
+.btn-star {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-star:hover {
+    background: #fff8e6;
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.btn-star.active {
+    background: #fff8e6;
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.btn-danger {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.btn-danger:hover {
+    background: #fecaca;
 }
 </style>
 {% endblock %}

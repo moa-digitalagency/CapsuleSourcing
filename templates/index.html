@@ -68,12 +68,12 @@
             <p>{{ content.featured.description if content and content.featured else "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain. Chaque creation est le fruit d'un savoir-faire ancestral transmis de generation en generation." }}</p>
         </div>
         
+        {% if featured_products|length > 0 %}
         <div class="vedette-grid">
-            {% if highlights|length > 0 %}
             <div class="vedette-main">
                 <div class="vedette-main-image">
-                    {% if highlights[0].image %}
-                    <img src="{{ highlights[0].image }}" alt="{{ highlights[0].title }}">
+                    {% if featured_products[0].image %}
+                    <img src="{{ featured_products[0].image }}" alt="Produit vedette">
                     {% else %}
                     <div class="vedette-placeholder">
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -85,22 +85,19 @@
                     {% endif %}
                 </div>
                 <div class="vedette-main-content">
-                    {% if highlights[0].badge %}
-                    <span class="vedette-badge">{{ highlights[0].badge }}</span>
-                    {% endif %}
-                    <h3 class="vedette-main-title">{{ highlights[0].title }}</h3>
-                    <p class="vedette-main-desc">{{ highlights[0].subtitle }}</p>
-                    <a href="{{ highlights[0].link or '/catalogue' }}" class="vedette-main-btn">{{ highlights[0].link_text or 'Decouvrir la Collection' }}</a>
+                    <span class="vedette-badge">VEDETTE</span>
+                    <h3 class="vedette-main-title">{{ featured_products[0].name or 'Artisanat Marocain' }}</h3>
+                    <p class="vedette-main-desc">{{ featured_products[0].description[:150] + '...' if featured_products[0].description and featured_products[0].description|length > 150 else (featured_products[0].description or 'Piece unique faconnee a la main par nos artisans') }}</p>
+                    <a href="{{ url_for('catalogue.catalogue') }}#produit-{{ featured_products[0].id }}" class="vedette-main-btn">Decouvrir</a>
                 </div>
             </div>
-            {% endif %}
             
             <div class="vedette-cards">
-                {% for highlight in highlights[1:5] %}
+                {% for product in featured_products[1:5] %}
                 <div class="vedette-card">
                     <div class="vedette-card-image">
-                        {% if highlight.image %}
-                        <img src="{{ highlight.image }}" alt="{{ highlight.title }}">
+                        {% if product.image %}
+                        <img src="{{ product.image }}" alt="Produit vedette">
                         {% else %}
                         <div class="vedette-placeholder-small">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -112,14 +109,20 @@
                         {% endif %}
                     </div>
                     <div class="vedette-card-content">
-                        <h4 class="vedette-card-title">{{ highlight.title }}</h4>
-                        <p class="vedette-card-subtitle">{{ highlight.subtitle }}</p>
-                        <a href="{{ highlight.link or '/catalogue' }}" class="vedette-card-link">{{ highlight.link_text or 'Voir le produit' }}</a>
+                        <h4 class="vedette-card-title">{{ product.name or 'Produit Artisanal' }}</h4>
+                        <p class="vedette-card-subtitle">{{ product.material or 'Artisanat marocain' }}</p>
+                        <a href="{{ url_for('catalogue.catalogue') }}#produit-{{ product.id }}" class="vedette-card-link">Voir le produit</a>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
+        {% else %}
+        <div class="no-featured-products" style="text-align: center; padding: 60px 20px; color: #666;">
+            <p>Aucun produit en vedette pour le moment.</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">Ajoutez des produits en vedette depuis le panel admin.</p>
+        </div>
+        {% endif %}
         
         <div class="section-cta">
             <a href="{{ url_for('catalogue.catalogue') }}" class="btn-explore">{{ content.featured.cta_button if content and content.featured else "Voir Toute la Collection" }}</a>

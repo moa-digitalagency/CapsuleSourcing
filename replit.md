@@ -213,6 +213,13 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Modifications Recentes
 
+### 26/11/2025: Produits Vedettes et Gestion Hero
+- Bouton etoile pour mettre/retirer des produits en vedette dans l'admin
+- Section vedette sur l'accueil affiche les produits marques comme vedettes
+- Selection de produits du catalogue pour les images du hero
+- Bouton supprimer pour chaque produit dans l'admin
+- Badge "VEDETTE" visible sur les produits en vedette dans l'admin
+
 ### 26/11/2025: Catalogue Galerie Simplifie
 - Nouveau format galerie pour le catalogue avec numerotation des produits (#1, #2, etc.)
 - Bouton WhatsApp "Ca m'interesse" sur chaque produit qui envoie le lien du produit

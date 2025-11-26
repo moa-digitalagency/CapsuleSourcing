@@ -33,6 +33,16 @@
                 <img src="{{ hero.main_image }}" alt="" class="image-preview">
             </div>
             {% endif %}
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Choisir un produit du catalogue :</p>
+            <select name="main_product_id" class="form-control" style="margin-bottom: 10px;" onchange="updateImagePreview(this, 'main')">
+                <option value="">-- Aucun produit selectionne --</option>
+                {% for product in products %}
+                <option value="{{ product.id }}" data-image="{{ product.image }}" {% if hero.main_image == product.image %}selected{% endif %}>
+                    #{{ loop.index }} - {{ product.name[:40] }}{% if product.name|length > 40 %}...{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            <p style="font-size: 0.85rem; color: #666; margin: 10px 0;">Ou telecharger une image :</p>
             <div class="file-input-wrapper">
                 <div class="file-input-label">Telecharger une image</div>
                 <input type="file" name="main_image" accept="image/*">
@@ -61,6 +71,16 @@
                 <img src="{{ hero.card1_image }}" alt="" class="image-preview" style="max-width: 100px;">
             </div>
             {% endif %}
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Choisir un produit du catalogue :</p>
+            <select name="card1_product_id" class="form-control" style="margin-bottom: 10px;">
+                <option value="">-- Aucun produit selectionne --</option>
+                {% for product in products %}
+                <option value="{{ product.id }}" data-image="{{ product.image }}" {% if hero.card1_image == product.image %}selected{% endif %}>
+                    #{{ loop.index }} - {{ product.name[:40] }}{% if product.name|length > 40 %}...{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            <p style="font-size: 0.85rem; color: #666; margin: 10px 0;">Ou telecharger :</p>
             <div class="file-input-wrapper">
                 <div class="file-input-label">Telecharger</div>
                 <input type="file" name="card1_image" accept="image/*">
@@ -89,6 +109,16 @@
                 <img src="{{ hero.card2_image }}" alt="" class="image-preview" style="max-width: 100px;">
             </div>
             {% endif %}
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Choisir un produit du catalogue :</p>
+            <select name="card2_product_id" class="form-control" style="margin-bottom: 10px;">
+                <option value="">-- Aucun produit selectionne --</option>
+                {% for product in products %}
+                <option value="{{ product.id }}" data-image="{{ product.image }}" {% if hero.card2_image == product.image %}selected{% endif %}>
+                    #{{ loop.index }} - {{ product.name[:40] }}{% if product.name|length > 40 %}...{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            <p style="font-size: 0.85rem; color: #666; margin: 10px 0;">Ou telecharger :</p>
             <div class="file-input-wrapper">
                 <div class="file-input-label">Telecharger</div>
                 <input type="file" name="card2_image" accept="image/*">

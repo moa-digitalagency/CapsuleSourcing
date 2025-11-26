@@ -125,6 +125,21 @@ def delete_product(id):
     return redirect(url_for('admin.products'))
 
 
+@admin_bp.route('/products/<int:id>/toggle-featured', methods=['POST'])
+@require_admin
+def toggle_featured(id):
+    from app import db
+    from models.database import ProductDB
+    product = ProductDB.query.get_or_404(id)
+    product.is_featured = not product.is_featured
+    db.session.commit()
+    if product.is_featured:
+        flash('Produit ajoute aux vedettes', 'success')
+    else:
+        flash('Produit retire des vedettes', 'success')
+    return redirect(url_for('admin.products'))
+
+
 @admin_bp.route('/categories')
 @require_admin
 def categories():
@@ -483,7 +498,7 @@ def delete_testimonial(id):
 @require_admin
 def homepage():
     from app import db
-    from models.database import HeroSection, HomepageStats
+    from models.database import HeroSection, HomepageStats, ProductDB
     hero = HeroSection.query.first()
     if not hero:
         hero = HeroSection()
@@ -496,14 +511,16 @@ def homepage():
         db.session.add(stats)
         db.session.commit()
     
-    return render_template('admin/homepage.html', hero=hero, stats=stats)
+    products = ProductDB.query.order_by(ProductDB.order).all()
+    
+    return render_template('admin/homepage.html', hero=hero, stats=stats, products=products)
 
 
 @admin_bp.route('/homepage/hero', methods=['POST'])
 @require_admin
 def update_hero():
     from app import db
-    from models.database import HeroSection
+    from models.database import HeroSection, ProductDB
     from utils.image_processor import process_image_for_type
     hero = HeroSection.query.first()
     if not hero:
@@ -519,6 +536,18 @@ def update_hero():
     hero.card2_title = request.form.get('card2_title', hero.card2_title)
     hero.card2_subtitle = request.form.get('card2_subtitle', hero.card2_subtitle)
     hero.card2_link = request.form.get('card2_link', hero.card2_link)
+    
+    product_fields = {
+        'main_product_id': 'main_image',
+        'card1_product_id': 'card1_image',
+        'card2_product_id': 'card2_image'
+    }
+    for product_field, image_field in product_fields.items():
+        product_id = request.form.get(product_field)
+        if product_id:
+            product = ProductDB.query.get(int(product_id))
+            if product and product.image:
+                setattr(hero, image_field, product.image)
     
     image_types = {'main_image': 'hero_main', 'card1_image': 'hero_card', 'card2_image': 'hero_card'}
     for field, img_type in image_types.items():
