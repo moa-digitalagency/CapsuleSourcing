@@ -847,12 +847,13 @@ def featured_highlights():
     
     highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
     
-    if len(highlights) < 4:
+    if len(highlights) < 5:
         default_data = [
-            {'slot': 1, 'title': 'Ceramique & Poterie', 'subtitle': 'Pieces uniques de Fes et Safi', 'badge': 'Collection', 'link': '/catalogue?category=ceramique'},
-            {'slot': 2, 'title': 'Maroquinerie', 'subtitle': 'Cuir tanne traditionnellement', 'badge': 'Artisanat', 'link': '/catalogue?category=cuir'},
-            {'slot': 3, 'title': 'Ebenisterie', 'subtitle': 'Bois sculpte et peint a la main', 'badge': 'Artisanat', 'link': '/catalogue?category=mobilier'},
-            {'slot': 4, 'title': 'Dinanderie', 'subtitle': 'Travail du cuivre et laiton', 'badge': 'Artisanat', 'link': '/catalogue?category=metal'},
+            {'slot': 1, 'title': 'Poterie Traditionnelle', 'subtitle': 'Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi.', 'badge': 'CERAMIQUE ET POTERIE', 'link': '/catalogue?category=ceramique', 'link_text': 'Decouvrir la Collection', 'image': '/static/images/moroccan_pottery_cer_26051764.jpg'},
+            {'slot': 2, 'title': 'Ex-voto en Laiton', 'subtitle': 'Laiton martele', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_craft_5197c08b.jpg'},
+            {'slot': 3, 'title': 'Miroirs Artisanaux', 'subtitle': 'Bois sculpte a la main', 'badge': '', 'link': '/catalogue?category=mobilier', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_woodwork_fu_74825e67.jpg'},
+            {'slot': 4, 'title': 'Mini Cadre Identite', 'subtitle': 'Laiton', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_craft_91c1b440.jpg'},
+            {'slot': 5, 'title': 'Solitore Mural en Laiton', 'subtitle': 'Laiton poli', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_metal_6cc61071.jpg'},
         ]
         existing_slots = [h.slot for h in highlights]
         for data in default_data:

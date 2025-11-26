@@ -63,20 +63,20 @@
 <section class="featured-section">
     <div class="container">
         <div class="section-header">
-            <span class="section-label">{{ content.featured.section_label if content and content.featured else "Notre Selection" }}</span>
+            <span class="section-label">{{ content.featured.section_label if content and content.featured else "NOTRE SELECTION" }}</span>
             <h2>{{ content.featured.title if content and content.featured else "Nos Creations Phares" }}</h2>
-            <p>{{ content.featured.description if content and content.featured else "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain." }}</p>
+            <p>{{ content.featured.description if content and content.featured else "Une selection rigoureuse de pieces emblematiques representant le meilleur de l'artisanat marocain. Chaque creation est le fruit d'un savoir-faire ancestral transmis de generation en generation." }}</p>
         </div>
         
-        <div class="featured-highlights-grid">
-            {% for highlight in highlights[:4] %}
-            <div class="featured-highlight-card">
-                <div class="featured-highlight-image">
-                    {% if highlight.image %}
-                    <img src="{{ highlight.image }}" alt="{{ highlight.title }}">
+        <div class="vedette-grid">
+            {% if highlights|length > 0 %}
+            <div class="vedette-main">
+                <div class="vedette-main-image">
+                    {% if highlights[0].image %}
+                    <img src="{{ highlights[0].image }}" alt="{{ highlights[0].title }}">
                     {% else %}
-                    <div class="featured-highlight-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <div class="vedette-placeholder">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                             <circle cx="8.5" cy="8.5" r="1.5"/>
                             <polyline points="21 15 16 10 5 21"/>
@@ -84,33 +84,37 @@
                     </div>
                     {% endif %}
                 </div>
-                <div class="featured-highlight-overlay">
-                    <span class="featured-highlight-badge">{{ highlight.badge or 'Artisanat' }}</span>
-                    <h3>{{ highlight.title }}</h3>
-                    <p>{{ highlight.subtitle }}</p>
-                    <a href="{{ highlight.link or '/catalogue' }}" class="featured-highlight-btn">{{ highlight.link_text or 'Explorer' }}</a>
+                <div class="vedette-main-content">
+                    {% if highlights[0].badge %}
+                    <span class="vedette-badge">{{ highlights[0].badge }}</span>
+                    {% endif %}
+                    <h3 class="vedette-main-title">{{ highlights[0].title }}</h3>
+                    <p class="vedette-main-desc">{{ highlights[0].subtitle }}</p>
+                    <a href="{{ highlights[0].link or '/catalogue' }}" class="vedette-main-btn">{{ highlights[0].link_text or 'Decouvrir la Collection' }}</a>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-
-        <div class="featured-products-section">
-            <div class="featured-products-header">
-                <h3>Produits en Vedette</h3>
-                <p>Decouvrez notre selection de pieces d'exception</p>
-            </div>
-            <div class="featured-products-grid">
-                {% for product in featured_products[:6] %}
-                <div class="featured-product-card">
-                    <div class="featured-product-image">
-                        <img src="{{ product.image }}" alt="{{ product.name }}">
-                        <div class="featured-product-badge">En Vedette</div>
+            {% endif %}
+            
+            <div class="vedette-cards">
+                {% for highlight in highlights[1:5] %}
+                <div class="vedette-card">
+                    <div class="vedette-card-image">
+                        {% if highlight.image %}
+                        <img src="{{ highlight.image }}" alt="{{ highlight.title }}">
+                        {% else %}
+                        <div class="vedette-placeholder-small">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                        {% endif %}
                     </div>
-                    <div class="featured-product-info">
-                        <span class="featured-product-category">{{ product.category_id|title if product.category_id else 'Artisanat' }}</span>
-                        <h4>{{ product.name }}</h4>
-                        <p class="featured-product-material">{{ product.material }}</p>
-                        <a href="{{ url_for('catalogue.product_detail', product_id=product.id) }}" class="featured-product-link">Voir le produit</a>
+                    <div class="vedette-card-content">
+                        <h4 class="vedette-card-title">{{ highlight.title }}</h4>
+                        <p class="vedette-card-subtitle">{{ highlight.subtitle }}</p>
+                        <a href="{{ highlight.link or '/catalogue' }}" class="vedette-card-link">{{ highlight.link_text or 'Voir le produit' }}</a>
                     </div>
                 </div>
                 {% endfor %}

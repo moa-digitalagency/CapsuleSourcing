@@ -21,22 +21,24 @@ def index():
     process_steps = ProcessStep.query.order_by(ProcessStep.order).limit(4).all()
     contact_info = ContactInfo.query.first()
     
-    highlights = FeaturedHighlight.query.filter_by(is_active=True).order_by(FeaturedHighlight.slot).all()
+    all_highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
     
-    if len(highlights) < 4:
+    if len(all_highlights) < 5:
         default_data = [
-            {'slot': 1, 'title': 'Ceramique & Poterie', 'subtitle': 'Pieces uniques de Fes et Safi', 'badge': 'Collection', 'link': '/catalogue?category=ceramique', 'image': '/static/images/moroccan_pottery_cer_26051764.jpg'},
-            {'slot': 2, 'title': 'Maroquinerie', 'subtitle': 'Cuir tanne traditionnellement', 'badge': 'Artisanat', 'link': '/catalogue?category=cuir', 'image': '/static/images/moroccan_leather_cra_5f8fd31d.jpg'},
-            {'slot': 3, 'title': 'Ebenisterie', 'subtitle': 'Bois sculpte et peint a la main', 'badge': 'Artisanat', 'link': '/catalogue?category=mobilier', 'image': '/static/images/moroccan_woodwork_fu_74825e67.jpg'},
-            {'slot': 4, 'title': 'Dinanderie', 'subtitle': 'Travail du cuivre et laiton', 'badge': 'Artisanat', 'link': '/catalogue?category=metal', 'image': '/static/images/moroccan_brass_metal_4be139c4.jpg'},
+            {'slot': 1, 'title': 'Poterie Traditionnelle', 'subtitle': 'Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi. Chaque creation porte l\'empreinte du maitre artisan qui l\'a realisee.', 'badge': 'CERAMIQUE ET POTERIE', 'link': '/catalogue?category=ceramique', 'link_text': 'Decouvrir la Collection', 'image': '/static/images/moroccan_pottery_cer_26051764.jpg', 'is_active': True},
+            {'slot': 2, 'title': 'Ex-voto en Laiton', 'subtitle': 'Laiton martele', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_craft_5197c08b.jpg', 'is_active': True},
+            {'slot': 3, 'title': 'Miroirs Artisanaux', 'subtitle': 'Bois sculpte a la main', 'badge': '', 'link': '/catalogue?category=mobilier', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_woodwork_fu_74825e67.jpg', 'is_active': True},
+            {'slot': 4, 'title': 'Mini Cadre Identite', 'subtitle': 'Laiton', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_craft_91c1b440.jpg', 'is_active': True},
+            {'slot': 5, 'title': 'Solitore Mural en Laiton', 'subtitle': 'Laiton poli', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_metal_6cc61071.jpg', 'is_active': True},
         ]
-        existing_slots = [h.slot for h in highlights]
+        existing_slots = [h.slot for h in all_highlights]
         for data in default_data:
             if data['slot'] not in existing_slots:
                 highlight = FeaturedHighlight(**data)
                 db.session.add(highlight)
         db.session.commit()
-        highlights = FeaturedHighlight.query.filter_by(is_active=True).order_by(FeaturedHighlight.slot).limit(4).all()
+    
+    highlights = FeaturedHighlight.query.filter_by(is_active=True).order_by(FeaturedHighlight.slot).limit(5).all()
     
     content = get_page_content('index')
     

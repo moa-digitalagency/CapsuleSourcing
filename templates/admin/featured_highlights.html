@@ -1,70 +1,127 @@
 {% extends "admin/base.html" %}
 
-{% block title %}Nos Creations Phares - Admin Capsule{% endblock %}
+{% block title %}Section Vedette - Admin Capsule{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1 class="page-title">Nos Creations Phares</h1>
+    <h1 class="page-title">Section Vedette</h1>
 </div>
 
 <div class="card">
     <p style="margin-bottom: 20px; color: #666;">
-        Gerez les 4 elements mis en avant sur la page d'accueil. Chaque element peut avoir son image, titre et lien personnalises.
+        Gerez les 5 elements de la section "Nos Creations Phares" sur la page d'accueil. 
+        L'element 1 est le bloc principal (grand a gauche), les elements 2 a 5 sont les petites cartes produits a droite.
     </p>
     
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
-        {% for highlight in highlights %}
-        <div style="border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fafafa;">
-            <div style="height: 180px; background: #e5e5e5; position: relative;">
-                {% if highlight.image %}
-                <img src="{{ highlight.image }}" alt="{{ highlight.title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                {% else %}
-                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                        <circle cx="8.5" cy="8.5" r="1.5"/>
-                        <polyline points="21 15 16 10 5 21"/>
-                    </svg>
+    <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 1rem; color: #8B7355; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.1em;">Bloc Principal (Gauche)</h3>
+        {% for highlight in highlights[:1] %}
+        <div style="border: 2px solid #8B7355; border-radius: 16px; overflow: hidden; background: #fafafa;">
+            <div style="display: grid; grid-template-columns: 300px 1fr; gap: 0;">
+                <div style="height: 220px; background: #e5e5e5; position: relative;">
+                    {% if highlight.image %}
+                    <img src="{{ highlight.image }}" alt="{{ highlight.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    <span style="position: absolute; top: 10px; left: 10px; background: #8B7355; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                        PRINCIPAL
+                    </span>
+                    {% if not highlight.is_active %}
+                    <span style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">
+                        Inactif
+                    </span>
+                    {% endif %}
                 </div>
-                {% endif %}
-                <span style="position: absolute; top: 10px; left: 10px; background: #8B7355; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">
-                    Slot {{ highlight.slot }}
-                </span>
-                {% if not highlight.is_active %}
-                <span style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">
-                    Inactif
-                </span>
-                {% endif %}
-            </div>
-            <div style="padding: 16px;">
-                <div style="font-size: 0.75rem; color: #8B7355; margin-bottom: 4px;">{{ highlight.badge }}</div>
-                <h3 style="font-size: 1.1rem; margin-bottom: 6px; color: #1a1a1a;">{{ highlight.title }}</h3>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 12px;">{{ highlight.subtitle or 'Aucune description' }}</p>
-                <a href="{{ url_for('admin.edit_featured_highlight', id=highlight.id) }}" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                    Modifier
-                </a>
+                <div style="padding: 24px; display: flex; flex-direction: column; justify-content: center;">
+                    {% if highlight.badge %}
+                    <div style="font-size: 0.7rem; color: #8B7355; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.15em;">{{ highlight.badge }}</div>
+                    {% endif %}
+                    <h3 style="font-size: 1.4rem; margin-bottom: 8px; color: #1a1a1a;">{{ highlight.title }}</h3>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 16px; line-height: 1.6;">{{ highlight.subtitle or 'Aucune description' }}</p>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="{{ url_for('admin.edit_featured_highlight', id=highlight.id) }}" class="btn btn-primary btn-sm">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Modifier
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
+    </div>
+    
+    <div>
+        <h3 style="font-size: 1rem; color: #666; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.1em;">Cartes Produits (Droite - 2x2)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            {% for highlight in highlights[1:5] %}
+            <div style="border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fafafa;">
+                <div style="height: 160px; background: #e5e5e5; position: relative;">
+                    {% if highlight.image %}
+                    <img src="{{ highlight.image }}" alt="{{ highlight.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    <span style="position: absolute; top: 8px; left: 8px; background: #666; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 500;">
+                        Slot {{ highlight.slot }}
+                    </span>
+                    {% if not highlight.is_active %}
+                    <span style="position: absolute; top: 8px; right: 8px; background: #dc3545; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 0.65rem;">
+                        Inactif
+                    </span>
+                    {% endif %}
+                </div>
+                <div style="padding: 14px;">
+                    <h4 style="font-size: 1rem; margin-bottom: 4px; color: #1a1a1a;">{{ highlight.title }}</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">{{ highlight.subtitle or 'Aucune description' }}</p>
+                    <a href="{{ url_for('admin.edit_featured_highlight', id=highlight.id) }}" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Modifier
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
 <div class="card" style="margin-top: 20px;">
     <div class="card-title">A propos de cette section</div>
+    <p style="color: #666; line-height: 1.6; margin-bottom: 16px;">
+        La section "Nos Creations Phares" affiche 5 elements sur la page d'accueil avec un design asymetrique :
+    </p>
+    <ul style="margin-left: 20px; color: #666; line-height: 1.8; margin-bottom: 16px;">
+        <li><strong>Bloc Principal (Slot 1)</strong> - Grand bloc a gauche avec image, categorie, titre, description longue et bouton "Decouvrir la Collection"</li>
+        <li><strong>Cartes Produits (Slots 2-5)</strong> - 4 petites cartes a droite (grille 2x2) avec image, titre, sous-titre et lien "Voir le produit"</li>
+    </ul>
     <p style="color: #666; line-height: 1.6;">
-        Ces 4 elements apparaissent dans la section "Nos Creations Phares" sur la page d'accueil. 
-        Vous pouvez personnaliser chaque element avec :
+        Pour chaque element vous pouvez personnaliser :
     </p>
     <ul style="margin-top: 12px; margin-left: 20px; color: #666; line-height: 1.8;">
-        <li><strong>Une image</strong> - Format recommande 500x400px</li>
-        <li><strong>Un badge</strong> - Ex: "Collection", "Artisanat", "Nouveaute"</li>
-        <li><strong>Un titre</strong> - Le nom de la categorie ou du produit</li>
-        <li><strong>Une description</strong> - Court texte explicatif</li>
-        <li><strong>Un lien</strong> - Vers le catalogue ou une page specifique</li>
+        <li><strong>Image</strong> - Format recommande: 800x600px pour le bloc principal, 400x300px pour les cartes</li>
+        <li><strong>Badge/Categorie</strong> - Texte affiche au-dessus du titre (ex: "CERAMIQUE ET POTERIE")</li>
+        <li><strong>Titre</strong> - Nom du produit ou de la collection</li>
+        <li><strong>Description</strong> - Texte descriptif (plus long pour le bloc principal)</li>
+        <li><strong>Lien</strong> - URL de destination quand on clique</li>
+        <li><strong>Texte du bouton</strong> - "Decouvrir la Collection" ou "Voir le produit"</li>
     </ul>
 </div>
 {% endblock %}

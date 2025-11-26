@@ -2324,7 +2324,7 @@ main {
     transform: translateX(3px);
 }
 
-/* Featured Highlights Grid - 4 Elements */
+/* Featured Highlights Grid - 4 Elements (Legacy) */
 .featured-highlights-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -2332,6 +2332,253 @@ main {
     margin-bottom: 60px;
 }
 
+/* Section Vedette - New Design with 1 Main + 4 Small Cards */
+.vedette-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.vedette-main {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 550px;
+    display: flex;
+    flex-direction: column;
+}
+
+.vedette-main-image {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.vedette-main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+    transition: var(--transition-slow);
+}
+
+.vedette-main:hover .vedette-main-image img {
+    transform: scale(1.03);
+    filter: brightness(0.6);
+}
+
+.vedette-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e5e5e5 0%, #d0d0d0 100%);
+    color: #999;
+}
+
+.vedette-main-content {
+    position: relative;
+    z-index: 2;
+    padding: 50px;
+    margin-top: auto;
+    color: var(--color-white);
+}
+
+.vedette-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 16px;
+}
+
+.vedette-main-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: var(--color-white);
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.vedette-main-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 28px;
+    max-width: 400px;
+}
+
+.vedette-main-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-white);
+    color: var(--color-text);
+    padding: 14px 28px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.vedette-main-btn::after {
+    content: '→';
+    transition: var(--transition-fast);
+}
+
+.vedette-main-btn:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    transform: translateY(-2px);
+}
+
+.vedette-main-btn:hover::after {
+    transform: translateX(4px);
+}
+
+/* Vedette Cards - 2x2 Grid on the right */
+.vedette-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.vedette-card {
+    background: var(--color-background);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+}
+
+.vedette-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.vedette-card-image {
+    height: 160px;
+    overflow: hidden;
+    border-radius: 16px;
+    margin: 12px 12px 0 12px;
+}
+
+.vedette-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-smooth);
+}
+
+.vedette-card:hover .vedette-card-image img {
+    transform: scale(1.08);
+}
+
+.vedette-placeholder-small {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8e8e8;
+    color: #bbb;
+}
+
+.vedette-card-content {
+    padding: 16px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.vedette-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+
+.vedette-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+    flex: 1;
+}
+
+.vedette-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.vedette-card-link::after {
+    content: '→';
+    transition: var(--transition-fast);
+}
+
+.vedette-card-link:hover {
+    color: var(--color-primary);
+}
+
+.vedette-card-link:hover::after {
+    transform: translateX(4px);
+}
+
+/* Responsive Vedette */
+@media (max-width: 1024px) {
+    .vedette-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .vedette-main {
+        min-height: 450px;
+    }
+    
+    .vedette-main-title {
+        font-size: 2rem;
+    }
+    
+    .vedette-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .vedette-main {
+        min-height: 400px;
+    }
+    
+    .vedette-main-content {
+        padding: 30px;
+    }
+    
+    .vedette-main-title {
+        font-size: 1.75rem;
+    }
+    
+    .vedette-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .vedette-card-image {
+        height: 180px;
+    }
+}
+
+/* Legacy Featured Highlight Styles */
 .featured-highlight-card {
     position: relative;
     border-radius: 20px;
