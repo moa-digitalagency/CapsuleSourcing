@@ -3,22 +3,7 @@
 Database Initialization Script for Capsule
 
 This script initializes the database with all required tables and
-optionally seeds default data. Run this script to set up the database
-before starting the application for the first time.
-
-Usage:
-    python init_db.py [--seed]
-    
-Options:
-    --seed    Add default data (admin user, sample categories, etc.)
-
-Required Environment Variables:
-    DATABASE_URL      - PostgreSQL connection URL
-    
-Required for --seed:
-    ADMIN_USERNAME    - Admin username
-    ADMIN_PASSWORD    - Admin password  
-    ADMIN_EMAIL       - Admin email
+seeds default data including all page content.
 """
 import os
 import sys
@@ -28,81 +13,62 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-def init_database():
-    """Initialize all database tables."""
-    from app import app, db
-    
-    with app.app_context():
-        import models.database
-        
-        logger.info("Creating database tables...")
-        db.create_all()
-        logger.info("Database tables created successfully!")
-        
-        return True
-
-
-def seed_default_data():
-    """Seed the database with default data."""
+def seed_all_data():
+    """Seed the database with all default data from templates."""
     from app import app, db
     from models.database import (
         User, ContactInfo, HeroSection, HomepageStats, 
-        SEOSettings, CategoryDB
+        SEOSettings, CategoryDB, ProductDB, Service, 
+        PartnershipType, ProcessStep, FAQ, Testimonial
     )
-    from werkzeug.security import generate_password_hash
-    
-    admin_username = os.environ.get('ADMIN_USERNAME')
-    admin_password = os.environ.get('ADMIN_PASSWORD')
-    admin_email = os.environ.get('ADMIN_EMAIL')
     
     with app.app_context():
-        if User.query.filter_by(is_admin=True).first():
-            logger.info("Admin user already exists, skipping user creation.")
-        else:
-            if not admin_username or not admin_password or not admin_email:
-                logger.warning("Admin credentials not set in environment variables.")
-                logger.warning("Set ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_EMAIL to create admin user.")
-                logger.warning("Skipping admin user creation.")
-            else:
-                admin = User(
-                    username=admin_username,
-                    email=admin_email,
-                    password_hash=generate_password_hash(admin_password),
-                    is_admin=True
-                )
-                db.session.add(admin)
-                logger.info(f"Created admin user (username: {admin_username})")
+        logger.info("Seeding all default data...")
         
-        contact = ContactInfo.query.first()
-        if not contact:
+        if not ContactInfo.query.first():
             contact = ContactInfo(
-                email=os.environ.get('CONTACT_EMAIL', ''),
-                phone=os.environ.get('CONTACT_PHONE', ''),
-                whatsapp=os.environ.get('CONTACT_WHATSAPP', ''),
-                address=os.environ.get('CONTACT_ADDRESS', ''),
-                instagram=os.environ.get('SOCIAL_INSTAGRAM', ''),
-                facebook=os.environ.get('SOCIAL_FACEBOOK', ''),
-                tiktok=os.environ.get('SOCIAL_TIKTOK', '')
+                email="contact@capsule-maroc.com",
+                phone="+212 XX XX XX XX",
+                whatsapp="+33774496440",
+                address="Marrakech, Maroc",
+                instagram="",
+                facebook="",
+                linkedin="",
+                twitter="",
+                youtube="",
+                tiktok="",
+                pinterest=""
             )
             db.session.add(contact)
-            logger.info("Created default contact info (configure in admin panel)")
+            logger.info("Created contact info")
         
         if not HeroSection.query.first():
-            hero = HeroSection()
+            hero = HeroSection(
+                title="L'Art du Savoir-Faire Marocain",
+                subtitle="Des pieces uniques, faconnees par des mains expertes",
+                button_text="Decouvrir la Collection",
+                main_image="/static/images/moroccan_brass_craft_91c1b440.jpg",
+                card1_title="Ebenisterie",
+                card1_subtitle="Le travail du bois traditionnel",
+                card1_image="/static/images/moroccan_brass_craft_59d29144.jpg",
+                card1_link="mobilier",
+                card2_title="Fibres Naturelles",
+                card2_subtitle="Vannerie et tissage artisanal",
+                card2_image="/static/images/moroccan_brass_craft_5197c08b.jpg",
+                card2_link="textile"
+            )
             db.session.add(hero)
-            logger.info("Created default hero section")
+            logger.info("Created hero section")
         
         if not HomepageStats.query.first():
-            stats = HomepageStats()
+            stats = HomepageStats(
+                artisans=50,
+                products=200,
+                partners=35,
+                countries=12
+            )
             db.session.add(stats)
-            logger.info("Created default homepage stats")
-        
-        pages = ['index', 'catalogue', 'about', 'contact', 'services', 'partenariats', 'processus', 'faq']
-        for page in pages:
-            if not SEOSettings.query.filter_by(page=page).first():
-                seo = SEOSettings(page=page)
-                db.session.add(seo)
-        logger.info("Created SEO settings for all pages")
+            logger.info("Created homepage stats")
         
         default_categories = [
             {'id': 'mobilier', 'name': 'Mobilier', 'icon': 'home', 'order': 1},
@@ -117,41 +83,286 @@ def seed_default_data():
             if not CategoryDB.query.get(cat['id']):
                 category = CategoryDB(**cat)
                 db.session.add(category)
-        logger.info("Created default categories")
+        logger.info("Created categories")
+        
+        if Service.query.count() == 0:
+            services = [
+                Service(
+                    title="Sourcing Sur Mesure",
+                    description="Identification et selection de produits artisanaux selon vos specifications. Nous parcourons le Maroc pour trouver les pieces qui correspondent exactement a vos besoins.",
+                    icon="search",
+                    order=1
+                ),
+                Service(
+                    title="Controle Qualite",
+                    description="Inspection rigoureuse de chaque piece avant expedition. Notre equipe verifie la conformite aux standards definis et garantit une qualite irreprochable.",
+                    icon="check",
+                    order=2
+                ),
+                Service(
+                    title="Logistique Export",
+                    description="Gestion complete de l'expedition internationale, de l'emballage a la livraison. Nous assurons le transport securise de vos commandes partout dans le monde.",
+                    icon="truck",
+                    order=3
+                ),
+                Service(
+                    title="Accompagnement Projet",
+                    description="Conseil et suivi personnalise pour vos projets d'amenagement ou de decoration. Un interlocuteur dedie vous accompagne de la conception a la realisation.",
+                    icon="users",
+                    order=4
+                )
+            ]
+            for service in services:
+                db.session.add(service)
+            logger.info("Created services")
+        
+        if PartnershipType.query.count() == 0:
+            partnerships = [
+                PartnershipType(
+                    title="Distributeur",
+                    description="Integrez notre collection dans votre offre commerciale et proposez a vos clients des pieces artisanales authentiques.",
+                    benefits="Tarifs preferentiels sur catalogue|Exclusivite territoriale possible|Support marketing et visuels|Formation produit",
+                    order=1
+                ),
+                PartnershipType(
+                    title="Hotellerie & Restauration",
+                    description="Creez une ambiance unique dans vos etablissements avec des pieces sur mesure refletant l'art de vivre marocain.",
+                    benefits="Projets sur mesure|Accompagnement decoration|Delais adaptes aux chantiers|Remplacement et SAV dedies",
+                    order=2
+                ),
+                PartnershipType(
+                    title="Architectes & Decorateurs",
+                    description="Enrichissez vos projets avec des pieces artisanales uniques selectionnees pour leur qualite et leur authenticite.",
+                    benefits="Acces collection complete|Echantillons disponibles|Commandes speciales|Livraison sur chantier",
+                    order=3
+                )
+            ]
+            for partnership in partnerships:
+                db.session.add(partnership)
+            logger.info("Created partnership types")
+        
+        if ProcessStep.query.count() == 0:
+            steps = [
+                ProcessStep(
+                    number="01",
+                    title="Decouverte",
+                    description="Analyse de vos besoins et definition du cahier des charges. Nous echangeons sur vos attentes, contraintes et objectifs pour cerner parfaitement votre projet.",
+                    order=1
+                ),
+                ProcessStep(
+                    number="02",
+                    title="Selection",
+                    description="Identification des artisans et produits correspondant a vos criteres. Notre reseau nous permet de trouver les meilleures pieces pour votre projet.",
+                    order=2
+                ),
+                ProcessStep(
+                    number="03",
+                    title="Production",
+                    description="Fabrication artisanale avec suivi qualite rigoureux. Chaque etape est documentee et validee pour garantir la conformite.",
+                    order=3
+                ),
+                ProcessStep(
+                    number="04",
+                    title="Livraison",
+                    description="Expedition soignee et livraison dans les delais. Emballage securise et transport adapte pour une reception en parfait etat.",
+                    order=4
+                )
+            ]
+            for step in steps:
+                db.session.add(step)
+            logger.info("Created process steps")
+        
+        if FAQ.query.count() == 0:
+            faqs = [
+                FAQ(
+                    question="Quels types de produits proposez-vous ?",
+                    answer="Nous proposons une large gamme de produits artisanaux marocains : ceramique et poterie, textiles (tapis, coussins), maroquinerie, travail du metal (laiton, fer forge), bois sculpte, vannerie et bien d'autres. Chaque piece est fabriquee a la main par des artisans qualifies.",
+                    order=1
+                ),
+                FAQ(
+                    question="Quels sont vos delais de livraison ?",
+                    answer="Les delais varient selon le type de commande. Pour les produits en stock, comptez 2 a 4 semaines. Pour les commandes sur mesure ou en quantite, les delais sont de 6 a 12 semaines selon la complexite. Nous vous communiquons un planning precis lors de la validation de commande.",
+                    order=2
+                ),
+                FAQ(
+                    question="Quelle est la quantite minimum de commande ?",
+                    answer="Nous travaillons principalement avec des professionnels (B2B). La quantite minimum depend des produits mais nous sommes flexibles et adaptons nos offres a vos besoins. Contactez-nous pour discuter de votre projet.",
+                    order=3
+                ),
+                FAQ(
+                    question="Livrez-vous a l'international ?",
+                    answer="Oui, nous livrons dans le monde entier. Notre equipe logistique gere l'ensemble des formalites d'export et vous accompagne pour une livraison sans souci. Les frais de port sont calcules selon la destination et le volume.",
+                    order=4
+                ),
+                FAQ(
+                    question="Proposez-vous des produits personnalises ?",
+                    answer="Absolument ! La personnalisation est l'une de nos forces. Nos artisans peuvent adapter les dimensions, couleurs, motifs selon vos specifications. Nous pouvons egalement creer des pieces uniques sur cahier des charges.",
+                    order=5
+                ),
+                FAQ(
+                    question="Comment garantissez-vous la qualite ?",
+                    answer="Chaque piece est inspectee avant expedition selon des criteres stricts. Nous travaillons uniquement avec des artisans selectionnes pour leur savoir-faire. En cas de non-conformite, nous assurons le remplacement ou le remboursement.",
+                    order=6
+                )
+            ]
+            for faq in faqs:
+                db.session.add(faq)
+            logger.info("Created FAQs")
+        
+        if Testimonial.query.count() == 0:
+            testimonials = [
+                Testimonial(
+                    text="La qualite des produits Capsule est exceptionnelle. Chaque piece raconte une histoire et reflete un savoir-faire unique. Nos clients adorent l'authenticite de ces creations.",
+                    author_name="Sarah Chen",
+                    author_title="Boutique Le Souk, Paris",
+                    author_image="/static/images/avatar1.jpg",
+                    order=1
+                ),
+                Testimonial(
+                    text="Un partenariat formidable. Capsule nous permet d'offrir a nos clients des pieces artisanales authentiques avec une tracabilite complete. Le service est impeccable.",
+                    author_name="Marc Dubois",
+                    author_title="Architecte d'interieur",
+                    author_image="/static/images/avatar2.jpg",
+                    order=2
+                ),
+                Testimonial(
+                    text="Excellente reactivite et produits conformes a nos attentes. Capsule comprend parfaitement les exigences du secteur hotelier haut de gamme.",
+                    author_name="Julie Martin",
+                    author_title="Directrice Achats, Groupe Hotelier",
+                    author_image="/static/images/avatar1.jpg",
+                    order=3
+                )
+            ]
+            for testimonial in testimonials:
+                db.session.add(testimonial)
+            logger.info("Created testimonials")
+        
+        if ProductDB.query.count() == 0:
+            products = [
+                ProductDB(
+                    name="Vase en Ceramique de Fes",
+                    category_id="ceramique",
+                    description="Magnifique vase en ceramique traditionnelle de Fes, orne de motifs geometriques bleus caracteristiques de l'artisanat fassi.",
+                    details="Ce vase est realise selon les techniques ancestrales des potiers de Fes. Chaque piece est unique, faconnee a la main et decoree avec des pigments naturels.",
+                    dimensions="H: 35cm, D: 20cm",
+                    material="Ceramique emaillee",
+                    image="/static/images/moroccan_artisan_han_11a3ad05.jpg",
+                    is_featured=True,
+                    order=1
+                ),
+                ProductDB(
+                    name="Lanterne en Laiton Cisele",
+                    category_id="metal",
+                    description="Lanterne traditionnelle en laiton finement cisele, creant de magnifiques jeux de lumiere.",
+                    details="Travail artisanal realise par les maitres ciseleurs de Marrakech. Le laiton est martele et perce a la main pour creer des motifs d'une grande finesse.",
+                    dimensions="H: 45cm, L: 25cm",
+                    material="Laiton",
+                    image="/static/images/moroccan_brass_craft_8cacf1dc.jpg",
+                    is_featured=True,
+                    order=2
+                ),
+                ProductDB(
+                    name="Tapis Berbere Authentique",
+                    category_id="textile",
+                    description="Tapis berbere tisse a la main dans l'Atlas, avec des motifs traditionnels et des couleurs naturelles.",
+                    details="Chaque tapis est une piece unique, tissee par des artisanes berberes selon des techniques transmises de generation en generation.",
+                    dimensions="200cm x 150cm",
+                    material="Laine naturelle",
+                    image="/static/images/moroccan_artisan_han_2e2686eb.jpg",
+                    is_featured=True,
+                    order=3
+                ),
+                ProductDB(
+                    name="Table Basse en Thuya",
+                    category_id="bois",
+                    description="Table basse en bois de thuya sculpte, avec des incrustations de nacre et de citronnier.",
+                    details="Le thuya est un bois precieux de la region d'Essaouira, reconnu pour ses veines uniques et son parfum delicat.",
+                    dimensions="H: 40cm, L: 80cm, P: 50cm",
+                    material="Bois de thuya, nacre, citronnier",
+                    image="/static/images/moroccan_brass_craft_af2c930a.jpg",
+                    is_featured=True,
+                    order=4
+                ),
+                ProductDB(
+                    name="Pouf en Cuir Tanne",
+                    category_id="cuir",
+                    description="Pouf traditionnel en cuir tanne naturellement, brode avec des fils de soie.",
+                    details="Le cuir est tanne selon la methode traditionnelle des tanneries de Fes, sans produits chimiques.",
+                    dimensions="D: 50cm, H: 35cm",
+                    material="Cuir de chevre",
+                    image="/static/images/moroccan_artisan_han_43aa89bc.jpg",
+                    is_featured=False,
+                    order=5
+                ),
+                ProductDB(
+                    name="Panier en Osier Tresse",
+                    category_id="mobilier",
+                    description="Panier artisanal en osier tresse, ideal pour le rangement ou la decoration.",
+                    details="Fabrique par les vanniers du Rif, chaque panier est tresse a la main avec des fibres naturelles.",
+                    dimensions="H: 30cm, D: 35cm",
+                    material="Osier naturel",
+                    image="/static/images/moroccan_brass_craft_5cbdcb61.jpg",
+                    is_featured=False,
+                    order=6
+                )
+            ]
+            for product in products:
+                db.session.add(product)
+            logger.info("Created sample products")
+        
+        pages = ['index', 'catalogue', 'about', 'contact', 'services', 'partenariats', 'processus', 'faq']
+        seo_defaults = {
+            'index': {'meta_title': 'Capsule - Artisanat Marocain d\'Exception', 'meta_description': 'Decouvrez notre selection de produits artisanaux marocains authentiques. Sourcing sur mesure pour professionnels.'},
+            'catalogue': {'meta_title': 'Catalogue - Capsule', 'meta_description': 'Explorez notre collection de produits artisanaux marocains: ceramique, textile, cuir, metal et bois.'},
+            'about': {'meta_title': 'Notre Histoire - Capsule', 'meta_description': 'Decouvrez l\'histoire de Capsule et notre engagement pour valoriser l\'artisanat marocain d\'exception.'},
+            'contact': {'meta_title': 'Contact - Capsule', 'meta_description': 'Contactez-nous pour discuter de vos projets d\'artisanat marocain. Nous sommes a votre ecoute.'},
+            'services': {'meta_title': 'Nos Services - Capsule', 'meta_description': 'Sourcing sur mesure, controle qualite, logistique export. Decouvrez nos services d\'accompagnement.'},
+            'partenariats': {'meta_title': 'Partenariats - Capsule', 'meta_description': 'Devenez partenaire Capsule. Solutions pour distributeurs, hoteliers et architectes.'},
+            'processus': {'meta_title': 'Notre Processus - Capsule', 'meta_description': 'De la commande a la livraison, decouvrez notre methodologie eprouvee.'},
+            'faq': {'meta_title': 'FAQ - Capsule', 'meta_description': 'Questions frequentes sur nos services, delais, livraisons et produits artisanaux.'}
+        }
+        for page in pages:
+            if not SEOSettings.query.filter_by(page=page).first():
+                defaults = seo_defaults.get(page, {})
+                seo = SEOSettings(
+                    page=page,
+                    meta_title=defaults.get('meta_title', f'{page.capitalize()} - Capsule'),
+                    meta_description=defaults.get('meta_description', '')
+                )
+                db.session.add(seo)
+        logger.info("Created SEO settings")
         
         db.session.commit()
-        logger.info("Default data seeded successfully!")
+        logger.info("All default data seeded successfully!")
         
         return True
 
 
 def main():
     """Main entry point."""
-    seed = '--seed' in sys.argv
-    
     logger.info("=" * 50)
     logger.info("Capsule Database Initialization")
     logger.info("=" * 50)
     
     if not os.environ.get('DATABASE_URL'):
         logger.error("DATABASE_URL environment variable is not set!")
-        logger.error("Please set DATABASE_URL before running this script.")
         sys.exit(1)
     
     try:
-        if init_database():
-            logger.info("Database initialized successfully!")
-            
-            if seed:
-                logger.info("")
-                logger.info("Seeding default data...")
-                seed_default_data()
-            else:
-                logger.info("")
-                logger.info("Tip: Run with --seed to add default data")
+        from app import app, db
+        
+        with app.app_context():
+            import models.database
+            logger.info("Creating database tables...")
+            db.create_all()
+            logger.info("Database tables created successfully!")
+        
+        seed_all_data()
     
     except Exception as e:
         logger.error(f"Error initializing database: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
     
     logger.info("")
