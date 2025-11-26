@@ -21,7 +21,18 @@
 <div class="content-sections">
     {% for section_name, items in sections.items() %}
     <div class="content-section">
-        <h3 class="section-title">{{ section_name|replace('_', ' ')|title }}</h3>
+        <div class="section-header">
+            <div class="section-number">{{ loop.index }}</div>
+            <div class="section-info">
+                {% if section_labels and section_name in section_labels %}
+                <h3 class="section-title">{{ section_labels[section_name][0] }}</h3>
+                <p class="section-description">{{ section_labels[section_name][1] }}</p>
+                {% else %}
+                <h3 class="section-title">{{ section_name|replace('_', ' ')|title }}</h3>
+                {% endif %}
+            </div>
+            <span class="section-key-badge">{{ section_name }}</span>
+        </div>
         <div class="content-items">
             {% for item in items %}
             <form action="{{ url_for('admin.edit_page_content', id=item.id) }}" method="POST" class="content-item">
@@ -108,13 +119,51 @@
     padding: 24px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-left: 4px solid #8B7355;
+}
+.section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+}
+.section-number {
+    background: #8B7355;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.section-info {
+    flex: 1;
 }
 .section-title {
     font-size: 18px;
+    color: #333;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+}
+.section-description {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
+.section-key-badge {
+    font-size: 11px;
     color: #8B7355;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #8B7355;
+    background: #f5f0eb;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-family: monospace;
+    white-space: nowrap;
 }
 .content-items {
     display: flex;

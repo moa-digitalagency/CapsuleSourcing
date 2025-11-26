@@ -723,21 +723,70 @@ def upload_with_crop():
 @require_admin
 def page_content():
     from models.database import PageContent
+    from collections import OrderedDict
+    
     pages = ['index', 'about', 'services', 'contact', 'catalogue', 'faq', 'partenariats', 'processus', 'global']
     page_filter = request.args.get('page', 'index')
     
-    contents = PageContent.query.filter_by(page=page_filter).order_by(PageContent.section, PageContent.key).all()
+    section_order = {
+        'index': ['featured', 'stats', 'our_values', 'process', 'testimonials', 'cta', 'newsletter'],
+        'about': ['header', 'intro', 'mission', 'our_values', 'expertise', 'sourcing', 'commitments', 'cta'],
+        'services': ['header', 'intro', 'features', 'cta'],
+        'contact': ['header', 'form', 'info'],
+        'catalogue': ['header', 'filter', 'empty'],
+        'faq': ['header', 'cta'],
+        'partenariats': ['header', 'intro', 'cta'],
+        'processus': ['header', 'intro', 'cta'],
+        'global': ['nav', 'footer']
+    }
     
-    sections = {}
+    section_labels = {
+        'featured': ('Section Vedette', 'Produits mis en avant sur la page d\'accueil'),
+        'stats': ('Statistiques', 'Chiffres cles affiches'),
+        'our_values': ('Nos Valeurs', 'Section presentant les valeurs'),
+        'process': ('Processus', 'Apercu du processus sur l\'accueil'),
+        'testimonials': ('Temoignages', 'Section des avis clients'),
+        'cta': ('Appel a l\'Action', 'Boutons et messages d\'incitation'),
+        'newsletter': ('Newsletter', 'Formulaire d\'inscription'),
+        'header': ('En-tete de Page', 'Titre et sous-titre de la page'),
+        'intro': ('Introduction', 'Texte d\'introduction'),
+        'mission': ('Mission', 'Notre mission'),
+        'expertise': ('Expertise', 'Notre expertise'),
+        'sourcing': ('Sourcing', 'L\'art du sourcing'),
+        'commitments': ('Engagements', 'Nos engagements'),
+        'form': ('Formulaire', 'Labels et textes du formulaire'),
+        'info': ('Informations', 'Informations de contact'),
+        'features': ('Caracteristiques', 'Points forts des services'),
+        'filter': ('Filtres', 'Options de filtrage'),
+        'empty': ('Etat Vide', 'Message quand pas de resultats'),
+        'nav': ('Navigation', 'Menu de navigation'),
+        'footer': ('Pied de Page', 'Liens et textes du footer')
+    }
+    
+    contents = PageContent.query.filter_by(page=page_filter).all()
+    
+    sections_raw = {}
     for content in contents:
-        if content.section not in sections:
-            sections[content.section] = []
-        sections[content.section].append(content)
+        if content.section not in sections_raw:
+            sections_raw[content.section] = []
+        sections_raw[content.section].append(content)
+    
+    ordered_sections = OrderedDict()
+    order = section_order.get(page_filter, [])
+    
+    for section_key in order:
+        if section_key in sections_raw:
+            ordered_sections[section_key] = sections_raw[section_key]
+    
+    for section_key in sections_raw:
+        if section_key not in ordered_sections:
+            ordered_sections[section_key] = sections_raw[section_key]
     
     return render_template('admin/page_content.html', 
         pages=pages, 
         current_page=page_filter, 
-        sections=sections
+        sections=ordered_sections,
+        section_labels=section_labels
     )
 
 
