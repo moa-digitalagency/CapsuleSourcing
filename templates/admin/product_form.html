@@ -10,48 +10,11 @@
 
 <div class="card">
     <form method="POST" enctype="multipart/form-data">
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Nom *</label>
-                <input type="text" name="name" class="form-control" value="{{ product.name if product else '' }}" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Categorie *</label>
-                <select name="category_id" class="form-control" required>
-                    <option value="">Selectionnez une categorie</option>
-                    {% for cat in categories %}
-                    <option value="{{ cat.id }}" {% if product and product.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-        
         <div class="form-group">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control">{{ product.description if product else '' }}</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">Details</label>
-            <textarea name="details" class="form-control">{{ product.details if product else '' }}</textarea>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Dimensions</label>
-                <input type="text" name="dimensions" class="form-control" value="{{ product.dimensions if product else '' }}">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Materiau</label>
-                <input type="text" name="material" class="form-control" value="{{ product.material if product else '' }}">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">Image</label>
+            <label class="form-label">Image du produit *</label>
             {% if product and product.image %}
-            <div style="margin-bottom: 10px;">
-                <img src="{{ product.image }}" alt="" class="image-preview">
+            <div style="margin-bottom: 15px;">
+                <img src="{{ product.image }}" alt="" style="max-width: 300px; border-radius: 12px;">
             </div>
             {% endif %}
             <div class="file-input-wrapper">
@@ -59,9 +22,9 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     Telecharger une image
                 </div>
-                <input type="file" name="image" accept="image/*">
+                <input type="file" name="image" accept="image/*" {% if not product %}required{% endif %}>
             </div>
-            <div style="margin-top: 10px;">
+            <div style="margin-top: 15px;">
                 <label class="form-label" style="font-size: 0.85rem;">Ou URL de l'image</label>
                 <input type="text" name="image_url" class="form-control" placeholder="https://...">
             </div>
@@ -69,17 +32,15 @@
         
         <div class="form-row">
             <div class="form-group">
-                <label class="form-label">Ordre</label>
-                <input type="number" name="order" class="form-control" value="{{ product.order if product else 0 }}">
-            </div>
-            <div class="form-group">
-                <label class="form-label">&nbsp;</label>
-                <div class="form-check">
-                    <input type="checkbox" name="is_featured" id="is_featured" {% if product and product.is_featured %}checked{% endif %}>
-                    <label for="is_featured">Produit en vedette</label>
-                </div>
+                <label class="form-label">Ordre d'affichage</label>
+                <input type="number" name="order" class="form-control" value="{{ product.order if product else 0 }}" min="0">
+                <small style="color: #666;">Les produits avec un numero plus petit apparaissent en premier</small>
             </div>
         </div>
+        
+        <input type="hidden" name="name" value="{{ product.name if product else 'Produit' }}">
+        <input type="hidden" name="category_id" value="{{ product.category_id if product else 'mobilier' }}">
+        <input type="hidden" name="description" value="{{ product.description if product else '' }}">
         
         <div style="display: flex; gap: 12px; margin-top: 20px;">
             <button type="submit" class="btn btn-primary">{{ 'Enregistrer' if product else 'Ajouter' }}</button>
