@@ -213,6 +213,14 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Modifications Recentes
 
+### 26/11/2025: Section Vedette Redesign
+- Nouvelle mise en page Section Vedette: 1 bloc principal a gauche + 4 cartes produits a droite (grille 2x2)
+- Modele FeaturedHighlight avec 5 slots: slot 1 = bloc principal, slots 2-5 = cartes produits
+- Champs editables: image, titre, sous-titre, badge, description, lien, texte du lien
+- Gestion complete dans /admin/featured-highlights avec distinction visuelle bloc principal vs cartes
+- CSS responsive: grille colonne unique sur tablet (<=1024px), cartes en colonne unique sur mobile (<=640px)
+- Seeding automatique des 5 slots avec donnees par defaut si absentes
+
 ### 26/11/2025: Systeme de Contenu Dynamique des Pages
 - Nouveau modele PageContent pour stocker tous les textes par page/section/cle
 - Templates mis a jour pour charger le contenu depuis la base de donnees
