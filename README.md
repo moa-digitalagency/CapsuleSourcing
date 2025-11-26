@@ -116,6 +116,7 @@ capsule/
 ├── services/               # Logique metier
 │   └── product_service.py # Service de gestion des produits
 ├── utils/                  # Utilitaires
+│   ├── helpers.py         # Fonctions utilitaires
 │   └── image_processor.py # Traitement des images
 ├── templates/              # Templates HTML (Jinja2)
 │   ├── admin/             # Templates panel admin
@@ -133,7 +134,7 @@ capsule/
 
 ### Pages Principales
 - **Accueil** (`/`) - Presentation et chiffres cles
-- **Catalogue** (`/catalogue`) - Liste des produits avec filtres
+- **Catalogue** (`/catalogue`) - Liste des produits avec filtres par categorie
 - **Produit** (`/produit/<id>`) - Details d'un produit
 - **A Propos** (`/a-propos`) - Mission et valeurs
 - **Contact** (`/contact`) - Formulaire de contact avec WhatsApp
@@ -144,26 +145,57 @@ capsule/
 - **Notre Processus** (`/processus`) - Comment nous travaillons
 - **FAQ** (`/faq`) - Questions frequentes
 
+### Authentification
+- **Connexion** (`/auth/login`) - Page de connexion
+- **Inscription** (`/auth/register`) - Page d'inscription
+- **Deconnexion** (`/auth/logout`) - Deconnexion
+
 ### Panel d'Administration (`/admin`)
 - Dashboard avec statistiques
 - Gestion des produits et categories
 - Gestion des services et FAQ
+- Gestion des partenariats et temoignages
 - Configuration du site (contact, reseaux sociaux)
 - Parametres SEO pour toutes les pages
 - Gestion des utilisateurs
 
+## Modeles de Base de Donnees
+
+| Modele | Description |
+|--------|-------------|
+| `User` | Utilisateurs avec authentification et roles admin |
+| `CategoryDB` | Categories de produits |
+| `ProductDB` | Produits avec images, descriptions, dimensions |
+| `Service` | Services proposes par Capsule |
+| `PartnershipType` | Types de partenariats B2B |
+| `ProcessStep` | Etapes du processus de travail |
+| `FAQ` | Questions frequentes |
+| `Testimonial` | Temoignages clients |
+| `PageContent` | Contenu dynamique des pages |
+| `SiteSettings` | Parametres generaux du site |
+| `SEOSettings` | Parametres SEO par page |
+| `HomepageStats` | Statistiques affichees sur la homepage |
+| `HeroSection` | Configuration de la section hero |
+| `ContactInfo` | Informations de contact et reseaux sociaux |
+
 ## Fonctionnalites
 
 ### Gestion des Reseaux Sociaux
-Les reseaux sociaux suivants peuvent etre configures dans l'admin:
-- WhatsApp (numero pour le formulaire de contact)
-- Facebook
-- Instagram
-- LinkedIn
-- Twitter / X
-- YouTube
-- TikTok
-- Pinterest
+
+Les reseaux sociaux suivants peuvent etre configures dans l'admin (`/admin/settings`):
+
+| Reseau | Champ | Format |
+|--------|-------|--------|
+| **WhatsApp** | `whatsapp` | Numero de telephone (+33 7 XX XX XX XX) |
+| **Facebook** | `facebook` | URL complete (https://facebook.com/...) |
+| **Instagram** | `instagram` | URL complete (https://instagram.com/...) |
+| **TikTok** | `tiktok` | URL complete (https://tiktok.com/@...) |
+| **LinkedIn** | `linkedin` | URL complete (https://linkedin.com/company/...) |
+| **Twitter / X** | `twitter` | URL complete (https://twitter.com/...) |
+| **YouTube** | `youtube` | URL complete (https://youtube.com/...) |
+| **Pinterest** | `pinterest` | URL complete (https://pinterest.com/...) |
+
+Les icones des reseaux sociaux s'affichent automatiquement dans le footer du site lorsque les liens sont configures.
 
 ### SEO
 Chaque page dispose de parametres SEO configurables:
@@ -173,6 +205,12 @@ Chaque page dispose de parametres SEO configurables:
 - Open Graph (titre, description, image)
 - Twitter Cards
 
+### Gestion des Images
+- Upload et traitement automatique des images
+- Recadrage optionnel
+- Optimisation pour le web
+- Support des formats: PNG, JPG, JPEG, GIF, WebP, SVG
+
 ## Stack Technique
 
 - **Backend**: Python Flask avec Blueprints
@@ -181,6 +219,7 @@ Chaque page dispose de parametres SEO configurables:
 - **Templating**: Jinja2
 - **Serveur**: Gunicorn
 - **Authentification**: Flask-Login
+- **Traitement d'images**: Pillow
 - **Architecture**: MVC avec services
 
 ## Design
@@ -195,6 +234,22 @@ Chaque page dispose de parametres SEO configurables:
 ### Typographie
 - Titres: Georgia (serif)
 - Corps: System fonts (sans-serif)
+
+## Administration
+
+### Acces Admin
+Pour acceder au panel d'administration:
+1. Connectez-vous avec un compte admin sur `/auth/login`
+2. Accedez a `/admin` pour le dashboard
+
+Le premier utilisateur inscrit devient automatiquement administrateur.
+
+### Configuration des Reseaux Sociaux
+1. Allez dans Administration > Parametres
+2. Remplissez les champs des reseaux sociaux souhaites
+3. Cliquez sur "Enregistrer"
+
+Les icones apparaitront automatiquement dans le footer du site.
 
 ## Contact
 
