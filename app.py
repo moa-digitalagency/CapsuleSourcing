@@ -120,3 +120,29 @@ def inject_seo():
     except Exception as e:
         logger.warning(f"Error loading SEO settings: {e}")
         return dict(seo=None)
+
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for VPS monitoring"""
+    try:
+        db.session.execute(db.text('SELECT 1'))
+        return {'status': 'healthy', 'database': 'connected'}, 200
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return {'status': 'unhealthy', 'database': 'disconnected', 'error': str(e)}, 503
+
+
+def ensure_directories():
+    """Ensure required directories exist"""
+    directories = ['static/uploads', 'static/images/products']
+    for directory in directories:
+        if not os.path.exists(directory):
+            try:
+                os.makedirs(directory, exist_ok=True)
+                logger.info(f"Created directory: {directory}")
+            except Exception as e:
+                logger.error(f"Failed to create directory {directory}: {e}")
+
+
+ensure_directories()

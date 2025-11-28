@@ -1,9 +1,12 @@
 import os
 import uuid
+import logging
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -16,914 +19,915 @@ def allowed_file(filename):
 def require_admin(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated:
+        try:
+            if not current_user.is_authenticated:
+                return redirect(url_for('auth.login'))
+            if not current_user.is_admin:
+                flash('Acces non autorise', 'error')
+                return redirect(url_for('main.index'))
+            return f(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in admin authentication check: {e}")
             return redirect(url_for('auth.login'))
-        if not current_user.is_admin:
-            flash('Acces non autorise', 'error')
-            return redirect(url_for('main.index'))
-        return f(*args, **kwargs)
     return decorated_function
 
 
 @admin_bp.route('/')
 @require_admin
 def dashboard():
-    from app import db
-    from models.database import ProductDB, CategoryDB, Service, FAQ, User
-    stats = {
-        'products': ProductDB.query.count(),
-        'categories': CategoryDB.query.count(),
-        'services': Service.query.count(),
-        'faqs': FAQ.query.count(),
-        'users': User.query.count()
-    }
-    return render_template('admin/dashboard.html', stats=stats)
+    try:
+        from app import db
+        from models.database import ProductDB, CategoryDB, Service, FAQ, User
+        stats = {
+            'products': ProductDB.query.count(),
+            'categories': CategoryDB.query.count(),
+            'services': Service.query.count(),
+            'faqs': FAQ.query.count(),
+            'users': User.query.count()
+        }
+        return render_template('admin/dashboard.html', stats=stats)
+    except Exception as e:
+        logger.error(f"Error in admin dashboard: {e}")
+        flash('Erreur lors du chargement du tableau de bord', 'error')
+        return render_template('admin/dashboard.html', stats={'products': 0, 'categories': 0, 'services': 0, 'faqs': 0, 'users': 0})
 
 
 @admin_bp.route('/products')
 @require_admin
 def products():
-    from models.database import ProductDB, CategoryDB
-    products = ProductDB.query.order_by(ProductDB.order).all()
-    categories = CategoryDB.query.order_by(CategoryDB.order).all()
-    return render_template('admin/products.html', products=products, categories=categories)
+    try:
+        from models.database import ProductDB, CategoryDB
+        products = ProductDB.query.order_by(ProductDB.order).all()
+        categories = CategoryDB.query.order_by(CategoryDB.order).all()
+        return render_template('admin/products.html', products=products, categories=categories)
+    except Exception as e:
+        logger.error(f"Error loading products: {e}")
+        flash('Erreur lors du chargement des produits', 'error')
+        return render_template('admin/products.html', products=[], categories=[])
 
 
 @admin_bp.route('/products/add', methods=['GET', 'POST'])
 @require_admin
 def add_product():
-    from app import db
-    from models.database import ProductDB, CategoryDB
-    from utils.image_processor import process_image_for_type
-    categories = CategoryDB.query.order_by(CategoryDB.order).all()
-    if request.method == 'POST':
-        image_path = None
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and file.filename and allowed_file(file.filename):
-                image_path = process_image_for_type(file, 'product')
-        
-        product = ProductDB(
-            name=request.form['name'],
-            category_id=request.form['category_id'],
-            description=request.form.get('description', ''),
-            details=request.form.get('details', ''),
-            dimensions=request.form.get('dimensions', ''),
-            material=request.form.get('material', ''),
-            image=image_path or request.form.get('image_url', ''),
-            is_featured=bool(request.form.get('is_featured')),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(product)
-        db.session.commit()
-        flash('Produit ajoute avec succes', 'success')
+    try:
+        from app import db
+        from models.database import ProductDB, CategoryDB
+        from utils.image_processor import process_image_for_type
+        categories = CategoryDB.query.order_by(CategoryDB.order).all()
+        if request.method == 'POST':
+            image_path = None
+            if 'image' in request.files:
+                file = request.files['image']
+                if file and file.filename and allowed_file(file.filename):
+                    image_path = process_image_for_type(file, 'product')
+            
+            product = ProductDB(
+                name=request.form['name'],
+                category_id=request.form['category_id'],
+                description=request.form.get('description', ''),
+                details=request.form.get('details', ''),
+                dimensions=request.form.get('dimensions', ''),
+                material=request.form.get('material', ''),
+                image=image_path or request.form.get('image_url', ''),
+                is_featured=bool(request.form.get('is_featured')),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(product)
+            db.session.commit()
+            flash('Produit ajoute avec succes', 'success')
+            return redirect(url_for('admin.products'))
+        return render_template('admin/product_form.html', product=None, categories=categories)
+    except Exception as e:
+        logger.error(f"Error adding product: {e}")
+        flash('Erreur lors de l\'ajout du produit', 'error')
         return redirect(url_for('admin.products'))
-    return render_template('admin/product_form.html', product=None, categories=categories)
 
 
 @admin_bp.route('/products/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_product(id):
-    from app import db
-    from models.database import ProductDB, CategoryDB
-    from utils.image_processor import process_image_for_type
-    product = ProductDB.query.get_or_404(id)
-    categories = CategoryDB.query.order_by(CategoryDB.order).all()
-    if request.method == 'POST':
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and file.filename and allowed_file(file.filename):
-                new_image = process_image_for_type(file, 'product')
-                if new_image:
-                    product.image = new_image
-        elif request.form.get('image_url'):
-            product.image = request.form['image_url']
-        
-        product.name = request.form['name']
-        product.category_id = request.form['category_id']
-        product.description = request.form.get('description', '')
-        product.details = request.form.get('details', '')
-        product.dimensions = request.form.get('dimensions', '')
-        product.material = request.form.get('material', '')
-        product.is_featured = bool(request.form.get('is_featured'))
-        product.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('Produit modifie avec succes', 'success')
+    try:
+        from app import db
+        from models.database import ProductDB, CategoryDB
+        from utils.image_processor import process_image_for_type
+        product = ProductDB.query.get_or_404(id)
+        categories = CategoryDB.query.order_by(CategoryDB.order).all()
+        if request.method == 'POST':
+            if 'image' in request.files:
+                file = request.files['image']
+                if file and file.filename and allowed_file(file.filename):
+                    new_image = process_image_for_type(file, 'product')
+                    if new_image:
+                        product.image = new_image
+            elif request.form.get('image_url'):
+                product.image = request.form['image_url']
+            
+            product.name = request.form['name']
+            product.category_id = request.form['category_id']
+            product.description = request.form.get('description', '')
+            product.details = request.form.get('details', '')
+            product.dimensions = request.form.get('dimensions', '')
+            product.material = request.form.get('material', '')
+            product.is_featured = bool(request.form.get('is_featured'))
+            product.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('Produit modifie avec succes', 'success')
+            return redirect(url_for('admin.products'))
+        return render_template('admin/product_form.html', product=product, categories=categories)
+    except Exception as e:
+        logger.error(f"Error editing product: {e}")
+        flash('Erreur lors de la modification du produit', 'error')
         return redirect(url_for('admin.products'))
-    return render_template('admin/product_form.html', product=product, categories=categories)
 
 
 @admin_bp.route('/products/<int:id>/delete', methods=['POST'])
 @require_admin
 def delete_product(id):
-    from app import db
-    from models.database import ProductDB
-    product = ProductDB.query.get_or_404(id)
-    db.session.delete(product)
-    db.session.commit()
-    flash('Produit supprime', 'success')
+    try:
+        from app import db
+        from models.database import ProductDB
+        product = ProductDB.query.get_or_404(id)
+        db.session.delete(product)
+        db.session.commit()
+        flash('Produit supprime', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting product: {e}")
+        flash('Erreur lors de la suppression du produit', 'error')
     return redirect(url_for('admin.products'))
 
 
 @admin_bp.route('/products/<int:id>/toggle-featured', methods=['POST'])
 @require_admin
 def toggle_featured(id):
-    from app import db
-    from models.database import ProductDB
-    product = ProductDB.query.get_or_404(id)
-    product.is_featured = not product.is_featured
-    db.session.commit()
-    if product.is_featured:
-        flash('Produit ajoute aux vedettes', 'success')
-    else:
-        flash('Produit retire des vedettes', 'success')
+    try:
+        from app import db
+        from models.database import ProductDB
+        product = ProductDB.query.get_or_404(id)
+        product.is_featured = not product.is_featured
+        db.session.commit()
+        if product.is_featured:
+            flash('Produit ajoute aux vedettes', 'success')
+        else:
+            flash('Produit retire des vedettes', 'success')
+    except Exception as e:
+        logger.error(f"Error toggling featured: {e}")
+        flash('Erreur lors de la modification', 'error')
     return redirect(url_for('admin.products'))
 
 
 @admin_bp.route('/categories')
 @require_admin
 def categories():
-    from models.database import CategoryDB
-    categories = CategoryDB.query.order_by(CategoryDB.order).all()
-    return render_template('admin/categories.html', categories=categories)
+    try:
+        from models.database import CategoryDB
+        categories = CategoryDB.query.order_by(CategoryDB.order).all()
+        return render_template('admin/categories.html', categories=categories)
+    except Exception as e:
+        logger.error(f"Error loading categories: {e}")
+        flash('Erreur lors du chargement des categories', 'error')
+        return render_template('admin/categories.html', categories=[])
 
 
 @admin_bp.route('/categories/add', methods=['GET', 'POST'])
 @require_admin
 def add_category():
-    from app import db
-    from models.database import CategoryDB
-    if request.method == 'POST':
-        category = CategoryDB(
-            id=request.form['id'],
-            name=request.form['name'],
-            icon=request.form.get('icon', ''),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(category)
-        db.session.commit()
-        flash('Categorie ajoutee avec succes', 'success')
+    try:
+        from app import db
+        from models.database import CategoryDB
+        if request.method == 'POST':
+            category = CategoryDB(
+                id=request.form['id'],
+                name=request.form['name'],
+                icon=request.form.get('icon', ''),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(category)
+            db.session.commit()
+            flash('Categorie ajoutee avec succes', 'success')
+            return redirect(url_for('admin.categories'))
+        return render_template('admin/category_form.html', category=None)
+    except Exception as e:
+        logger.error(f"Error adding category: {e}")
+        flash('Erreur lors de l\'ajout de la categorie', 'error')
         return redirect(url_for('admin.categories'))
-    return render_template('admin/category_form.html', category=None)
 
 
 @admin_bp.route('/categories/<id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_category(id):
-    from app import db
-    from models.database import CategoryDB
-    category = CategoryDB.query.get_or_404(id)
-    if request.method == 'POST':
-        category.name = request.form['name']
-        category.icon = request.form.get('icon', '')
-        category.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('Categorie modifiee avec succes', 'success')
+    try:
+        from app import db
+        from models.database import CategoryDB
+        category = CategoryDB.query.get_or_404(id)
+        if request.method == 'POST':
+            category.name = request.form['name']
+            category.icon = request.form.get('icon', '')
+            category.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('Categorie modifiee avec succes', 'success')
+            return redirect(url_for('admin.categories'))
+        return render_template('admin/category_form.html', category=category)
+    except Exception as e:
+        logger.error(f"Error editing category: {e}")
+        flash('Erreur lors de la modification de la categorie', 'error')
         return redirect(url_for('admin.categories'))
-    return render_template('admin/category_form.html', category=category)
 
 
 @admin_bp.route('/categories/<id>/delete', methods=['POST'])
 @require_admin
 def delete_category(id):
-    from app import db
-    from models.database import CategoryDB
-    category = CategoryDB.query.get_or_404(id)
-    if category.products:
-        flash('Impossible de supprimer une categorie avec des produits', 'error')
-        return redirect(url_for('admin.categories'))
-    db.session.delete(category)
-    db.session.commit()
-    flash('Categorie supprimee', 'success')
+    try:
+        from app import db
+        from models.database import CategoryDB
+        category = CategoryDB.query.get_or_404(id)
+        if category.products:
+            flash('Impossible de supprimer une categorie avec des produits', 'error')
+            return redirect(url_for('admin.categories'))
+        db.session.delete(category)
+        db.session.commit()
+        flash('Categorie supprimee', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting category: {e}")
+        flash('Erreur lors de la suppression de la categorie', 'error')
     return redirect(url_for('admin.categories'))
 
 
 @admin_bp.route('/services')
 @require_admin
 def services():
-    from models.database import Service
-    services = Service.query.order_by(Service.order).all()
-    return render_template('admin/services.html', services=services)
+    try:
+        from models.database import Service
+        services = Service.query.order_by(Service.order).all()
+        return render_template('admin/services.html', services=services)
+    except Exception as e:
+        logger.error(f"Error loading services: {e}")
+        flash('Erreur lors du chargement des services', 'error')
+        return render_template('admin/services.html', services=[])
 
 
 @admin_bp.route('/services/add', methods=['GET', 'POST'])
 @require_admin
 def add_service():
-    from app import db
-    from models.database import Service
-    if request.method == 'POST':
-        service = Service(
-            title=request.form['title'],
-            description=request.form.get('description', ''),
-            icon=request.form.get('icon', ''),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(service)
-        db.session.commit()
-        flash('Service ajoute avec succes', 'success')
+    try:
+        from app import db
+        from models.database import Service
+        if request.method == 'POST':
+            service = Service(
+                title=request.form['title'],
+                description=request.form.get('description', ''),
+                icon=request.form.get('icon', ''),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(service)
+            db.session.commit()
+            flash('Service ajoute avec succes', 'success')
+            return redirect(url_for('admin.services'))
+        return render_template('admin/service_form.html', service=None)
+    except Exception as e:
+        logger.error(f"Error adding service: {e}")
+        flash('Erreur lors de l\'ajout du service', 'error')
         return redirect(url_for('admin.services'))
-    return render_template('admin/service_form.html', service=None)
 
 
 @admin_bp.route('/services/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_service(id):
-    from app import db
-    from models.database import Service
-    service = Service.query.get_or_404(id)
-    if request.method == 'POST':
-        service.title = request.form['title']
-        service.description = request.form.get('description', '')
-        service.icon = request.form.get('icon', '')
-        service.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('Service modifie avec succes', 'success')
+    try:
+        from app import db
+        from models.database import Service
+        service = Service.query.get_or_404(id)
+        if request.method == 'POST':
+            service.title = request.form['title']
+            service.description = request.form.get('description', '')
+            service.icon = request.form.get('icon', '')
+            service.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('Service modifie avec succes', 'success')
+            return redirect(url_for('admin.services'))
+        return render_template('admin/service_form.html', service=service)
+    except Exception as e:
+        logger.error(f"Error editing service: {e}")
+        flash('Erreur lors de la modification du service', 'error')
         return redirect(url_for('admin.services'))
-    return render_template('admin/service_form.html', service=service)
 
 
 @admin_bp.route('/services/<int:id>/delete', methods=['POST'])
 @require_admin
 def delete_service(id):
-    from app import db
-    from models.database import Service
-    service = Service.query.get_or_404(id)
-    db.session.delete(service)
-    db.session.commit()
-    flash('Service supprime', 'success')
+    try:
+        from app import db
+        from models.database import Service
+        service = Service.query.get_or_404(id)
+        db.session.delete(service)
+        db.session.commit()
+        flash('Service supprime', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting service: {e}")
+        flash('Erreur lors de la suppression du service', 'error')
     return redirect(url_for('admin.services'))
 
 
 @admin_bp.route('/partnerships')
 @require_admin
 def partnerships():
-    from models.database import PartnershipType
-    partnerships = PartnershipType.query.order_by(PartnershipType.order).all()
-    return render_template('admin/partnerships.html', partnerships=partnerships)
+    try:
+        from models.database import PartnershipType
+        partnerships = PartnershipType.query.order_by(PartnershipType.order).all()
+        return render_template('admin/partnerships.html', partnerships=partnerships)
+    except Exception as e:
+        logger.error(f"Error loading partnerships: {e}")
+        flash('Erreur lors du chargement des partenariats', 'error')
+        return render_template('admin/partnerships.html', partnerships=[])
 
 
 @admin_bp.route('/partnerships/add', methods=['GET', 'POST'])
 @require_admin
 def add_partnership():
-    from app import db
-    from models.database import PartnershipType
-    if request.method == 'POST':
-        partnership = PartnershipType(
-            title=request.form['title'],
-            description=request.form.get('description', ''),
-            benefits=request.form.get('benefits', ''),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(partnership)
-        db.session.commit()
-        flash('Type de partenariat ajoute avec succes', 'success')
+    try:
+        from app import db
+        from models.database import PartnershipType
+        if request.method == 'POST':
+            partnership = PartnershipType(
+                title=request.form['title'],
+                description=request.form.get('description', ''),
+                benefits=request.form.get('benefits', ''),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(partnership)
+            db.session.commit()
+            flash('Type de partenariat ajoute avec succes', 'success')
+            return redirect(url_for('admin.partnerships'))
+        return render_template('admin/partnership_form.html', partnership=None)
+    except Exception as e:
+        logger.error(f"Error adding partnership: {e}")
+        flash('Erreur lors de l\'ajout du partenariat', 'error')
         return redirect(url_for('admin.partnerships'))
-    return render_template('admin/partnership_form.html', partnership=None)
 
 
 @admin_bp.route('/partnerships/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_partnership(id):
-    from app import db
-    from models.database import PartnershipType
-    partnership = PartnershipType.query.get_or_404(id)
-    if request.method == 'POST':
-        partnership.title = request.form['title']
-        partnership.description = request.form.get('description', '')
-        partnership.benefits = request.form.get('benefits', '')
-        partnership.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('Type de partenariat modifie avec succes', 'success')
+    try:
+        from app import db
+        from models.database import PartnershipType
+        partnership = PartnershipType.query.get_or_404(id)
+        if request.method == 'POST':
+            partnership.title = request.form['title']
+            partnership.description = request.form.get('description', '')
+            partnership.benefits = request.form.get('benefits', '')
+            partnership.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('Type de partenariat modifie avec succes', 'success')
+            return redirect(url_for('admin.partnerships'))
+        return render_template('admin/partnership_form.html', partnership=partnership)
+    except Exception as e:
+        logger.error(f"Error editing partnership: {e}")
+        flash('Erreur lors de la modification du partenariat', 'error')
         return redirect(url_for('admin.partnerships'))
-    return render_template('admin/partnership_form.html', partnership=partnership)
 
 
 @admin_bp.route('/partnerships/<int:id>/delete', methods=['POST'])
 @require_admin
 def delete_partnership(id):
-    from app import db
-    from models.database import PartnershipType
-    partnership = PartnershipType.query.get_or_404(id)
-    db.session.delete(partnership)
-    db.session.commit()
-    flash('Type de partenariat supprime', 'success')
+    try:
+        from app import db
+        from models.database import PartnershipType
+        partnership = PartnershipType.query.get_or_404(id)
+        db.session.delete(partnership)
+        db.session.commit()
+        flash('Type de partenariat supprime', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting partnership: {e}")
+        flash('Erreur lors de la suppression du partenariat', 'error')
     return redirect(url_for('admin.partnerships'))
 
 
 @admin_bp.route('/process')
 @require_admin
 def process_steps():
-    from models.database import ProcessStep
-    steps = ProcessStep.query.order_by(ProcessStep.order).all()
-    return render_template('admin/process_steps.html', steps=steps)
+    try:
+        from models.database import ProcessStep
+        steps = ProcessStep.query.order_by(ProcessStep.order).all()
+        return render_template('admin/process_steps.html', steps=steps)
+    except Exception as e:
+        logger.error(f"Error loading process steps: {e}")
+        flash('Erreur lors du chargement des etapes', 'error')
+        return render_template('admin/process_steps.html', steps=[])
 
 
 @admin_bp.route('/process/add', methods=['GET', 'POST'])
 @require_admin
 def add_process_step():
-    from app import db
-    from models.database import ProcessStep
-    if request.method == 'POST':
-        step = ProcessStep(
-            number=request.form['number'],
-            title=request.form['title'],
-            description=request.form.get('description', ''),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(step)
-        db.session.commit()
-        flash('Etape ajoutee avec succes', 'success')
+    try:
+        from app import db
+        from models.database import ProcessStep
+        if request.method == 'POST':
+            step = ProcessStep(
+                number=request.form['number'],
+                title=request.form['title'],
+                description=request.form.get('description', ''),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(step)
+            db.session.commit()
+            flash('Etape ajoutee avec succes', 'success')
+            return redirect(url_for('admin.process_steps'))
+        return render_template('admin/process_step_form.html', step=None)
+    except Exception as e:
+        logger.error(f"Error adding process step: {e}")
+        flash('Erreur lors de l\'ajout de l\'etape', 'error')
         return redirect(url_for('admin.process_steps'))
-    return render_template('admin/process_step_form.html', step=None)
 
 
 @admin_bp.route('/process/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_process_step(id):
-    from app import db
-    from models.database import ProcessStep
-    step = ProcessStep.query.get_or_404(id)
-    if request.method == 'POST':
-        step.number = request.form['number']
-        step.title = request.form['title']
-        step.description = request.form.get('description', '')
-        step.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('Etape modifiee avec succes', 'success')
+    try:
+        from app import db
+        from models.database import ProcessStep
+        step = ProcessStep.query.get_or_404(id)
+        if request.method == 'POST':
+            step.number = request.form['number']
+            step.title = request.form['title']
+            step.description = request.form.get('description', '')
+            step.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('Etape modifiee avec succes', 'success')
+            return redirect(url_for('admin.process_steps'))
+        return render_template('admin/process_step_form.html', step=step)
+    except Exception as e:
+        logger.error(f"Error editing process step: {e}")
+        flash('Erreur lors de la modification de l\'etape', 'error')
         return redirect(url_for('admin.process_steps'))
-    return render_template('admin/process_step_form.html', step=step)
 
 
 @admin_bp.route('/process/<int:id>/delete', methods=['POST'])
 @require_admin
 def delete_process_step(id):
-    from app import db
-    from models.database import ProcessStep
-    step = ProcessStep.query.get_or_404(id)
-    db.session.delete(step)
-    db.session.commit()
-    flash('Etape supprimee', 'success')
+    try:
+        from app import db
+        from models.database import ProcessStep
+        step = ProcessStep.query.get_or_404(id)
+        db.session.delete(step)
+        db.session.commit()
+        flash('Etape supprimee', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting process step: {e}")
+        flash('Erreur lors de la suppression de l\'etape', 'error')
     return redirect(url_for('admin.process_steps'))
 
 
 @admin_bp.route('/faqs')
 @require_admin
 def faqs():
-    from models.database import FAQ
-    faqs = FAQ.query.order_by(FAQ.order).all()
-    return render_template('admin/faqs.html', faqs=faqs)
+    try:
+        from models.database import FAQ
+        faqs = FAQ.query.order_by(FAQ.order).all()
+        return render_template('admin/faqs.html', faqs=faqs)
+    except Exception as e:
+        logger.error(f"Error loading FAQs: {e}")
+        flash('Erreur lors du chargement des FAQs', 'error')
+        return render_template('admin/faqs.html', faqs=[])
 
 
 @admin_bp.route('/faqs/add', methods=['GET', 'POST'])
 @require_admin
 def add_faq():
-    from app import db
-    from models.database import FAQ
-    if request.method == 'POST':
-        faq = FAQ(
-            question=request.form['question'],
-            answer=request.form.get('answer', ''),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(faq)
-        db.session.commit()
-        flash('FAQ ajoutee avec succes', 'success')
+    try:
+        from app import db
+        from models.database import FAQ
+        if request.method == 'POST':
+            faq = FAQ(
+                question=request.form['question'],
+                answer=request.form.get('answer', ''),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(faq)
+            db.session.commit()
+            flash('FAQ ajoutee avec succes', 'success')
+            return redirect(url_for('admin.faqs'))
+        return render_template('admin/faq_form.html', faq=None)
+    except Exception as e:
+        logger.error(f"Error adding FAQ: {e}")
+        flash('Erreur lors de l\'ajout de la FAQ', 'error')
         return redirect(url_for('admin.faqs'))
-    return render_template('admin/faq_form.html', faq=None)
 
 
 @admin_bp.route('/faqs/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_faq(id):
-    from app import db
-    from models.database import FAQ
-    faq = FAQ.query.get_or_404(id)
-    if request.method == 'POST':
-        faq.question = request.form['question']
-        faq.answer = request.form.get('answer', '')
-        faq.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('FAQ modifiee avec succes', 'success')
+    try:
+        from app import db
+        from models.database import FAQ
+        faq = FAQ.query.get_or_404(id)
+        if request.method == 'POST':
+            faq.question = request.form['question']
+            faq.answer = request.form.get('answer', '')
+            faq.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('FAQ modifiee avec succes', 'success')
+            return redirect(url_for('admin.faqs'))
+        return render_template('admin/faq_form.html', faq=faq)
+    except Exception as e:
+        logger.error(f"Error editing FAQ: {e}")
+        flash('Erreur lors de la modification de la FAQ', 'error')
         return redirect(url_for('admin.faqs'))
-    return render_template('admin/faq_form.html', faq=faq)
 
 
 @admin_bp.route('/faqs/<int:id>/delete', methods=['POST'])
 @require_admin
 def delete_faq(id):
-    from app import db
-    from models.database import FAQ
-    faq = FAQ.query.get_or_404(id)
-    db.session.delete(faq)
-    db.session.commit()
-    flash('FAQ supprimee', 'success')
+    try:
+        from app import db
+        from models.database import FAQ
+        faq = FAQ.query.get_or_404(id)
+        db.session.delete(faq)
+        db.session.commit()
+        flash('FAQ supprimee', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting FAQ: {e}")
+        flash('Erreur lors de la suppression de la FAQ', 'error')
     return redirect(url_for('admin.faqs'))
 
 
 @admin_bp.route('/testimonials')
 @require_admin
 def testimonials():
-    from models.database import Testimonial
-    testimonials = Testimonial.query.order_by(Testimonial.order).all()
-    return render_template('admin/testimonials.html', testimonials=testimonials)
+    try:
+        from models.database import Testimonial
+        testimonials = Testimonial.query.order_by(Testimonial.order).all()
+        return render_template('admin/testimonials.html', testimonials=testimonials)
+    except Exception as e:
+        logger.error(f"Error loading testimonials: {e}")
+        flash('Erreur lors du chargement des temoignages', 'error')
+        return render_template('admin/testimonials.html', testimonials=[])
 
 
 @admin_bp.route('/testimonials/add', methods=['GET', 'POST'])
 @require_admin
 def add_testimonial():
-    from app import db
-    from models.database import Testimonial
-    from utils.image_processor import process_image_for_type
-    if request.method == 'POST':
-        image_path = None
-        if 'author_image' in request.files:
-            file = request.files['author_image']
-            if file and file.filename and allowed_file(file.filename):
-                image_path = process_image_for_type(file, 'testimonial')
-        
-        testimonial = Testimonial(
-            text=request.form['text'],
-            author_name=request.form['author_name'],
-            author_title=request.form.get('author_title', ''),
-            author_image=image_path or request.form.get('author_image_url', ''),
-            order=int(request.form.get('order', 0))
-        )
-        db.session.add(testimonial)
-        db.session.commit()
-        flash('Temoignage ajoute avec succes', 'success')
+    try:
+        from app import db
+        from models.database import Testimonial
+        from utils.image_processor import process_image_for_type
+        if request.method == 'POST':
+            image_path = None
+            if 'author_image' in request.files:
+                file = request.files['author_image']
+                if file and file.filename and allowed_file(file.filename):
+                    image_path = process_image_for_type(file, 'testimonial')
+            
+            testimonial = Testimonial(
+                text=request.form['text'],
+                author_name=request.form['author_name'],
+                author_title=request.form.get('author_title', ''),
+                author_image=image_path or request.form.get('author_image_url', ''),
+                order=int(request.form.get('order', 0))
+            )
+            db.session.add(testimonial)
+            db.session.commit()
+            flash('Temoignage ajoute avec succes', 'success')
+            return redirect(url_for('admin.testimonials'))
+        return render_template('admin/testimonial_form.html', testimonial=None)
+    except Exception as e:
+        logger.error(f"Error adding testimonial: {e}")
+        flash('Erreur lors de l\'ajout du temoignage', 'error')
         return redirect(url_for('admin.testimonials'))
-    return render_template('admin/testimonial_form.html', testimonial=None)
 
 
 @admin_bp.route('/testimonials/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_testimonial(id):
-    from app import db
-    from models.database import Testimonial
-    from utils.image_processor import process_image_for_type
-    testimonial = Testimonial.query.get_or_404(id)
-    if request.method == 'POST':
-        if 'author_image' in request.files:
-            file = request.files['author_image']
-            if file and file.filename and allowed_file(file.filename):
-                new_image = process_image_for_type(file, 'testimonial')
-                if new_image:
-                    testimonial.author_image = new_image
-        elif request.form.get('author_image_url'):
-            testimonial.author_image = request.form['author_image_url']
-        
-        testimonial.text = request.form['text']
-        testimonial.author_name = request.form['author_name']
-        testimonial.author_title = request.form.get('author_title', '')
-        testimonial.order = int(request.form.get('order', 0))
-        db.session.commit()
-        flash('Temoignage modifie avec succes', 'success')
+    try:
+        from app import db
+        from models.database import Testimonial
+        from utils.image_processor import process_image_for_type
+        testimonial = Testimonial.query.get_or_404(id)
+        if request.method == 'POST':
+            if 'author_image' in request.files:
+                file = request.files['author_image']
+                if file and file.filename and allowed_file(file.filename):
+                    new_image = process_image_for_type(file, 'testimonial')
+                    if new_image:
+                        testimonial.author_image = new_image
+            elif request.form.get('author_image_url'):
+                testimonial.author_image = request.form['author_image_url']
+            
+            testimonial.text = request.form['text']
+            testimonial.author_name = request.form['author_name']
+            testimonial.author_title = request.form.get('author_title', '')
+            testimonial.order = int(request.form.get('order', 0))
+            db.session.commit()
+            flash('Temoignage modifie avec succes', 'success')
+            return redirect(url_for('admin.testimonials'))
+        return render_template('admin/testimonial_form.html', testimonial=testimonial)
+    except Exception as e:
+        logger.error(f"Error editing testimonial: {e}")
+        flash('Erreur lors de la modification du temoignage', 'error')
         return redirect(url_for('admin.testimonials'))
-    return render_template('admin/testimonial_form.html', testimonial=testimonial)
 
 
 @admin_bp.route('/testimonials/<int:id>/delete', methods=['POST'])
 @require_admin
 def delete_testimonial(id):
-    from app import db
-    from models.database import Testimonial
-    testimonial = Testimonial.query.get_or_404(id)
-    db.session.delete(testimonial)
-    db.session.commit()
-    flash('Temoignage supprime', 'success')
+    try:
+        from app import db
+        from models.database import Testimonial
+        testimonial = Testimonial.query.get_or_404(id)
+        db.session.delete(testimonial)
+        db.session.commit()
+        flash('Temoignage supprime', 'success')
+    except Exception as e:
+        logger.error(f"Error deleting testimonial: {e}")
+        flash('Erreur lors de la suppression du temoignage', 'error')
     return redirect(url_for('admin.testimonials'))
 
 
 @admin_bp.route('/homepage')
 @require_admin
 def homepage():
-    from app import db
-    from models.database import HeroSection, HomepageStats, ProductDB
-    hero = HeroSection.query.first()
-    if not hero:
-        hero = HeroSection()
-        db.session.add(hero)
-        db.session.commit()
-    
-    stats = HomepageStats.query.first()
-    if not stats:
-        stats = HomepageStats()
-        db.session.add(stats)
-        db.session.commit()
-    
-    products = ProductDB.query.order_by(ProductDB.order).all()
-    
-    return render_template('admin/homepage.html', hero=hero, stats=stats, products=products)
+    try:
+        from app import db
+        from models.database import HeroSection, HomepageStats, ProductDB
+        hero = HeroSection.query.first()
+        if not hero:
+            hero = HeroSection()
+            db.session.add(hero)
+            db.session.commit()
+        
+        stats = HomepageStats.query.first()
+        if not stats:
+            stats = HomepageStats()
+            db.session.add(stats)
+            db.session.commit()
+        
+        products = ProductDB.query.order_by(ProductDB.order).all()
+        
+        return render_template('admin/homepage.html', hero=hero, stats=stats, products=products)
+    except Exception as e:
+        logger.error(f"Error loading homepage settings: {e}")
+        flash('Erreur lors du chargement des parametres', 'error')
+        return render_template('admin/homepage.html', hero=None, stats=None, products=[])
 
 
 @admin_bp.route('/homepage/hero', methods=['POST'])
 @require_admin
 def update_hero():
-    from app import db
-    from models.database import HeroSection, ProductDB
-    from utils.image_processor import process_image_for_type
-    hero = HeroSection.query.first()
-    if not hero:
-        hero = HeroSection()
-        db.session.add(hero)
-    
-    hero.title = request.form.get('title', hero.title)
-    hero.subtitle = request.form.get('subtitle', hero.subtitle)
-    hero.button_text = request.form.get('button_text', hero.button_text)
-    hero.card1_title = request.form.get('card1_title', hero.card1_title)
-    hero.card1_subtitle = request.form.get('card1_subtitle', hero.card1_subtitle)
-    hero.card1_link = request.form.get('card1_link', hero.card1_link)
-    hero.card2_title = request.form.get('card2_title', hero.card2_title)
-    hero.card2_subtitle = request.form.get('card2_subtitle', hero.card2_subtitle)
-    hero.card2_link = request.form.get('card2_link', hero.card2_link)
-    
-    product_fields = {
-        'main_product_id': 'main_image',
-        'card1_product_id': 'card1_image',
-        'card2_product_id': 'card2_image'
-    }
-    for product_field, image_field in product_fields.items():
-        product_id = request.form.get(product_field)
-        if product_id:
-            product = ProductDB.query.get(int(product_id))
-            if product and product.image:
-                setattr(hero, image_field, product.image)
-    
-    image_types = {'main_image': 'hero_main', 'card1_image': 'hero_card', 'card2_image': 'hero_card'}
-    for field, img_type in image_types.items():
-        if field in request.files:
-            file = request.files[field]
-            if file and file.filename and allowed_file(file.filename):
-                new_image = process_image_for_type(file, img_type)
-                if new_image:
-                    setattr(hero, field, new_image)
-    
-    db.session.commit()
-    flash('Section hero mise a jour', 'success')
+    try:
+        from app import db
+        from models.database import HeroSection, ProductDB
+        from utils.image_processor import process_image_for_type
+        hero = HeroSection.query.first()
+        if not hero:
+            hero = HeroSection()
+            db.session.add(hero)
+        
+        hero.title = request.form.get('title', hero.title)
+        hero.subtitle = request.form.get('subtitle', hero.subtitle)
+        hero.button_text = request.form.get('button_text', hero.button_text)
+        hero.card1_title = request.form.get('card1_title', hero.card1_title)
+        hero.card1_subtitle = request.form.get('card1_subtitle', hero.card1_subtitle)
+        hero.card1_link = request.form.get('card1_link', hero.card1_link)
+        hero.card2_title = request.form.get('card2_title', hero.card2_title)
+        hero.card2_subtitle = request.form.get('card2_subtitle', hero.card2_subtitle)
+        hero.card2_link = request.form.get('card2_link', hero.card2_link)
+        
+        product_fields = {
+            'main_product_id': 'main_image',
+            'card1_product_id': 'card1_image',
+            'card2_product_id': 'card2_image'
+        }
+        for product_field, image_field in product_fields.items():
+            product_id = request.form.get(product_field)
+            if product_id:
+                product = ProductDB.query.get(int(product_id))
+                if product and product.image:
+                    setattr(hero, image_field, product.image)
+        
+        image_types = {'main_image': 'hero_main', 'card1_image': 'hero_card', 'card2_image': 'hero_card'}
+        for field, img_type in image_types.items():
+            if field in request.files:
+                file = request.files[field]
+                if file and file.filename and allowed_file(file.filename):
+                    new_image = process_image_for_type(file, img_type)
+                    if new_image:
+                        setattr(hero, field, new_image)
+        
+        db.session.commit()
+        flash('Section hero mise a jour', 'success')
+    except Exception as e:
+        logger.error(f"Error updating hero: {e}")
+        flash('Erreur lors de la mise a jour du hero', 'error')
     return redirect(url_for('admin.homepage'))
 
 
 @admin_bp.route('/homepage/stats', methods=['POST'])
 @require_admin
 def update_stats():
-    from app import db
-    from models.database import HomepageStats
-    stats = HomepageStats.query.first()
-    if not stats:
-        stats = HomepageStats()
-        db.session.add(stats)
-    
-    stats.artisans = int(request.form.get('artisans', 50))
-    stats.products = int(request.form.get('products', 200))
-    stats.partners = int(request.form.get('partners', 35))
-    stats.countries = int(request.form.get('countries', 12))
-    
-    db.session.commit()
-    flash('Statistiques mises a jour', 'success')
+    try:
+        from app import db
+        from models.database import HomepageStats
+        stats = HomepageStats.query.first()
+        if not stats:
+            stats = HomepageStats()
+            db.session.add(stats)
+        
+        stats.artisans = int(request.form.get('artisans', 50))
+        stats.products = int(request.form.get('products', 200))
+        stats.partners = int(request.form.get('partners', 35))
+        stats.countries = int(request.form.get('countries', 12))
+        
+        db.session.commit()
+        flash('Statistiques mises a jour', 'success')
+    except Exception as e:
+        logger.error(f"Error updating stats: {e}")
+        flash('Erreur lors de la mise a jour des statistiques', 'error')
     return redirect(url_for('admin.homepage'))
 
 
 @admin_bp.route('/seo')
 @require_admin
 def seo():
-    from app import db
-    from models.database import SEOSettings
-    pages = ['index', 'catalogue', 'about', 'contact', 'services', 'partenariats', 'processus', 'faq']
-    seo_settings = {}
-    for page in pages:
-        setting = SEOSettings.query.filter_by(page=page).first()
-        if not setting:
-            setting = SEOSettings(page=page)
-            db.session.add(setting)
-        seo_settings[page] = setting
-    db.session.commit()
-    return render_template('admin/seo.html', seo_settings=seo_settings, pages=pages)
+    try:
+        from app import db
+        from models.database import SEOSettings
+        pages = ['index', 'catalogue', 'about', 'contact', 'services', 'partenariats', 'processus', 'faq']
+        seo_settings = {}
+        for page in pages:
+            setting = SEOSettings.query.filter_by(page=page).first()
+            if not setting:
+                setting = SEOSettings(page=page)
+                db.session.add(setting)
+            seo_settings[page] = setting
+        db.session.commit()
+        return render_template('admin/seo.html', seo_settings=seo_settings, pages=pages)
+    except Exception as e:
+        logger.error(f"Error loading SEO settings: {e}")
+        flash('Erreur lors du chargement des parametres SEO', 'error')
+        return render_template('admin/seo.html', seo_settings={}, pages=[])
 
 
 @admin_bp.route('/seo/<page>', methods=['POST'])
 @require_admin
 def update_seo(page):
-    from app import db
-    from models.database import SEOSettings
-    setting = SEOSettings.query.filter_by(page=page).first()
-    if not setting:
-        setting = SEOSettings(page=page)
-        db.session.add(setting)
-    
-    from utils.image_processor import process_image_for_type
-    
-    setting.meta_title = request.form.get('meta_title', '')
-    setting.meta_description = request.form.get('meta_description', '')
-    setting.meta_keywords = request.form.get('meta_keywords', '')
-    setting.og_title = request.form.get('og_title', '')
-    setting.og_description = request.form.get('og_description', '')
-    
-    if 'og_image' in request.files:
-        file = request.files['og_image']
-        if file and file.filename and allowed_file(file.filename):
-            new_image = process_image_for_type(file, 'og_image')
-            if new_image:
-                setting.og_image = new_image
-    
-    db.session.commit()
-    flash(f'SEO de la page {page} mis a jour', 'success')
+    try:
+        from app import db
+        from models.database import SEOSettings
+        from utils.image_processor import process_image_for_type
+        
+        setting = SEOSettings.query.filter_by(page=page).first()
+        if not setting:
+            setting = SEOSettings(page=page)
+            db.session.add(setting)
+        
+        setting.meta_title = request.form.get('meta_title', '')
+        setting.meta_description = request.form.get('meta_description', '')
+        setting.meta_keywords = request.form.get('meta_keywords', '')
+        setting.og_title = request.form.get('og_title', '')
+        setting.og_description = request.form.get('og_description', '')
+        
+        if 'og_image' in request.files:
+            file = request.files['og_image']
+            if file and file.filename and allowed_file(file.filename):
+                new_image = process_image_for_type(file, 'og_image')
+                if new_image:
+                    setting.og_image = new_image
+        
+        db.session.commit()
+        flash(f'SEO pour {page} mis a jour', 'success')
+    except Exception as e:
+        logger.error(f"Error updating SEO for {page}: {e}")
+        flash('Erreur lors de la mise a jour du SEO', 'error')
     return redirect(url_for('admin.seo'))
 
 
-@admin_bp.route('/settings')
+@admin_bp.route('/contact-info')
 @require_admin
-def settings():
-    from app import db
-    from models.database import ContactInfo
-    contact = ContactInfo.query.first()
-    if not contact:
-        contact = ContactInfo()
-        db.session.add(contact)
+def contact_info():
+    try:
+        from app import db
+        from models.database import ContactInfo
+        contact = ContactInfo.query.first()
+        if not contact:
+            contact = ContactInfo()
+            db.session.add(contact)
+            db.session.commit()
+        return render_template('admin/contact_info.html', contact=contact)
+    except Exception as e:
+        logger.error(f"Error loading contact info: {e}")
+        flash('Erreur lors du chargement des informations de contact', 'error')
+        return render_template('admin/contact_info.html', contact=None)
+
+
+@admin_bp.route('/contact-info', methods=['POST'])
+@require_admin
+def update_contact_info():
+    try:
+        from app import db
+        from models.database import ContactInfo
+        contact = ContactInfo.query.first()
+        if not contact:
+            contact = ContactInfo()
+            db.session.add(contact)
+        
+        contact.email = request.form.get('email', '')
+        contact.phone = request.form.get('phone', '')
+        contact.whatsapp = request.form.get('whatsapp', '')
+        contact.address = request.form.get('address', '')
+        contact.instagram = request.form.get('instagram', '')
+        contact.facebook = request.form.get('facebook', '')
+        contact.linkedin = request.form.get('linkedin', '')
+        contact.hours = request.form.get('hours', '')
+        
         db.session.commit()
-    return render_template('admin/settings.html', contact=contact)
+        flash('Informations de contact mises a jour', 'success')
+    except Exception as e:
+        logger.error(f"Error updating contact info: {e}")
+        flash('Erreur lors de la mise a jour des informations de contact', 'error')
+    return redirect(url_for('admin.contact_info'))
 
 
-@admin_bp.route('/settings/contact', methods=['POST'])
+@admin_bp.route('/highlights')
 @require_admin
-def update_contact():
-    from app import db
-    from models.database import ContactInfo
-    contact = ContactInfo.query.first()
-    if not contact:
-        contact = ContactInfo()
-        db.session.add(contact)
-    
-    contact.email = request.form.get('email', '')
-    contact.phone = request.form.get('phone', '')
-    contact.whatsapp = request.form.get('whatsapp', '')
-    contact.address = request.form.get('address', '')
-    contact.instagram = request.form.get('instagram', '')
-    contact.facebook = request.form.get('facebook', '')
-    contact.tiktok = request.form.get('tiktok', '')
-    
-    db.session.commit()
-    flash('Informations de contact mises a jour', 'success')
-    return redirect(url_for('admin.settings'))
+def highlights():
+    try:
+        from models.database import FeaturedHighlight
+        highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
+        return render_template('admin/highlights.html', highlights=highlights)
+    except Exception as e:
+        logger.error(f"Error loading highlights: {e}")
+        flash('Erreur lors du chargement des mises en avant', 'error')
+        return render_template('admin/highlights.html', highlights=[])
 
 
-@admin_bp.route('/users')
+@admin_bp.route('/highlights/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
-def users():
-    from models.database import User
-    users = User.query.all()
-    return render_template('admin/users.html', users=users)
-
-
-@admin_bp.route('/users/<user_id>/toggle-admin', methods=['POST'])
-@require_admin
-def toggle_admin(user_id):
-    from app import db
-    from models.database import User
-    user = User.query.get_or_404(user_id)
-    if user.id == current_user.id:
-        flash('Vous ne pouvez pas modifier vos propres droits admin', 'error')
-    else:
-        user.is_admin = not user.is_admin
-        db.session.commit()
-        flash(f'Droits admin {"accordes" if user.is_admin else "retires"} pour {user.email or user.id}', 'success')
-    return redirect(url_for('admin.users'))
-
-
-@admin_bp.route('/upload', methods=['POST'])
-@require_admin
-def upload_file():
-    from utils.image_processor import process_image_for_type
-    if 'file' not in request.files:
-        return jsonify({'error': 'Aucun fichier'}), 400
-    
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'Aucun fichier selectionne'}), 400
-    
-    if file and allowed_file(file.filename):
-        image_type = request.form.get('image_type', 'default')
-        url = process_image_for_type(file, image_type)
-        if url:
-            return jsonify({'url': url})
-        return jsonify({'error': 'Erreur lors du traitement'}), 400
-    
-    return jsonify({'error': 'Type de fichier non autorise'}), 400
-
-
-@admin_bp.route('/upload-with-crop', methods=['POST'])
-@require_admin
-def upload_with_crop():
-    from utils.image_processor import process_image_for_type
-    
-    if 'file' not in request.files:
-        return jsonify({'error': 'Aucun fichier'}), 400
-    
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'Aucun fichier selectionne'}), 400
-    
-    image_type = request.form.get('image_type', 'default')
-    
-    crop_data = None
-    if request.form.get('crop_x') is not None:
-        try:
-            crop_data = {
-                'x': float(request.form.get('crop_x', 0)),
-                'y': float(request.form.get('crop_y', 0)),
-                'width': float(request.form.get('crop_width', 0)),
-                'height': float(request.form.get('crop_height', 0))
-            }
-        except (ValueError, TypeError):
-            crop_data = None
-    
-    url = process_image_for_type(file, image_type, crop_data)
-    
-    if url:
-        return jsonify({'url': url, 'success': True})
-    
-    return jsonify({'error': 'Erreur lors du traitement de l\'image'}), 400
+def edit_highlight(id):
+    try:
+        from app import db
+        from models.database import FeaturedHighlight
+        from utils.image_processor import process_image_for_type
+        highlight = FeaturedHighlight.query.get_or_404(id)
+        if request.method == 'POST':
+            if 'image' in request.files:
+                file = request.files['image']
+                if file and file.filename and allowed_file(file.filename):
+                    new_image = process_image_for_type(file, 'featured_highlight')
+                    if new_image:
+                        highlight.image = new_image
+            elif request.form.get('image_url'):
+                highlight.image = request.form['image_url']
+            
+            highlight.title = request.form.get('title', '')
+            highlight.subtitle = request.form.get('subtitle', '')
+            highlight.badge = request.form.get('badge', '')
+            highlight.link = request.form.get('link', '')
+            highlight.link_text = request.form.get('link_text', '')
+            highlight.is_active = bool(request.form.get('is_active'))
+            
+            db.session.commit()
+            flash('Mise en avant modifiee avec succes', 'success')
+            return redirect(url_for('admin.highlights'))
+        return render_template('admin/highlight_form.html', highlight=highlight)
+    except Exception as e:
+        logger.error(f"Error editing highlight: {e}")
+        flash('Erreur lors de la modification de la mise en avant', 'error')
+        return redirect(url_for('admin.highlights'))
 
 
 @admin_bp.route('/page-content')
 @require_admin
 def page_content():
-    from models.database import PageContent
-    from collections import OrderedDict
-    
-    pages = ['index', 'about', 'services', 'contact', 'catalogue', 'faq', 'partenariats', 'processus', 'global']
-    page_filter = request.args.get('page', 'index')
-    
-    section_order = {
-        'index': ['featured', 'stats', 'our_values', 'process', 'testimonials', 'cta', 'newsletter'],
-        'about': ['header', 'intro', 'mission', 'our_values', 'expertise', 'sourcing', 'commitments', 'cta'],
-        'services': ['header', 'intro', 'features', 'cta'],
-        'contact': ['header', 'form', 'info'],
-        'catalogue': ['header', 'filter', 'empty'],
-        'faq': ['header', 'cta'],
-        'partenariats': ['header', 'intro', 'cta'],
-        'processus': ['header', 'intro', 'cta'],
-        'global': ['nav', 'footer']
-    }
-    
-    section_labels = {
-        'featured': ('Section Vedette', 'Produits mis en avant sur la page d\'accueil'),
-        'stats': ('Statistiques', 'Chiffres cles affiches'),
-        'our_values': ('Nos Valeurs', 'Section presentant les valeurs'),
-        'process': ('Processus', 'Apercu du processus sur l\'accueil'),
-        'testimonials': ('Temoignages', 'Section des avis clients'),
-        'cta': ('Appel a l\'Action', 'Boutons et messages d\'incitation'),
-        'newsletter': ('Newsletter', 'Formulaire d\'inscription'),
-        'header': ('En-tete de Page', 'Titre et sous-titre de la page'),
-        'intro': ('Introduction', 'Texte d\'introduction'),
-        'mission': ('Mission', 'Notre mission'),
-        'expertise': ('Expertise', 'Notre expertise'),
-        'sourcing': ('Sourcing', 'L\'art du sourcing'),
-        'commitments': ('Engagements', 'Nos engagements'),
-        'form': ('Formulaire', 'Labels et textes du formulaire'),
-        'info': ('Informations', 'Informations de contact'),
-        'features': ('Caracteristiques', 'Points forts des services'),
-        'filter': ('Filtres', 'Options de filtrage'),
-        'empty': ('Etat Vide', 'Message quand pas de resultats'),
-        'nav': ('Navigation', 'Menu de navigation'),
-        'footer': ('Pied de Page', 'Liens et textes du footer')
-    }
-    
-    contents = PageContent.query.filter_by(page=page_filter).all()
-    
-    sections_raw = {}
-    for content in contents:
-        if content.section not in sections_raw:
-            sections_raw[content.section] = []
-        sections_raw[content.section].append(content)
-    
-    ordered_sections = OrderedDict()
-    order = section_order.get(page_filter, [])
-    
-    for section_key in order:
-        if section_key in sections_raw:
-            ordered_sections[section_key] = sections_raw[section_key]
-    
-    for section_key in sections_raw:
-        if section_key not in ordered_sections:
-            ordered_sections[section_key] = sections_raw[section_key]
-    
-    return render_template('admin/page_content.html', 
-        pages=pages, 
-        current_page=page_filter, 
-        sections=ordered_sections,
-        section_labels=section_labels
-    )
+    try:
+        from models.database import PageContent
+        pages = PageContent.query.order_by(PageContent.page).all()
+        return render_template('admin/page_content.html', pages=pages)
+    except Exception as e:
+        logger.error(f"Error loading page content: {e}")
+        flash('Erreur lors du chargement du contenu des pages', 'error')
+        return render_template('admin/page_content.html', pages=[])
 
 
-@admin_bp.route('/page-content/edit/<int:id>', methods=['POST'])
+@admin_bp.route('/page-content/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
 def edit_page_content(id):
-    from app import db
-    from models.database import PageContent
-    
-    content = PageContent.query.get_or_404(id)
-    content.value = request.form.get('value', '')
-    db.session.commit()
-    
-    flash(f'Contenu "{content.key}" mis a jour', 'success')
-    return redirect(url_for('admin.page_content', page=content.page))
-
-
-@admin_bp.route('/page-content/add', methods=['POST'])
-@require_admin
-def add_page_content():
-    from app import db
-    from models.database import PageContent
-    
-    page = request.form.get('page')
-    section = request.form.get('section')
-    key = request.form.get('key')
-    value = request.form.get('value', '')
-    
-    existing = PageContent.query.filter_by(page=page, section=section, key=key).first()
-    if existing:
-        flash('Ce contenu existe deja', 'error')
-        return redirect(url_for('admin.page_content', page=page))
-    
-    content = PageContent(page=page, section=section, key=key, value=value)
-    db.session.add(content)
-    db.session.commit()
-    
-    flash('Contenu ajoute avec succes', 'success')
-    return redirect(url_for('admin.page_content', page=page))
-
-
-@admin_bp.route('/page-content/delete/<int:id>', methods=['POST'])
-@require_admin
-def delete_page_content(id):
-    from app import db
-    from models.database import PageContent
-    
-    content = PageContent.query.get_or_404(id)
-    page = content.page
-    db.session.delete(content)
-    db.session.commit()
-    
-    flash('Contenu supprime', 'success')
-    return redirect(url_for('admin.page_content', page=page))
-
-
-@admin_bp.route('/featured-highlights')
-@require_admin
-def featured_highlights():
-    from app import db
-    from models.database import FeaturedHighlight
-    
-    highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
-    
-    if len(highlights) < 5:
-        default_data = [
-            {'slot': 1, 'title': 'Poterie Traditionnelle', 'subtitle': 'Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi.', 'badge': 'CERAMIQUE ET POTERIE', 'link': '/catalogue?category=ceramique', 'link_text': 'Decouvrir la Collection', 'image': '/static/images/moroccan_pottery_cer_26051764.jpg'},
-            {'slot': 2, 'title': 'Ex-voto en Laiton', 'subtitle': 'Laiton martele', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_craft_5197c08b.jpg'},
-            {'slot': 3, 'title': 'Miroirs Artisanaux', 'subtitle': 'Bois sculpte a la main', 'badge': '', 'link': '/catalogue?category=mobilier', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_woodwork_fu_74825e67.jpg'},
-            {'slot': 4, 'title': 'Mini Cadre Identite', 'subtitle': 'Laiton', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_craft_91c1b440.jpg'},
-            {'slot': 5, 'title': 'Solitore Mural en Laiton', 'subtitle': 'Laiton poli', 'badge': '', 'link': '/catalogue?category=metal', 'link_text': 'Voir le produit', 'image': '/static/images/moroccan_brass_metal_6cc61071.jpg'},
-        ]
-        existing_slots = [h.slot for h in highlights]
-        for data in default_data:
-            if data['slot'] not in existing_slots:
-                highlight = FeaturedHighlight(**data)
-                db.session.add(highlight)
-        db.session.commit()
-        highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
-    
-    return render_template('admin/featured_highlights.html', highlights=highlights)
-
-
-@admin_bp.route('/featured-highlights/<int:id>/edit', methods=['GET', 'POST'])
-@require_admin
-def edit_featured_highlight(id):
-    from app import db
-    from models.database import FeaturedHighlight
-    from utils.image_processor import process_image_for_type
-    
-    highlight = FeaturedHighlight.query.get_or_404(id)
-    
-    if request.method == 'POST':
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and file.filename and allowed_file(file.filename):
-                new_image = process_image_for_type(file, 'featured_highlight')
-                if new_image:
-                    highlight.image = new_image
-        elif request.form.get('image_url'):
-            highlight.image = request.form['image_url']
-        
-        highlight.title = request.form.get('title', highlight.title)
-        highlight.subtitle = request.form.get('subtitle', '')
-        highlight.description = request.form.get('description', '')
-        highlight.link = request.form.get('link', '')
-        highlight.link_text = request.form.get('link_text', 'Explorer')
-        highlight.badge = request.form.get('badge', 'Artisanat')
-        highlight.is_active = bool(request.form.get('is_active'))
-        
-        db.session.commit()
-        flash(f'Element {highlight.slot} mis a jour avec succes', 'success')
-        return redirect(url_for('admin.featured_highlights'))
-    
-    return render_template('admin/featured_highlight_form.html', highlight=highlight)
+    try:
+        from app import db
+        from models.database import PageContent
+        content = PageContent.query.get_or_404(id)
+        if request.method == 'POST':
+            import json
+            try:
+                content.content = json.loads(request.form.get('content', '{}'))
+            except json.JSONDecodeError:
+                flash('Contenu JSON invalide', 'error')
+                return render_template('admin/page_content_form.html', content=content)
+            
+            db.session.commit()
+            flash('Contenu de la page mis a jour', 'success')
+            return redirect(url_for('admin.page_content'))
+        return render_template('admin/page_content_form.html', content=content)
+    except Exception as e:
+        logger.error(f"Error editing page content: {e}")
+        flash('Erreur lors de la modification du contenu de la page', 'error')
+        return redirect(url_for('admin.page_content'))
