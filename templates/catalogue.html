@@ -20,11 +20,11 @@
             {% for product in products %}
             <div class="gallery-item" id="produit-{{ product.id }}">
                 <div class="gallery-image">
-                    <span class="product-number">#{{ loop.index }}</span>
-                    <img src="{{ product.image }}" alt="Produit {{ loop.index }}" loading="lazy">
+                    <span class="product-number">Produit #{{ '%03d'|format(loop.index) }}</span>
+                    <img src="{{ product.image }}" alt="Produit #{{ '%03d'|format(loop.index) }}" loading="lazy">
                 </div>
                 <div class="gallery-footer">
-                    {% set whatsapp_text = "Bonjour, je suis interesse(e) par le produit n" ~ loop.index ~ " - " ~ url_for('catalogue.catalogue', _external=True) ~ "#produit-" ~ product.id %}
+                    {% set whatsapp_text = "Bonjour, je suis interesse(e) par le Produit #" ~ '%03d'|format(loop.index) ~ " - " ~ url_for('catalogue.catalogue', _external=True) ~ "#produit-" ~ product.id %}
                     <a href="https://wa.me/{{ contact_info.whatsapp|replace('+', '')|replace(' ', '') }}?text={{ whatsapp_text|urlencode }}" 
                        class="btn-whatsapp" 
                        target="_blank"
