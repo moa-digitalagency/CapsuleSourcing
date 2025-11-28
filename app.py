@@ -72,8 +72,12 @@ def handle_exception(e):
 
 @login_manager.user_loader
 def load_user(user_id):
-    from models.database import User
-    return User.query.get(int(user_id))
+    try:
+        from models.database import User
+        return User.query.get(int(user_id))
+    except Exception as e:
+        logger.warning(f"Error loading user: {e}")
+        return None
 
 
 @app.context_processor
