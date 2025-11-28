@@ -214,16 +214,20 @@ def seed_all_data():
         logger.info("Seeding all default data...")
         
         if User.query.count() == 0:
+            admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+            admin_email = os.environ.get('ADMIN_EMAIL', 'admin@capsule-maroc.com')
+            admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123')
+            
             admin_user = User(
-                username="admin",
-                email="admin@capsule-maroc.com",
+                username=admin_username,
+                email=admin_email,
                 first_name="Administrateur",
                 last_name="Capsule",
                 is_admin=True
             )
-            admin_user.set_password("admin123")
+            admin_user.set_password(admin_password)
             db.session.add(admin_user)
-            logger.info("Created default admin user (admin/admin123)")
+            logger.info(f"Created admin user from env vars: {admin_username}")
         
         if not ContactInfo.query.first():
             contact = ContactInfo(
