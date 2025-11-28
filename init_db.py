@@ -206,11 +206,24 @@ def seed_all_data():
     from models.database import (
         User, ContactInfo, HeroSection, HomepageStats, 
         SEOSettings, CategoryDB, ProductDB, Service, 
-        PartnershipType, ProcessStep, FAQ, Testimonial
+        PartnershipType, ProcessStep, FAQ, Testimonial,
+        FeaturedHighlight
     )
     
     def run_seed():
         logger.info("Seeding all default data...")
+        
+        if User.query.count() == 0:
+            admin_user = User(
+                username="admin",
+                email="admin@capsule-maroc.com",
+                first_name="Administrateur",
+                last_name="Capsule",
+                is_admin=True
+            )
+            admin_user.set_password("admin123")
+            db.session.add(admin_user)
+            logger.info("Created default admin user (admin/admin123)")
         
         if not ContactInfo.query.first():
             contact = ContactInfo(
@@ -461,6 +474,69 @@ def seed_all_data():
                 )
                 db.session.add(seo)
         logger.info("Created SEO settings")
+        
+        if FeaturedHighlight.query.count() == 0:
+            featured_highlights = [
+                FeaturedHighlight(
+                    slot=1,
+                    title="Poterie Traditionnelle",
+                    subtitle="Pieces uniques faconnees selon les techniques ancestrales de Fes et Safi",
+                    description="Chaque creation porte l'empreinte du maitre artisan qui l'a realisee.",
+                    image="/static/images/moroccan_artisan_han_11a3ad05.jpg",
+                    link="/catalogue?category=ceramique",
+                    link_text="Decouvrir la Collection",
+                    badge="Ceramique et Poterie",
+                    is_active=True,
+                    order=1
+                ),
+                FeaturedHighlight(
+                    slot=2,
+                    title="Cuir Marocain",
+                    subtitle="Maroquinerie artisanale",
+                    image="/static/images/moroccan_brass_craft_91c1b440.jpg",
+                    link="/catalogue?category=cuir",
+                    link_text="Voir le produit",
+                    badge="Cuir",
+                    is_active=True,
+                    order=2
+                ),
+                FeaturedHighlight(
+                    slot=3,
+                    title="Travail du Metal",
+                    subtitle="Laiton et fer forge",
+                    image="/static/images/moroccan_brass_craft_59d29144.jpg",
+                    link="/catalogue?category=metal",
+                    link_text="Voir le produit",
+                    badge="Metal",
+                    is_active=True,
+                    order=3
+                ),
+                FeaturedHighlight(
+                    slot=4,
+                    title="Textile Berbere",
+                    subtitle="Tapis et tissages",
+                    image="/static/images/moroccan_brass_craft_5197c08b.jpg",
+                    link="/catalogue?category=textile",
+                    link_text="Voir le produit",
+                    badge="Textile",
+                    is_active=True,
+                    order=4
+                ),
+                FeaturedHighlight(
+                    slot=5,
+                    title="Bois Sculpte",
+                    subtitle="Mobilier et decoration",
+                    image="/static/images/moroccan_brass_craft_91c1b440.jpg",
+                    link="/catalogue?category=bois",
+                    link_text="Voir le produit",
+                    badge="Bois",
+                    is_active=True,
+                    order=5
+                )
+            ]
+            for highlight in featured_highlights:
+                db.session.add(highlight)
+            logger.info("Created featured highlights")
         
         db.session.commit()
         logger.info("All default data seeded successfully!")

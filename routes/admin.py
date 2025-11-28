@@ -836,8 +836,7 @@ def update_contact_info():
         contact.address = request.form.get('address', '')
         contact.instagram = request.form.get('instagram', '')
         contact.facebook = request.form.get('facebook', '')
-        contact.linkedin = request.form.get('linkedin', '')
-        contact.hours = request.form.get('hours', '')
+        contact.tiktok = request.form.get('tiktok', '')
         
         db.session.commit()
         flash('Informations de contact mises a jour', 'success')
@@ -849,20 +848,20 @@ def update_contact_info():
 
 @admin_bp.route('/highlights')
 @require_admin
-def highlights():
+def featured_highlights():
     try:
         from models.database import FeaturedHighlight
         highlights = FeaturedHighlight.query.order_by(FeaturedHighlight.slot).all()
-        return render_template('admin/highlights.html', highlights=highlights)
+        return render_template('admin/featured_highlights.html', highlights=highlights)
     except Exception as e:
         logger.error(f"Error loading highlights: {e}")
         flash('Erreur lors du chargement des mises en avant', 'error')
-        return render_template('admin/highlights.html', highlights=[])
+        return render_template('admin/featured_highlights.html', highlights=[])
 
 
 @admin_bp.route('/highlights/<int:id>/edit', methods=['GET', 'POST'])
 @require_admin
-def edit_highlight(id):
+def edit_featured_highlight(id):
     try:
         from app import db
         from models.database import FeaturedHighlight
@@ -887,12 +886,12 @@ def edit_highlight(id):
             
             db.session.commit()
             flash('Mise en avant modifiee avec succes', 'success')
-            return redirect(url_for('admin.highlights'))
-        return render_template('admin/highlight_form.html', highlight=highlight)
+            return redirect(url_for('admin.featured_highlights'))
+        return render_template('admin/featured_highlight_form.html', highlight=highlight)
     except Exception as e:
         logger.error(f"Error editing highlight: {e}")
         flash('Erreur lors de la modification de la mise en avant', 'error')
-        return redirect(url_for('admin.highlights'))
+        return redirect(url_for('admin.featured_highlights'))
 
 
 @admin_bp.route('/page-content')
